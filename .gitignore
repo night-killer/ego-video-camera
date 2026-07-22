@@ -158,6 +158,11 @@ activemq-data/
 # Environments
 .env
 .envrc
+
+# Authentication material must never enter this repository.
+.netrc
+*.netrc
+.secrets/
 .venv
 env/
 venv/
