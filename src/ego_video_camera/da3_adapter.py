@@ -20,8 +20,31 @@ from .serialization import write_json
 from .transforms import invert_pose
 
 
-POSE_CONVENTION = "OpenCV camera-to-DA3-world (T_D_E), converted from official stitched W2C output"
+OFFICIAL_STITCHED_POSE_CONVENTION = (
+    "DA3-Streaming stitched camera-to-world with camera basis "
+    "+X right, +Y down, +Z forward (OpenCV)"
+)
+POSE_CONVENTION = (
+    "EgoBody PV camera-to-DA3-world (T_D_E), camera basis "
+    "+X right, +Y up, -Z forward"
+)
+DA3_STREAMING_TO_EGOBODY_PV_CAMERA = np.diag([1.0, -1.0, -1.0, 1.0])
 EXPECTED_DA3_COMMIT = "41736238f5bced4debf3f2a12375d2466874866d"
+
+
+def da3_streaming_c2w_to_egobody_pv(poses: np.ndarray) -> np.ndarray:
+    """Change only the camera basis of official stitched C2W poses.
+
+    DA3-Streaming's saved camera frame uses OpenCV right/down/forward axes.
+    EgoBody PV/HoloLens poses use right/up/back axes, with gaze along -Z.
+    Right multiplication changes the local camera basis while preserving
+    every camera center and the DA3 world frame.
+    """
+
+    poses = np.asarray(poses, dtype=np.float64)
+    if poses.shape[-2:] != (4, 4):
+        raise ValueError(f"Expected (..., 4, 4) stitched poses, got {poses.shape}")
+    return poses @ DA3_STREAMING_TO_EGOBODY_PV_CAMERA
 
 
 @lru_cache(maxsize=4)
@@ -264,19 +287,24 @@ def run_da3_streaming(
     )
     runner = cls(str(input_dir), str(output / "da3_streaming"), copy.deepcopy(config))
     runner.run()
-    c2w, intrinsics = _read_stitched_outputs(output / "da3_streaming")
-    if len(c2w) != len(image_paths):
-        raise RuntimeError(f"DA3 returned {len(c2w)} poses for {len(image_paths)} images")
+    official_c2w, intrinsics = _read_stitched_outputs(output / "da3_streaming")
+    if len(official_c2w) != len(image_paths):
+        raise RuntimeError(
+            f"DA3 returned {len(official_c2w)} poses for {len(image_paths)} images"
+        )
+    egobody_pv_c2w = da3_streaming_c2w_to_egobody_pv(official_c2w)
     records = []
     confidence_values = _read_confidence_medians(
         output / "da3_streaming", runner.chunk_indices, len(image_paths)
     )
-    for index, (pose, intrinsic) in enumerate(zip(c2w, intrinsics)):
+    for index, (official_pose, egobody_pv_pose, intrinsic) in enumerate(
+        zip(official_c2w, egobody_pv_c2w, intrinsics)
+    ):
         normalized_confidence = (
             float(confidence_values[index]) if np.isfinite(confidence_values[index]) else None
         )
         valid = bool(
-            np.isfinite(pose).all()
+            np.isfinite(egobody_pv_pose).all()
             and normalized_confidence is not None
             and normalized_confidence >= confidence_threshold
         )
@@ -285,8 +313,14 @@ def run_da3_streaming(
                 "frame_id": int(frame_ids[index]),
                 "timestamp": int(timestamps[index]),
                 "source_image": str(Path(image_paths[index]).resolve()),
-                "raw_extrinsics": invert_pose(pose),
-                "stitched_c2w": pose,
+                "raw_extrinsics": invert_pose(official_pose),
+                "raw_extrinsics_convention": (
+                    "world-to-camera inverse of official_stitched_c2w"
+                ),
+                "stitched_c2w": official_pose,
+                "stitched_c2w_convention": OFFICIAL_STITCHED_POSE_CONVENTION,
+                "egobody_pv_c2w": egobody_pv_pose,
+                "egobody_pv_w2c": invert_pose(egobody_pv_pose),
                 "predicted_intrinsics": intrinsic,
                 "confidence_raw_median": None if normalized_confidence is None else normalized_confidence + 1.0,
                 "confidence_normalized_median": normalized_confidence,
@@ -312,13 +346,19 @@ def run_da3_streaming(
         "loop_closure": False,
         "input_count": len(staged),
         "pose_convention": POSE_CONVENTION,
+        "official_stitched_pose_convention": OFFICIAL_STITCHED_POSE_CONVENTION,
+        "camera_basis_change_right_multiply": DA3_STREAMING_TO_EGOBODY_PV_CAMERA,
         "records": records,
     }
     write_json(output / "da3_poses_raw.json", metadata)
     np.savez_compressed(
         output / "da3_poses_raw.npz",
-        c2w=c2w,
-        w2c=np.asarray([invert_pose(pose) for pose in c2w]),
+        c2w=official_c2w,
+        w2c=np.asarray([invert_pose(pose) for pose in official_c2w]),
+        c2w_egobody_pv=egobody_pv_c2w,
+        w2c_egobody_pv=np.asarray(
+            [invert_pose(pose) for pose in egobody_pv_c2w]
+        ),
         intrinsics=intrinsics,
         confidence=confidence_values,
         frame_ids=np.asarray(frame_ids),

@@ -52,6 +52,23 @@ def _finite_pose(pose: np.ndarray | None) -> bool:
     return pose is not None and np.asarray(pose).shape == (4, 4) and np.isfinite(pose).all()
 
 
+def semantic_pose_directions(
+    rotation: np.ndarray, frame_kind: str
+) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Return semantic right, up and gaze directions in the parent frame."""
+
+    rotation = np.asarray(rotation, dtype=np.float64)
+    if rotation.shape != (3, 3):
+        raise ValueError(f"Expected a 3x3 rotation, got {rotation.shape}")
+    if frame_kind == "head":
+        # EgoBody head convention: +X right, +Y up, -Z gaze/forward.
+        return rotation[:, 0], rotation[:, 1], -rotation[:, 2]
+    if frame_kind == "camera":
+        # EgoBody PV/HoloLens camera: +X right, +Y up, -Z gaze/forward.
+        return rotation[:, 0], rotation[:, 1], -rotation[:, 2]
+    raise ValueError(f"Unsupported pose frame kind: {frame_kind}")
+
+
 def draw_pose_overlay(
     image: np.ndarray,
     pose: np.ndarray | None,
@@ -67,13 +84,13 @@ def draw_pose_overlay(
     pose = np.asarray(pose, dtype=np.float64)
     origin = pose[:3, 3]
     rotation = pose[:3, :3]
+    right, up, gaze = semantic_pose_directions(rotation, frame_kind)
     points = np.stack(
         [
             origin,
-            origin + axis_length_m * rotation[:, 0],
-            origin + axis_length_m * rotation[:, 1],
-            origin + axis_length_m * rotation[:, 2],
-            origin + axis_length_m * (-(rotation[:, 2]) if frame_kind == "head" else rotation[:, 2]),
+            origin + axis_length_m * right,
+            origin + axis_length_m * up,
+            origin + axis_length_m * gaze,
         ]
     )
     pixels, depth_valid = camera.project(points)
@@ -82,28 +99,31 @@ def draw_pose_overlay(
     center = tuple(np.rint(pixels[0]).astype(int))
     cv2.drawMarker(output, center, color, cv2.MARKER_CROSS, 24, 3, cv2.LINE_AA)
     cv2.circle(output, center, 11, color, 2, cv2.LINE_AA)
-    axis_colors = [(0, 0, 255), (0, 255, 0), (255, 0, 0)]
-    for index, axis_color in enumerate(axis_colors, start=1):
+    semantic_axes = [
+        (1, (0, 0, 255), "R", 2),
+        (2, (0, 255, 0), "UP", 2),
+        (3, (255, 0, 0), "GAZE", 4),
+    ]
+    for index, axis_color, label, thickness in semantic_axes:
         if depth_valid[index] and np.isfinite(pixels[index]).all():
+            endpoint = tuple(np.rint(pixels[index]).astype(int))
             cv2.arrowedLine(
                 output,
                 center,
-                tuple(np.rint(pixels[index]).astype(int)),
+                endpoint,
                 axis_color,
-                2,
+                thickness,
                 cv2.LINE_AA,
-                tipLength=0.18,
+                tipLength=0.24,
             )
-    if depth_valid[4] and np.isfinite(pixels[4]).all():
-        cv2.arrowedLine(
-            output,
-            center,
-            tuple(np.rint(pixels[4]).astype(int)),
-            color,
-            4,
-            cv2.LINE_AA,
-            tipLength=0.22,
-        )
+            draw_text(
+                output,
+                label,
+                (endpoint[0] + 5, endpoint[1] - 5),
+                axis_color,
+                0.48,
+                1,
+            )
     if history:
         history_points = np.asarray([item[:3, 3] for item in history if _finite_pose(item)])
         if len(history_points) >= 2:

@@ -12,8 +12,12 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 from .da3_adapter import (
+    DA3_STREAMING_TO_EGOBODY_PV_CAMERA,
     EXPECTED_DA3_COMMIT,
+    OFFICIAL_STITCHED_POSE_CONVENTION,
+    POSE_CONVENTION,
     _effective_streaming_overlap,
+    da3_streaming_c2w_to_egobody_pv,
     run_da3_streaming,
 )
 from .egobody_io import (
@@ -31,6 +35,7 @@ from .head_pose_conversion import calibrate_camera_to_head, camera_to_head_poses
 from .metrics import trajectory_metrics
 from .serialization import read_json, write_json
 from .trajectory_alignment import estimate_full_alignment, estimate_prefix_alignment
+from .transforms import invert_pose
 from .video_io import FFmpegWriter, verify_video
 from .visualization import DA3_COLOR, GT_COLOR, compose_triptych, draw_pose_overlay, draw_text, letterbox
 
@@ -340,9 +345,15 @@ def _align_da3(da3_c2w: np.ndarray, valid: np.ndarray, gt: dict, config: dict) -
     source = da3_c2w[valid]
     target = gt["T_W_E"][valid]
     valid_timestamps = timestamps[valid]
-    oracle = estimate_full_alignment(source, target, True)
-    se3 = estimate_full_alignment(source, target, False)
     alignment_config = config["alignment"]
+    minimum_span = float(alignment_config.get("minimum_translation_span_m", 0.1))
+    minimum_rank = float(alignment_config.get("minimum_rank_ratio", 0.001))
+    oracle = estimate_full_alignment(
+        source, target, True, minimum_span, minimum_rank
+    )
+    se3 = estimate_full_alignment(
+        source, target, False, minimum_span, minimum_rank
+    )
     prefix = estimate_prefix_alignment(
         source,
         target,
@@ -350,8 +361,8 @@ def _align_da3(da3_c2w: np.ndarray, valid: np.ndarray, gt: dict, config: dict) -
         float(config["clip"].get("calibration_prefix_sec", 3)),
         5.0,
         float(config["clip"].get("maximum_prefix_ratio", 0.3)),
-        float(alignment_config.get("minimum_translation_span_m", 0.1)),
-        float(alignment_config.get("minimum_rank_ratio", 0.001)),
+        minimum_span,
+        minimum_rank,
         timeline_start_sec=float(timestamps[0]),
         timeline_end_sec=float(timestamps[-1]),
     )
@@ -571,6 +582,89 @@ def _da3_resume_matches(da3_dir: Path, records, config: dict) -> bool:
     )
 
 
+def _load_and_document_da3_poses(da3_dir: Path) -> dict[str, np.ndarray]:
+    """Load official poses and expose the EgoBody-PV-basis interpretation.
+
+    Existing GPU results predate the explicit ``c2w_egobody_pv`` key. They
+    remain reusable: their official stitched matrices are preserved, and the
+    fixed camera-basis change is applied during post-processing without
+    inference.
+    """
+
+    npz_path = da3_dir / "da3_poses_raw.npz"
+    with np.load(npz_path) as data:
+        official_c2w = np.asarray(data["c2w"], dtype=np.float64)
+        if "c2w_egobody_pv" in data.files:
+            egobody_pv_c2w = np.asarray(
+                data["c2w_egobody_pv"], dtype=np.float64
+            )
+            interpretation_source = "explicit_c2w_egobody_pv"
+        elif "c2w_opencv" in data.files:
+            # A short-lived adapter revision used this misleading key for the
+            # same right-multiplied EgoBody-PV matrices. Accept it without
+            # forcing an expensive inference rerun.
+            egobody_pv_c2w = np.asarray(data["c2w_opencv"], dtype=np.float64)
+            interpretation_source = "legacy_mislabeled_c2w_opencv"
+        else:
+            egobody_pv_c2w = da3_streaming_c2w_to_egobody_pv(official_c2w)
+            interpretation_source = (
+                "legacy_official_c2w_converted_during_postprocess"
+            )
+        result = {
+            "official_c2w": official_c2w,
+            "egobody_pv_c2w": egobody_pv_c2w,
+            "confidence": np.asarray(data["confidence"]),
+            "frame_ids": np.asarray(data["frame_ids"]),
+            "timestamps": np.asarray(data["timestamps"]),
+        }
+
+    interpretation = {
+        "official_pose_convention": OFFICIAL_STITCHED_POSE_CONVENTION,
+        "downstream_pose_convention": POSE_CONVENTION,
+        "camera_basis_change": {
+            "operation": "right_multiply",
+            "matrix": DA3_STREAMING_TO_EGOBODY_PV_CAMERA,
+            "preserves_camera_centers": True,
+        },
+        "source": interpretation_source,
+        "input_count": len(official_c2w),
+    }
+    write_json(da3_dir / "pose_basis_interpretation.json", interpretation)
+
+    metadata_path = da3_dir / "da3_poses_raw.json"
+    if metadata_path.is_file():
+        metadata = read_json(metadata_path)
+        metadata.update(
+            {
+                "pose_convention": POSE_CONVENTION,
+                "official_stitched_pose_convention": OFFICIAL_STITCHED_POSE_CONVENTION,
+                "camera_basis_change_right_multiply": DA3_STREAMING_TO_EGOBODY_PV_CAMERA,
+            }
+        )
+        records = metadata.get("records", [])
+        if len(records) == len(official_c2w):
+            for record, official_pose, egobody_pv_pose in zip(
+                records, official_c2w, egobody_pv_c2w
+            ):
+                record.pop("opencv_c2w", None)
+                record.pop("opencv_w2c", None)
+                record.update(
+                    {
+                        "raw_extrinsics": invert_pose(official_pose),
+                        "raw_extrinsics_convention": (
+                            "world-to-camera inverse of official_stitched_c2w"
+                        ),
+                        "stitched_c2w": official_pose,
+                        "stitched_c2w_convention": OFFICIAL_STITCHED_POSE_CONVENTION,
+                        "egobody_pv_c2w": egobody_pv_pose,
+                        "egobody_pv_w2c": invert_pose(egobody_pv_pose),
+                        "pose_convention": POSE_CONVENTION,
+                    }
+                )
+        write_json(metadata_path, metadata)
+    return result
+
+
 def run_clip(
     *,
     repo_root: str | Path,
@@ -612,11 +706,11 @@ def run_clip(
     da3_npz = da3_dir / "da3_poses_raw.npz"
     if not da3_npz.is_file():
         return {"gt": prepared["report"], "da3": "not_run_on_cpu"}
-    with np.load(da3_npz) as data:
-        da3_c2w = data["c2w"]
-        confidence = data["confidence"]
-        da3_frame_ids = data["frame_ids"]
-        da3_timestamps = data["timestamps"]
+    da3_data = _load_and_document_da3_poses(da3_dir)
+    da3_c2w = da3_data["egobody_pv_c2w"]
+    confidence = da3_data["confidence"]
+    da3_frame_ids = da3_data["frame_ids"]
+    da3_timestamps = da3_data["timestamps"]
     if not np.array_equal(da3_frame_ids, np.asarray([record.frame_id for record in records])):
         raise RuntimeError("DA3 frame IDs do not match the selected EgoBody inputs")
     if not np.array_equal(da3_timestamps, np.asarray([record.timestamp for record in records])):

@@ -2,8 +2,14 @@ from types import SimpleNamespace
 
 import numpy as np
 
-from ego_video_camera.clip_pipeline import _da3_resume_matches
-from ego_video_camera.da3_adapter import EXPECTED_DA3_COMMIT
+from ego_video_camera.clip_pipeline import (
+    _da3_resume_matches,
+    _load_and_document_da3_poses,
+)
+from ego_video_camera.da3_adapter import (
+    DA3_STREAMING_TO_EGOBODY_PV_CAMERA,
+    EXPECTED_DA3_COMMIT,
+)
 from ego_video_camera.serialization import write_json
 
 
@@ -54,3 +60,27 @@ def test_da3_resume_requires_matching_inputs_and_inference_config(tmp_path):
         [SimpleNamespace(frame_id=10, timestamp=100)],
         _config(checkpoint),
     )
+
+
+def test_legacy_da3_archive_is_basis_converted_without_rerunning_inference(tmp_path):
+    output = tmp_path / "da3"
+    output.mkdir()
+    official = np.eye(4)[None]
+    official[0, :3, 3] = [1.0, 2.0, 3.0]
+    np.savez(
+        output / "da3_poses_raw.npz",
+        c2w=official,
+        confidence=[2.0],
+        frame_ids=[10],
+        timestamps=[100],
+    )
+    write_json(
+        output / "da3_poses_raw.json",
+        {"records": [{"frame_id": 10, "stitched_c2w": official[0]}]},
+    )
+    loaded = _load_and_document_da3_poses(output)
+    np.testing.assert_allclose(
+        loaded["egobody_pv_c2w"][0],
+        official[0] @ DA3_STREAMING_TO_EGOBODY_PV_CAMERA,
+    )
+    assert (output / "pose_basis_interpretation.json").is_file()

@@ -30,6 +30,8 @@ def test_generated_gpu_commands_are_valid_shell_and_have_real_recordings(tmp_pat
     assert "recording_easy" in content
     assert "recording_medium" in content
     assert "recording_hard" in content
+    assert "CUDA_VISIBLE_DEVICES=7" in content
+    assert "CUDA_VISIBLE_DEVICES=0" not in content
     assert "formal-all) run_formal_all" in content
     assert "--run-selected-clips" in content
     assert "--compose-all-toys" in content

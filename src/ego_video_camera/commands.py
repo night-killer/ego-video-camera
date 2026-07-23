@@ -10,7 +10,7 @@ def _shell_join(parts: list[str]) -> str:
 
 
 def _shell_function(name: str, command: list[str], *, cuda: bool = True) -> str:
-    prefix = "CUDA_VISIBLE_DEVICES=0 " if cuda else ""
+    prefix = "CUDA_VISIBLE_DEVICES=7 " if cuda else ""
     rendered = prefix + _shell_join(command)
     body = "\n".join(f"  {line}" for line in rendered.splitlines())
     return f"{name}() {{\n{body}\n}}"

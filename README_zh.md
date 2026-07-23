@@ -11,7 +11,7 @@
 - `model.safetensors` SHA-256：`8ebe871a022ed58d2fc8fdfb2ebdb31d57b60fe39611c849095851a7b7c6020c`
 - 同目录的 `*.partial` 只会记录为 ignored，不会被删除或加载
 - DA3 官方 submodule commit：`41736238f5bced4debf3f2a12375d2466874866d`
-- 当前主机没有 CUDA，因此这里只执行 CPU load-only、mock 和真实 GT-only 验收；真实 DA3 推理命令由实际 clips 自动生成
+- 初始环境预检使用 CPU load-only；三个正式 clip 与 smoke 的 DA3 推理随后已在 `CUDA_VISIBLE_DEVICES=7` 上完成
 
 初始化源码：
 
@@ -28,10 +28,12 @@ git submodule update --init --recursive
 - PV 文本中的 16 个数按 C-order 解析为 `T_W_E`
 - `holo_to_kinect12.json` 的 `trans` 解析为 `T_K_W`
 - GT ego pose：`T_K_E = T_K_W @ T_W_E`
-- DA3 官方 stitched pose 是 OpenCV C2W；同时保留其逆矩阵 W2C
+- DA3-Streaming 保存的 stitched pose 是 C2W，局部相机基为 OpenCV 的 `+X` 向右、`+Y` 向下、`+Z` 向前。adapter 保留官方 C2W/W2C，并在后处理入口右乘 `diag(1,-1,-1,1)`，转换为 EgoBody PV/HoloLens 的相机基：`+X` 向右、`+Y` 向上、`-Z` 为视线前向；该固定基变换不改变相机中心
 - Sim(3) scale 只作用于相机中心；旋转为 `R_W_E = R_align @ R_D_E`
 - Ego/Exo 同步只使用精确 frame ID。EgoBody 没有提供 exo timestamp 时，mapping 中写 `null`，并标记 `sync_basis=exact_frame_id`
 - gaze CSV 中的完整 4×4 矩阵是 `T_W_Q`，Head frame 的前向为 `-Z`
+
+投影标注只绘制三根从中心向外的语义箭头：红色 `R` 表示头右方，绿色 `UP` 表示头上方，蓝色 `GAZE` 表示视线方向。真实 Head frame 和 EgoBody PV camera-center proxy 均使用 `(+X,+Y,-Z)`。中心点和历史轨迹仍以绿色区分 GT、橙色区分 DA3。
 
 在 calibration prefix 内估计固定外参：
 
@@ -143,7 +145,7 @@ bash outputs/egobody_da3_toy/gpu_commands.sh formal-all
 也可以运行单个 recording：
 
 ```bash
-CUDA_VISIBLE_DEVICES=0 ./run_demo.sh \
+CUDA_VISIBLE_DEVICES=7 ./run_demo.sh \
   --sequence-id <selected-recording-name> \
   --run-da3 --render-comparison --evaluate --resume
 ```
@@ -184,7 +186,16 @@ DA3 adapter 只接收 Ego RGB 路径，并明确调用 `use_ray_pose=True`；不
 - Medium：`recording_20210929_S15_S11_03` / `2021-09-29-152630`，156/160 帧，画内率 97.5%，缺帧率 2.5%；prefix 只有 18 个合法 head 配对，因此明确使用 camera-center proxy
 - Hard：`recording_20210910_S06_S05_01` / `2021-09-10-171420`，160/160 帧，画内率 100%，缺帧率 0%，真实 Head Pose
 
-三段 GT-only 均已用 ffprobe 验证为 H.264、1920×1080、`yuv420p`、20.000 秒。Medium 只编码 156 个真实帧，实际 CFR 为 7.8 FPS，并永久标注 2.5% source sampling gaps；没有伪造或插值帧。当前 CPU 主机未执行 GPU smoke 或真实 DA3 inference，状态记录在 `execution_status.json`。
+三段 GT-only 均已用 ffprobe 验证为 H.264、1920×1080、`yuv420p`、20.000 秒。Medium 只编码 156 个真实帧，实际 CFR 为 7.8 FPS，并永久标注 2.5% source sampling gaps；没有伪造或插值帧。GPU smoke 和三个正式 clip 均已完成，执行产物保存在各 recording 的 `da3/` 目录。
+
+DA3 输出的坐标基修正后，直接复用现有 GPU 推理产物重新完成了对齐、评估和渲染，没有重跑模型：
+
+- Medium：oracle 旋转误差 median/P95 为 1.46°/4.40°，prefix 为 7.26°/9.19°
+- Hard：oracle 旋转误差 median/P95 为 5.14°/7.25°；prefix 的 median 为 34.62°，表明这段短 prefix 的外推质量明显较差
+- Easy：GT 相机中心在整段内仅移动 3.02 cm，低于 10 cm 的可观测性阈值；oracle、prefix 和 SE(3) 均明确标记为 `degenerate`，视频不绘制伪可靠的 DA3 箭头
+- 5 秒 smoke：GT/DA3 平移跨度均小于 1.2 cm，也明确标记为 `degenerate`；它只证明真实推理产物可生成和读取，不作为对齐精度样例
+
+所有正式 DA3 命令均由 `gpu_commands.sh` 固定到 7 号卡。坐标基修正属于确定性的 CPU 后处理，原始 DA3 C2W/W2C 仍完整保留。
 
 ## 测试
 

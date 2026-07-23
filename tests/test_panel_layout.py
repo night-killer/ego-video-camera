@@ -1,6 +1,10 @@
 import numpy as np
 
-from ego_video_camera.visualization import compose_triptych, letterbox
+from ego_video_camera.visualization import (
+    compose_triptych,
+    letterbox,
+    semantic_pose_directions,
+)
 
 
 def test_letterbox_preserves_aspect_ratio_and_layout():
@@ -26,3 +30,17 @@ def test_triptych_has_requested_panel_geometry():
         alignment_label="Calibration-prefix alignment",
     )
     assert canvas.shape == (1080, 1920, 3)
+
+
+def test_semantic_axes_use_head_and_egobody_pv_camera_conventions():
+    rotation = np.eye(3)
+    head_right, head_up, head_gaze = semantic_pose_directions(rotation, "head")
+    camera_right, camera_up, camera_gaze = semantic_pose_directions(
+        rotation, "camera"
+    )
+    np.testing.assert_allclose(head_right, [1, 0, 0])
+    np.testing.assert_allclose(head_up, [0, 1, 0])
+    np.testing.assert_allclose(head_gaze, [0, 0, -1])
+    np.testing.assert_allclose(camera_right, [1, 0, 0])
+    np.testing.assert_allclose(camera_up, [0, 1, 0])
+    np.testing.assert_allclose(camera_gaze, [0, 0, -1])

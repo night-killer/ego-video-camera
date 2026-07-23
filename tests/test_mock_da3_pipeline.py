@@ -21,6 +21,6 @@ def test_mock_pipeline_generates_playable_triptych(tmp_path: Path):
     validation = result["panel_validation"]
     assert validation["right_exo_backgrounds_same_source"]
     assert validation["top_gt_primary_pixel_count"] > 0
-    assert validation["top_da3_primary_pixel_count"] == 0
+    assert validation["top_da3_marker_absent"]
     assert validation["bottom_da3_primary_pixel_count"] > 0
-    assert validation["bottom_gt_primary_pixel_count"] == 0
+    assert validation["bottom_gt_marker_absent"]

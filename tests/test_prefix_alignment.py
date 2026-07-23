@@ -1,6 +1,9 @@
 import numpy as np
 
-from ego_video_camera.trajectory_alignment import estimate_prefix_alignment
+from ego_video_camera.trajectory_alignment import (
+    estimate_full_alignment,
+    estimate_prefix_alignment,
+)
 
 
 def test_prefix_alignment_reports_degenerate_static_prefix():
@@ -39,3 +42,22 @@ def test_prefix_alignment_does_not_slide_past_clip_prefix():
     )
     assert result.status == "degenerate"
     assert result.transform is None
+
+
+def test_full_alignment_rejects_underexcited_target_trajectory():
+    source = np.repeat(np.eye(4)[None], 20, axis=0)
+    target = source.copy()
+    source[:, 0, 3] = np.linspace(0, 0.3, len(source))
+    source[:, 1, 3] = 0.05 * np.sin(np.linspace(0, 3, len(source)))
+    target[:, 0, 3] = np.linspace(0, 0.03, len(target))
+    target[:, 1, 3] = 0.005 * np.sin(np.linspace(0, 3, len(target)))
+    result = estimate_full_alignment(
+        source,
+        target,
+        with_scale=True,
+        minimum_span_m=0.1,
+        minimum_rank_ratio=0.001,
+    )
+    assert result.status == "degenerate"
+    assert result.transform is None
+    assert "target span=" in result.reason

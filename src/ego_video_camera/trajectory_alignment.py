@@ -119,12 +119,41 @@ def estimate_prefix_alignment(
     )
 
 
-def estimate_full_alignment(source_c2w: np.ndarray, target_c2w: np.ndarray, with_scale: bool) -> AlignmentResult:
+def estimate_full_alignment(
+    source_c2w: np.ndarray,
+    target_c2w: np.ndarray,
+    with_scale: bool,
+    minimum_span_m: float = 0.0,
+    minimum_rank_ratio: float = 0.0,
+) -> AlignmentResult:
     valid = np.isfinite(source_c2w).all(axis=(1, 2)) & np.isfinite(target_c2w).all(axis=(1, 2))
     if valid.sum() < 3:
         return AlignmentResult("invalid", None, int(valid.sum()), None, "Fewer than three valid poses")
+    source_points = source_c2w[valid, :3, 3]
+    target_points = target_c2w[valid, :3, 3]
+    source_excitation = trajectory_excitation(source_points)
+    target_excitation = trajectory_excitation(target_points)
+    if (
+        source_excitation["span_m"] < minimum_span_m
+        or target_excitation["span_m"] < minimum_span_m
+        or source_excitation["rank_ratio"] < minimum_rank_ratio
+        or target_excitation["rank_ratio"] < minimum_rank_ratio
+    ):
+        return AlignmentResult(
+            "degenerate",
+            None,
+            int(valid.sum()),
+            None,
+            (
+                "Insufficient full-trajectory excitation: "
+                f"source span={source_excitation['span_m']:.6g} m, "
+                f"target span={target_excitation['span_m']:.6g} m, "
+                f"source rank_ratio={source_excitation['rank_ratio']:.6g}, "
+                f"target rank_ratio={target_excitation['rank_ratio']:.6g}"
+            ),
+        )
     try:
-        transform = umeyama(source_c2w[valid, :3, 3], target_c2w[valid, :3, 3], with_scale)
+        transform = umeyama(source_points, target_points, with_scale)
     except ValueError as error:
         return AlignmentResult("degenerate", None, int(valid.sum()), None, str(error))
     return AlignmentResult("ok", transform, int(valid.sum()), None)

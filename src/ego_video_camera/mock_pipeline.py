@@ -17,9 +17,13 @@ from .visualization import DA3_COLOR, GT_COLOR, compose_triptych, draw_pose_over
 
 def _pose(x: float, yaw_deg: float = 0.0) -> np.ndarray:
     yaw = np.radians(yaw_deg)
-    rotation = np.asarray(
+    parent_yaw = np.asarray(
         [[np.cos(yaw), 0, np.sin(yaw)], [0, 1, 0], [-np.sin(yaw), 0, np.cos(yaw)]]
     )
+    # The synthetic parent is an OpenCV exo camera (+Y down, +Z forward),
+    # while the semantic head frame is +Y up and -Z gaze. This base rotation
+    # makes UP project upward and GAZE point away from the head toward +Z.
+    rotation = parent_yaw @ np.diag([1.0, -1.0, -1.0])
     pose = np.eye(4)
     pose[:3, :3] = rotation
     pose[:3, 3] = [x, 0.1 * np.sin(x * 2), 3.0 + 0.05 * np.cos(x)]
@@ -45,7 +49,15 @@ def run_mock_pipeline(
 ) -> dict:
     output_root = Path(output_root)
     output_root.mkdir(parents=True, exist_ok=True)
-    gt = np.stack([_pose(-0.6 + 1.2 * i / max(frame_count - 1, 1), i * 2.0) for i in range(frame_count)])
+    gt = np.stack(
+        [
+            _pose(
+                -0.6 + 1.2 * i / max(frame_count - 1, 1),
+                -25.0 + i * 2.0,
+            )
+            for i in range(frame_count)
+        ]
+    )
     source = Sim3(
         1.7,
         np.asarray([[0.94, 0, -0.342], [0, 1, 0], [0.342, 0, 0.94]]),
@@ -80,17 +92,26 @@ def run_mock_pipeline(
             if index == 0:
                 gt_pixels = np.all(gt_overlay == np.asarray(GT_COLOR), axis=2)
                 da3_pixels = np.all(da3_overlay == np.asarray(DA3_COLOR), axis=2)
+                top_da3_pixels = int(
+                    np.all(gt_overlay == np.asarray(DA3_COLOR), axis=2).sum()
+                )
+                bottom_gt_pixels = int(
+                    np.all(da3_overlay == np.asarray(GT_COLOR), axis=2).sum()
+                )
+                # Semantic R/UP/GAZE axes use fixed shared colors. A handful
+                # of anti-aliased pixels can numerically equal a primary
+                # marker color without representing a cross-panel marker.
+                collision_tolerance = 4
                 panel_validation = {
                     "right_exo_backgrounds_same_source": True,
                     "right_exo_source_sha256": hashlib.sha256(exo.tobytes()).hexdigest(),
                     "top_gt_primary_pixel_count": int(gt_pixels.sum()),
-                    "top_da3_primary_pixel_count": int(
-                        np.all(gt_overlay == np.asarray(DA3_COLOR), axis=2).sum()
-                    ),
+                    "top_da3_primary_pixel_count": top_da3_pixels,
+                    "top_da3_marker_absent": top_da3_pixels <= collision_tolerance,
                     "bottom_da3_primary_pixel_count": int(da3_pixels.sum()),
-                    "bottom_gt_primary_pixel_count": int(
-                        np.all(da3_overlay == np.asarray(GT_COLOR), axis=2).sum()
-                    ),
+                    "bottom_gt_primary_pixel_count": bottom_gt_pixels,
+                    "bottom_gt_marker_absent": bottom_gt_pixels <= collision_tolerance,
+                    "semantic_axis_antialias_collision_tolerance": collision_tolerance,
                 }
             frame = compose_triptych(
                 ego,
