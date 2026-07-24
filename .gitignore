@@ -35,10 +35,14 @@ MANIFEST
 # Project runtime artifacts
 outputs/
 runs/
+/data/
 *.mp4
 *.npz
 *.safetensors
 .ruff_cache/
+
+# Expiring official dataset manifests should stay local.
+*_download_urls.json
 
 # Installer logs
 pip-log.txt
@@ -163,6 +167,10 @@ activemq-data/
 .netrc
 *.netrc
 .secrets/
+
+# Evaluation checkpoints are large local artifacts.
+ckpts/
+
 .venv
 env/
 venv/

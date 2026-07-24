@@ -1,0 +1,198 @@
+schema_version: 1
+profile:
+  id: ego_pose_eval_core65_v2
+  description: "Ego RGB -> 6DoF camera/head pose evaluation subset"
+  target_fps: 10
+  clip_count: 112
+  duration_seconds: 3900
+  random_seed: 20260723
+
+datasets:
+  adt:
+    title: Aria Digital Twin
+    reference_grade: A
+    access: official_explorer_license
+    source_page: https://facebookresearch.github.io/projectaria_tools/docs/open_datasets/aria_digital_twin_dataset/dataset_download
+    explorer_manifest: https://explorer.projectaria.com/data/adt/download_links
+    minimal_groups: [video_main_rgb, main_groundtruth]
+    official_data_types: [0, 6]
+    clip_count: 24
+    duration_seconds: 720
+    clips:
+      - {sequence: Lite_release_recognition_GreenDecorationTall_seq031_61283, start_s: 30, duration_s: 30, stratum: slow_object_exam}
+      - {sequence: Lite_release_recognition_BlackCeramicBowl_seq033_61283, start_s: 30, duration_s: 30, stratum: slow_object_exam}
+      - {sequence: Lite_release_recognition_Mug_2_seq030_61283, start_s: 30, duration_s: 30, stratum: slow_object_exam}
+      - {sequence: Lite_release_recognition_BambooPlate_seq031_61283, start_s: 30, duration_s: 30, stratum: slow_object_exam}
+      - {sequence: Lite_release_recognition_BirdHouseToy_seq031_61283, start_s: 30, duration_s: 30, stratum: slow_object_exam}
+      - {sequence: Lite_release_recognition_DinoToy_seq030_61283, start_s: 30, duration_s: 30, stratum: slow_object_exam}
+      - {sequence: Apartment_release_clean_seq140_M1292, start_s: 30, duration_s: 30, stratum: locomotion}
+      - {sequence: Apartment_release_clean_seq136_M1292, start_s: 30, duration_s: 30, stratum: locomotion}
+      - {sequence: Apartment_release_clean_seq133_M1292, start_s: 30, duration_s: 30, stratum: locomotion}
+      - {sequence: Apartment_release_clean_seq143_M1292, start_s: 30, duration_s: 30, stratum: locomotion}
+      - {sequence: Apartment_release_clean_seq150_M1292, start_s: 30, duration_s: 30, stratum: locomotion}
+      - {sequence: Apartment_release_clean_seq149_M1292, start_s: 30, duration_s: 30, stratum: locomotion}
+      - {sequence: Apartment_release_meal_seq131_M1292, start_s: 30, duration_s: 30, stratum: interaction}
+      - {sequence: Apartment_release_meal_seq132_M1292, start_s: 30, duration_s: 30, stratum: interaction}
+      - {sequence: Apartment_release_meal_seq136_M1292, start_s: 30, duration_s: 30, stratum: interaction}
+      - {sequence: Apartment_release_decoration_seq131_M1292, start_s: 30, duration_s: 30, stratum: interaction}
+      - {sequence: Apartment_release_decoration_seq133_M1292, start_s: 30, duration_s: 30, stratum: interaction}
+      - {sequence: Apartment_release_work_seq107_M1292, start_s: 30, duration_s: 30, stratum: interaction}
+      - {sequence: Apartment_release_multiskeleton_party_seq101_M1292, start_s: 40, duration_s: 30, stratum: multi_person}
+      - {sequence: Apartment_release_multiskeleton_party_seq102_71292, start_s: 40, duration_s: 30, stratum: multi_person}
+      - {sequence: Apartment_release_multiskeleton_party_seq103_M1292, start_s: 40, duration_s: 30, stratum: multi_person}
+      - {sequence: Apartment_release_multiskeleton_party_seq114_71292, start_s: 40, duration_s: 30, stratum: multi_person}
+      - {sequence: Apartment_release_multiskeleton_party_seq117_M1292, start_s: 40, duration_s: 30, stratum: multi_person}
+      - {sequence: Apartment_release_multiskeleton_party_seq123_71292, start_s: 40, duration_s: 30, stratum: multi_person}
+
+  egobody:
+    title: EgoBody
+    reference_grade: B_device_reference
+    access: official_authenticated_license
+    source_page: https://github.com/sanweiliti/EgoBody
+    official_base_url: https://egobody.ethz.ch/data/dataset/
+    minimal_archives: [egocentric_color.zip, egocentric_gaze.zip, calibrations.zip]
+    optional_exo_archive: kinect_color.zip
+    clip_count: 20
+    duration_seconds: 400
+    clips:
+      - {sequence: recording_20210921_S11_S10_02, hololens_sequence: 2021-09-21-145953, start_s: 0, duration_s: 20, stratum: low_motion, split: val, scene: cab_e, recording_start_frame: 2091, recording_end_frame: 3870, expected_start_frame: 2091, expected_start_timestamp: 132767028547871795}
+      - {sequence: recording_20220215_S21_S22_02, hololens_sequence: 2022-02-15-153004, start_s: 60, duration_s: 20, stratum: low_motion, split: val, scene: cnb_dlab_0215, recording_start_frame: 1511, recording_end_frame: 4750, expected_start_frame: 3312, expected_start_timestamp: 132894091109624687}
+      - {sequence: recording_20220218_S02_S23_01, hololens_sequence: 2022-02-18-154113, start_s: 30, duration_s: 20, stratum: low_motion, split: train, scene: seminar_h53_0218, recording_start_frame: 2091, recording_end_frame: 4090, expected_start_frame: 2992, expected_start_timestamp: 132896689732233765}
+      - {sequence: recording_20220315_S21_S30_01, hololens_sequence: 2022-03-15-145226, start_s: 0, duration_s: 20, stratum: low_motion, split: val, scene: seminar_g110_0315, recording_start_frame: 2571, recording_end_frame: 4690, expected_start_frame: 2571, expected_start_timestamp: 132918260273690854}
+      - {sequence: recording_20220315_S21_S30_02, hololens_sequence: 2022-03-15-150727, start_s: 10, duration_s: 20, stratum: low_motion, split: val, scene: seminar_g110_0315, recording_start_frame: 1501, recording_end_frame: 2890, expected_start_frame: 1801, expected_start_timestamp: 132918268951810110}
+      - {sequence: recording_20210921_S10_S11_01, hololens_sequence: 2021-09-21-145252, start_s: 20, duration_s: 20, stratum: moderate_motion, split: train, scene: cab_e, recording_start_frame: 1171, recording_end_frame: 3360, expected_start_frame: 1771, expected_start_timestamp: 132767024264599670}
+      - {sequence: recording_20210923_S03_S14_01, hololens_sequence: 2021-09-23-164445, start_s: 20, duration_s: 20, stratum: moderate_motion, split: val, scene: cab_h_tables, recording_start_frame: 1211, recording_end_frame: 3250, expected_start_frame: 1811, expected_start_timestamp: 132768819352380153}
+      - {sequence: recording_20220215_S21_S22_01, hololens_sequence: 2022-02-15-143227, start_s: 0, duration_s: 20, stratum: moderate_motion, split: val, scene: cnb_dlab_0215, recording_start_frame: 1901, recording_end_frame: 4900, expected_start_frame: 1901, expected_start_timestamp: 132894056050363019}
+      - {sequence: recording_20220218_S23_S02_02, hololens_sequence: 2022-02-18-155527, start_s: 40, duration_s: 20, stratum: moderate_motion, split: val, scene: seminar_h53_0218, recording_start_frame: 1301, recording_end_frame: 3700, expected_start_frame: 2501, expected_start_timestamp: 132896698078757520}
+      - {sequence: recording_20210929_S15_S11_01, hololens_sequence: 2021-09-29-150021, start_s: 0, duration_s: 20, stratum: moderate_motion, split: train, scene: seminar_d78, recording_start_frame: 1461, recording_end_frame: 3990, expected_start_frame: 1461, expected_start_timestamp: 132773940515523751}
+      - {sequence: recording_20211002_S15_S17_01, hololens_sequence: 2021-10-02-144146, start_s: 50, duration_s: 20, stratum: locomotion, split: train, scene: cab_g_benches, recording_start_frame: 1961, recording_end_frame: 4530, expected_start_frame: 3462, expected_start_timestamp: 132776522154987985}
+      - {sequence: recording_20211002_S15_S17_02, hololens_sequence: 2021-10-02-151623, start_s: 10, duration_s: 20, stratum: locomotion, split: train, scene: cab_g_benches, recording_start_frame: 1121, recording_end_frame: 3740, expected_start_frame: 1421, expected_start_timestamp: 132776542187059136}
+      - {sequence: recording_20211002_S03_S18_04, hololens_sequence: 2021-10-02-171911, start_s: 0, duration_s: 20, stratum: locomotion, split: val, scene: cab_g_benches, recording_start_frame: 3601, recording_end_frame: 5450, expected_start_frame: 3601, expected_start_timestamp: 132776616584388069}
+      - {sequence: recording_20220315_S21_S30_05, hololens_sequence: 2022-03-15-154234, start_s: 10, duration_s: 20, stratum: locomotion, split: val, scene: seminar_g110_0315, recording_start_frame: 1301, recording_end_frame: 3000, expected_start_frame: 1601, expected_start_timestamp: 132918290042925598}
+      - {sequence: recording_20210918_S05_S06_01, hololens_sequence: 2021-09-18-145851, start_s: 0, duration_s: 20, stratum: locomotion, split: train, scene: kitchen_gfloor, recording_start_frame: 2241, recording_end_frame: 3620, expected_start_frame: 2241, expected_start_timestamp: 132764436164521165}
+      - {sequence: recording_20210911_S08_S03_01, hololens_sequence: 2021-09-11-170150, start_s: 60, duration_s: 20, stratum: fast_turn, split: train, scene: seminar_h52, recording_start_frame: 1541, recording_end_frame: 4430, expected_start_frame: 3342, expected_start_timestamp: 132758462132488232}
+      - {sequence: recording_20210910_S06_S05_01, hololens_sequence: 2021-09-10-171420, start_s: 0, duration_s: 20, stratum: fast_turn, split: train, scene: seminar_h52, recording_start_frame: 951, recording_end_frame: 1870, expected_start_frame: 951, expected_start_timestamp: 132757604832581678}
+      - {sequence: recording_20220312_S28_S29_06, hololens_sequence: 2022-03-12-161421, start_s: 20, duration_s: 20, stratum: fast_turn, split: train, scene: foodlab_0312, recording_start_frame: 2051, recording_end_frame: 4600, expected_start_frame: 2651, expected_start_timestamp: 132915717354530969}
+      - {sequence: recording_20220312_S28_S29_01, hololens_sequence: 2022-03-12-145312, start_s: 40, duration_s: 20, stratum: fast_turn, split: train, scene: foodlab_0312, recording_start_frame: 1661, recording_end_frame: 4790, expected_start_frame: 2861, expected_start_timestamp: 132915668830108843}
+      - {sequence: recording_20210907_S04_S03_01, hololens_sequence: 2021-09-07-165406, start_s: 0, duration_s: 20, stratum: fast_turn, split: train, scene: seminar_g110, recording_start_frame: 2001, recording_end_frame: 2940, expected_start_frame: 2001, expected_start_timestamp: 132755001015905134}
+
+  monado:
+    title: Monado SLAM Dataset
+    reference_grade: A
+    access: public_huggingface
+    source_page: https://huggingface.co/datasets/collabora/monado-slam-datasets
+    hf_repo: collabora/monado-slam-datasets
+    clip_count: 16
+    duration_seconds: 480
+    clips:
+      - {sequence: MGO13_sudden_movements, archive: M_monado_datasets/MG_reverb_g2/MGO_others/MGO13_sudden_movements.zip, device: MG_reverb_g2, start_s: 10, duration_s: 30, stratum: fast_motion}
+      - {sequence: MOO13_sudden_movements, archive: M_monado_datasets/MO_odyssey_plus/MOO_others/MOO13_sudden_movements.zip, device: MO_odyssey_plus, start_s: 10, duration_s: 30, stratum: fast_motion}
+      - {sequence: MIO03_hand_shooter_easy, archive: M_monado_datasets/MI_valve_index/MIO_others/MIO03_hand_shooter_easy.zip, device: MI_valve_index, start_s: 10, duration_s: 30, stratum: fast_motion}
+      - {sequence: MIO04_hand_shooter_hard, archive: M_monado_datasets/MI_valve_index/MIO_others/MIO04_hand_shooter_hard.zip, device: MI_valve_index, start_s: 10, duration_s: 30, stratum: fast_motion}
+      - {sequence: MIO12_moving_screens, archive: M_monado_datasets/MI_valve_index/MIO_others/MIO12_moving_screens.zip, device: MI_valve_index, start_s: 10, duration_s: 30, stratum: dynamic_occlusion}
+      - {sequence: MIO13_moving_person, archive: M_monado_datasets/MI_valve_index/MIO_others/MIO13_moving_person.zip, device: MI_valve_index, start_s: 10, duration_s: 30, stratum: dynamic_occlusion}
+      - {sequence: MIO14_moving_props, archive: M_monado_datasets/MI_valve_index/MIO_others/MIO14_moving_props.zip, device: MI_valve_index, start_s: 10, duration_s: 30, stratum: dynamic_occlusion}
+      - {sequence: MIO15_moving_person_props, archive: M_monado_datasets/MI_valve_index/MIO_others/MIO15_moving_person_props.zip, device: MI_valve_index, start_s: 10, duration_s: 30, stratum: dynamic_occlusion}
+      - {sequence: MGO01_low_light, archive: M_monado_datasets/MG_reverb_g2/MGO_others/MGO01_low_light.zip, device: MG_reverb_g2, start_s: 10, duration_s: 30, stratum: low_light}
+      - {sequence: MGO14_flickering_light, archive: M_monado_datasets/MG_reverb_g2/MGO_others/MGO14_flickering_light.zip, device: MG_reverb_g2, start_s: 10, duration_s: 30, stratum: low_light}
+      - {sequence: MOO14_flickering_light, archive: M_monado_datasets/MO_odyssey_plus/MOO_others/MOO14_flickering_light.zip, device: MO_odyssey_plus, start_s: 10, duration_s: 30, stratum: low_light}
+      - {sequence: MOX01_low_light, archive: M_monado_datasets/MO_odyssey_plus/extras/other_datasets/MOX01_low_light.zip, device: MO_odyssey_plus, start_s: 10, duration_s: 30, stratum: low_light}
+      - {sequence: MIPB01_beatsaber_100bills_360_normal, archive: M_monado_datasets/MI_valve_index/MIP_playing/MIPB_beat_saber/MIPB01_beatsaber_100bills_360_normal.zip, device: MI_valve_index, start_s: 10, duration_s: 30, stratum: gameplay}
+      - {sequence: MIPB02_beatsaber_crabrave_360_hard, archive: M_monado_datasets/MI_valve_index/MIP_playing/MIPB_beat_saber/MIPB02_beatsaber_crabrave_360_hard.zip, device: MI_valve_index, start_s: 10, duration_s: 30, stratum: gameplay}
+      - {sequence: MIPB04_beatsaber_fitbeat_hard, archive: M_monado_datasets/MI_valve_index/MIP_playing/MIPB_beat_saber/MIPB04_beatsaber_fitbeat_hard.zip, device: MI_valve_index, start_s: 10, duration_s: 30, stratum: gameplay}
+      - {sequence: MIPP01_pistolwhip_blackmagic_hard, archive: M_monado_datasets/MI_valve_index/MIP_playing/MIPP_pistol_whip/MIPP01_pistolwhip_blackmagic_hard.zip, device: MI_valve_index, start_s: 10, duration_s: 30, stratum: gameplay}
+
+  princeton365:
+    title: Princeton365 validation
+    reference_grade: A_non_headworn
+    access: public_huggingface
+    source_page: https://huggingface.co/datasets/princeton-vl/princeton365
+    hf_repo: princeton-vl/princeton365
+    clip_count: 18
+    duration_seconds: 540
+    clips:
+      - {sequence: new_indoor_close_14, shard: 3, start_s: 10, duration_s: 30, stratum: indoors}
+      - {sequence: new_indoor_15, shard: 5, start_s: 10, duration_s: 30, stratum: indoors}
+      - {sequence: new_indoor_14, shard: 4, start_s: 10, duration_s: 30, stratum: indoors}
+      - {sequence: new_indoor_close_3, shard: 8, start_s: 10, duration_s: 30, stratum: indoors}
+      - {sequence: new_indoor_7, shard: 7, start_s: 10, duration_s: 30, stratum: indoors}
+      - {sequence: new_indoor_19, shard: 6, start_s: 10, duration_s: 30, stratum: indoors}
+      - {sequence: outdoor_36, shard: 71, start_s: 10, duration_s: 30, stratum: outdoors}
+      - {sequence: outdoor_17, shard: 66, start_s: 10, duration_s: 30, stratum: outdoors}
+      - {sequence: outdoor_14, shard: 68, start_s: 10, duration_s: 30, stratum: outdoors}
+      - {sequence: outdoor_8, shard: 67, start_s: 10, duration_s: 30, stratum: outdoors}
+      - {sequence: outdoor_20, shard: 72, start_s: 10, duration_s: 30, stratum: outdoors}
+      - {sequence: outdoor_25, shard: 69, start_s: 10, duration_s: 30, stratum: outdoors}
+      - {sequence: new_scanning_35, shard: 42, start_s: 5, duration_s: 30, stratum: scanning_videos}
+      - {sequence: new_scanning_131, shard: 29, start_s: 10, duration_s: 30, stratum: scanning_videos}
+      - {sequence: new_scanning_154, shard: 53, start_s: 10, duration_s: 30, stratum: scanning_videos}
+      # The original 182 and 177 sources are shorter than the 30-second target.
+      - {sequence: new_scanning_32, shard: 31, start_s: 10, duration_s: 30, stratum: scanning_videos}
+      - {sequence: new_scanning_129, shard: 50, start_s: 10, duration_s: 30, stratum: scanning_videos}
+      - {sequence: new_scanning_33, shard: 54, start_s: 10, duration_s: 30, stratum: scanning_videos}
+
+  hot3d:
+    title: HOT3D Aria
+    reference_grade: B
+    access: official_explorer_license
+    source_page: https://github.com/facebookresearch/hot3d
+    explorer_manifest: https://explorer.projectaria.com/data/hot3d-aria/download_links
+    minimal_groups: [video_main_rgb, mps_slam_trajectories, mps_slam_calibration, ground_truth, hand_data]
+    requested_data_groups: [main_vrs, mps_slam_trajectories, mps_slam_calibration]
+    optional_group_patterns: ["hand", "mask", "metadata"]
+    clip_count: 16
+    duration_seconds: 320
+    clips:
+      - {sequence: P0001_15c4300c, start_s: 30, duration_s: 20, stratum: kitchen}
+      - {sequence: P0002_65085bfc, start_s: 30, duration_s: 20, stratum: kitchen}
+      - {sequence: P0003_e3a74169, start_s: 30, duration_s: 20, stratum: kitchen}
+      - {sequence: P0014_8254f925, start_s: 30, duration_s: 20, stratum: kitchen}
+      - {sequence: P0001_23fa0ee8, start_s: 30, duration_s: 20, stratum: office}
+      - {sequence: P0003_c701bd11, start_s: 30, duration_s: 20, stratum: office}
+      - {sequence: P0010_573b2de6, start_s: 30, duration_s: 20, stratum: office}
+      - {sequence: P0012_130a66e1, start_s: 30, duration_s: 20, stratum: office}
+      - {sequence: P0001_550ea2ac, start_s: 30, duration_s: 20, stratum: toys}
+      - {sequence: P0009_02511c2f, start_s: 30, duration_s: 20, stratum: toys}
+      - {sequence: P0011_7a8886e7, start_s: 30, duration_s: 20, stratum: toys}
+      - {sequence: P0015_cc5dfd13, start_s: 30, duration_s: 20, stratum: toys}
+      - {sequence: P0001_83b755aa, start_s: 30, duration_s: 20, stratum: mixed_handheld}
+      - {sequence: P0009_5bb7cc2a, start_s: 30, duration_s: 20, stratum: mixed_handheld}
+      - {sequence: P0011_451a7734, start_s: 30, duration_s: 20, stratum: mixed_handheld}
+      - {sequence: P0012_0323d770, start_s: 30, duration_s: 20, stratum: mixed_handheld}
+
+  incrowd_vi:
+    title: InCrowd-VI
+    reference_grade: B
+    access: public_https
+    source_page: https://github.com/banafshebamdad/InCrowd-VI/wiki/InCrowd-Vi-Sequences
+    calibration_url: https://raw.githubusercontent.com/wiki/banafshebamdad/InCrowd-VI/Calibration-Data.md
+    clip_count: 12
+    duration_seconds: 360
+    clips:
+      - {sequence: Oerlikon_entrance_G7, base_url: https://vault.cloudlab.zhaw.ch/vaults/InCrowd-VI/data/Oerlikon_Bahnhof/Oerlikon_entrance_G7/, video: Oerlikon_entrance_G7_WOA.mp4, start_s: 10, duration_s: 30, stratum: high}
+      - {sequence: G6_exit, base_url: https://vault.cloudlab.zhaw.ch/vaults/InCrowd-VI/data/Winterthur_HB/G6_exit/, video: G6_exit_WOA.mp4, start_s: 10, duration_s: 30, stratum: high}
+      - {sequence: Zurich_airport_ochsner_sport, base_url: https://vault.cloudlab.zhaw.ch/vaults/InCrowd-VI/data/Zurich_Airport/Zurich_airport_ochsner_sport/, video: Zurich_airpoit_ochsner_sport_WOA.mp4, start_s: 10, duration_s: 30, stratum: high}
+      - {sequence: Cafe_exit, base_url: https://vault.cloudlab.zhaw.ch/vaults/InCrowd-VI/data/Zurich_HB/Cafe_exit/, video: Cafe_exit_WOA.mp4, start_s: 10, duration_s: 30, stratum: high}
+      - {sequence: Migros, base_url: https://vault.cloudlab.zhaw.ch/vaults/InCrowd-VI/data/Migros/Migros/, video: Migris_low_WOA.mp4, start_s: 10, duration_s: 30, stratum: medium}
+      - {sequence: TS_exam_supervision_loop, base_url: https://vault.cloudlab.zhaw.ch/vaults/InCrowd-VI/data/TS_exam/TS_exam_supervision_loop/, video: TS_exam_supervision_loop_WOA.mp4, start_s: 10, duration_s: 30, stratum: medium}
+      - {sequence: UZH_musium_under_ground_loop, base_url: https://vault.cloudlab.zhaw.ch/vaults/InCrowd-VI/data/UZH_museum/UZH_musium_under_ground_loop/, video: UZH_musium_under_ground_loop_WOA.mp4, start_s: 10, duration_s: 30, stratum: medium}
+      - {sequence: Zurich_airport_shop, base_url: https://vault.cloudlab.zhaw.ch/vaults/InCrowd-VI/data/Zurich_Airport/Zurich_airport_shop/, video: Zurich_airpoit_shop_WOA.mp4, start_s: 10, duration_s: 30, stratum: medium}
+      - {sequence: AND_Lib_floor5_1, base_url: https://vault.cloudlab.zhaw.ch/vaults/InCrowd-VI/data/Andreasstrasse_15/AND_Lib_floor5_1/, video: AND_Lib_floor5_1_WOA.mp4, start_s: 10, duration_s: 30, stratum: low}
+      - {sequence: ETH_ground_floor, base_url: https://vault.cloudlab.zhaw.ch/vaults/InCrowd-VI/data/ETH_HG/ETH_ground_floor/, video: ETH_ground_floor_WOA.mp4, trajectory: trj_gt_sec_xyzw.txt, trajectory_quaternion_order: xyzw, start_s: 10, duration_s: 30, stratum: low}
+      - {sequence: Kriegsstrasse94_1_pedestrian, base_url: https://vault.cloudlab.zhaw.ch/vaults/InCrowd-VI/data/Kriegsstrasse94/Kriegsstrasse94_1_pedestrian/, video: Kriegsstrasse94_1_pedestrian_WOA.mp4, start_s: 10, duration_s: 30, stratum: low}
+      - {sequence: UZH_musium_1, base_url: https://vault.cloudlab.zhaw.ch/vaults/InCrowd-VI/data/UZH_museum/UZH_musium_1/, video: UZH_musium_1_WOA.mp4, start_s: 10, duration_s: 30, stratum: low}
+
+  lamaria:
+    title: LaMAria training/additional
+    reference_grade: B_pseudo_dense
+    access: public_https
+    source_page: https://lamaria.ethz.ch/slam_datasets
+    clip_count: 6
+    duration_seconds: 1080
+    clips:
+      - {sequence: sequence_1_19, split: training, start_s: 60, duration_s: 180, stratum: short}
+      - {sequence: sequence_2_11, split: training, start_s: 120, duration_s: 180, stratum: medium}
+      - {sequence: sequence_3_17, split: training, start_s: 180, duration_s: 180, stratum: long}
+      - {sequence: sequence_3_18, split: training, start_s: 300, duration_s: 180, stratum: long}
+      - {sequence: sequence_4_10, split: training, start_s: 120, duration_s: 180, stratum: low_light}
+      - {sequence: sequence_4_11, split: training, start_s: 240, duration_s: 180, stratum: low_light}
