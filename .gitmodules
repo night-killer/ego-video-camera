@@ -1,3 +1,39 @@
 [submodule "thirdparty/Depth-Anything-3"]
 	path = thirdparty/Depth-Anything-3
 	url = https://github.com/ByteDance-Seed/Depth-Anything-3.git
+[submodule "thirdparty/ReViV"]
+	path = thirdparty/ReViV
+	url = https://github.com/lvsean/reviv4d.git
+[submodule "thirdparty/EgoM2P"]
+	path = thirdparty/EgoM2P
+	url = https://github.com/ligengen/EgoM2P.git
+[submodule "thirdparty/DROID-SLAM"]
+	path = thirdparty/DROID-SLAM
+	url = https://github.com/princeton-vl/DROID-SLAM.git
+[submodule "thirdparty/ORB_SLAM3"]
+	path = thirdparty/ORB_SLAM3
+	url = https://github.com/UZ-SLAMLab/ORB_SLAM3.git
+[submodule "thirdparty/ViPE"]
+	path = thirdparty/ViPE
+	url = https://github.com/nv-tlabs/vipe.git
+[submodule "thirdparty/VGGT-SLAM"]
+	path = thirdparty/VGGT-SLAM
+	url = https://github.com/MIT-SPARK/VGGT-SLAM.git
+[submodule "thirdparty/LingBot-Map"]
+	path = thirdparty/LingBot-Map
+	url = https://github.com/Robbyant/lingbot-map.git
+[submodule "thirdparty/MegaSaM"]
+	path = thirdparty/MegaSaM
+	url = https://github.com/mega-sam/mega-sam.git
+[submodule "thirdparty/HaWoR"]
+	path = thirdparty/HaWoR
+	url = https://github.com/ThunderVVV/HaWoR.git
+[submodule "thirdparty/EgoEgo"]
+	path = thirdparty/EgoEgo
+	url = https://github.com/lijiaman/egoego_release.git
+[submodule "thirdparty/VGGT-Omega"]
+	path = thirdparty/VGGT-Omega
+	url = https://github.com/facebookresearch/vggt-omega.git
+[submodule "thirdparty/Stera-SDK"]
+	path = thirdparty/Stera-SDK
+	url = https://github.com/fpv-labs/stera-sdk.git
