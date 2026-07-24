@@ -1,6 +1,6 @@
 # Ego 视角 6DoF 相机/头部姿态 Benchmark 与 Evaluation 文献调研
 
-> 调研日期：2026-07-23
+> 调研日期：2026-07-23；资源状态与主榜口径更新于 2026-07-24
 >
 > 目标任务：单目 egocentric RGB 视频 → 逐帧 6DoF 相机轨迹 → 固定相机—头部外参 → 机器人头部目标姿态/逆运动学。
 >
@@ -163,7 +163,7 @@ head-mounted monocular RGB
 
 ### 3.3 ReViV：当前最新的直接 ego camera baseline
 
-[ReViV](https://reviv4d.github.io/)用一个前馈模型从单目 ego RGB 联合预测相机轨迹、深度、注视、身体和手。作者在 arXiv v1 中声明论文已接收 ECCV 2026，并声称代码和模型完全开源；但截至 2026-07-23，项目页指向的 GitHub 仓库仍返回 404。因此它目前适合作为论文结果对照，不能算“已验证可运行”的 baseline。
+[ReViV](https://reviv4d.github.io/)用一个前馈模型从单目 ego RGB 联合预测相机轨迹、深度、注视、身体和手。作者在 arXiv v1 中声明论文已接收 ECCV 2026。项目仓库已于 2026-07-21 后公开；截至 2026-07-24，本项目已把源码固定为 `thirdparty/ReViV` submodule，并验证两条推理权重路径。它现在是可接入的 baseline，但本轮 CPU 机器尚未运行推理；Cosmos metric-depth tokenizer 的 5 个文件仍需接受 NVIDIA license 后获取。
 
 其 ADT 相机评测协议是：
 
@@ -307,7 +307,7 @@ ORE 很适合验证方法在大量自然 ego 视频上的相对稳定性，补�
 | Princeton365 | user-view RGB | 隐藏标志板 + 360° 相机 | RGB 6DoF、coverage、在线提交 | 非严格头戴；长视频非全程有 pose |
 | EgoStatic | 野外 ego RGB | 无 pose GT；静态物体 proxy | 大规模自然域泛化 | 不能给出完整 6DoF 绝对误差 |
 
-ADT 是本项目最合适的主数据集。其[数据格式说明](https://facebookresearch.github.io/projectaria_tools/docs/open_datasets/aria_digital_twin_dataset/data_format)明确区分 `aria_trajectory.csv` 真值与 MPS 输出。Kin-Poly 则最贴近“相机/头部轨迹最终驱动身体或机器人”的下游关系。
+ADT 的[数据格式说明](https://facebookresearch.github.io/projectaria_tools/docs/open_datasets/aria_digital_twin_dataset/data_format)明确区分 `aria_trajectory.csv` 真值与 MPS 输出，因此它适合复现 ego 文献；但其 RGB 是鱼眼，只能进入统一矫正后的附录赛道，不能承担本项目的原生非鱼眼主榜。原生彩色透视主榜优先使用 OpenLORIS-office、Bonn、TUM、Princeton365，以及通过相机标定准入后的 Oxford-IHM。Kin-Poly 则最贴近“相机/头部轨迹最终驱动身体或机器人”的下游关系。
 
 ## 6. 各论文的数字为什么不能直接横向排名
 
@@ -356,7 +356,7 @@ ADT 是本项目最合适的主数据集。其[数据格式说明](https://faceb
 | DROID-SLAM | 学习式 SLAM | 多篇直接相关论文的共同基线，能测出 foundation model 是否真正更好 |
 | DPV-SLAM | VO + 全局优化 | 补充长轨迹、回环和 coverage 能力 |
 
-若只能跑 4 个，优先 `DA3NESTED-GIANT-LARGE-1.1 + EgoM2P + ViPE + DROID-SLAM`。ReViV 的公开仓库恢复可访问后，再将它加入。
+若只能跑 4 个，优先 `DA3NESTED-GIANT-LARGE-1.1 + ReViV + EgoM2P + ViPE`；第五个补 DROID-SLAM 作为学习式 SLAM 锚点。
 
 若手部经常遮挡相机，再增加 HaWoR camera module；若需要最直接的历史 head-pose 对照，再增加 EgoEgo。
 
@@ -364,7 +364,7 @@ ADT 是本项目最合适的主数据集。其[数据格式说明](https://faceb
 
 建议按机制分组，避免堆很多相似模型：
 
-- Ego-specific：EgoEgo、EgoM2P、EgoMono4D、HaWoR，以及代码可访问后的 ReViV；
+- Ego-specific：EgoEgo、EgoM2P、EgoMono4D、HaWoR、ReViV；
 - Foundation/video geometry：DA3NESTED-GIANT-LARGE-1.1、VGGT 或 VGGT-Ω、ViPE；
 - 学习式轨迹估计：DROID-SLAM、DPVO/DPV-SLAM；
 - 经典几何控制组：ORB-SLAM3；
@@ -425,16 +425,16 @@ ADT 是本项目最合适的主数据集。其[数据格式说明](https://faceb
 
 ## 10. 建议的实验顺序
 
-1. 先在 ADT 和 KinPoly 上统一 `timestamp + T_world_camera + valid` 数据接口，并验证 W2C/C2W、米/毫米和坐标轴。
-2. 跑 DA3、DROID-SLAM、ViPE、EgoM2P 四个核心 baseline；同一序列同时生成 raw、prefix、oracle 三套结果。
+1. 先在已冻结的 native RGB 与 robot-interaction profile 上统一 `timestamp + T_world_camera + valid` 数据接口，并验证 W2C/C2W、米/毫米和坐标轴；ADT/KinPoly 留在 rectified/downstream 复现实验。
+2. 跑 DA3、DROID-SLAM、ViPE、ReViV、EgoM2P 五个核心 baseline；同一序列同时生成 raw、prefix、oracle 三套结果。
 3. 增加静止片段、快速转头、手遮挡和跨窗口边界诊断。
 4. 将预测相机轨迹通过固定外参转换成头部轨迹，接入机器人 IK；报告轨迹指标和下游指标。
-5. 再扩展 DPV-SLAM、HaWoR、EgoEgo，以及代码开放后的 ReViV，并加入 LaMAria/Monado/EgoStatic 压力赛道。
+5. 再扩展 DPV-SLAM、HaWoR、EgoEgo、ReViV，并加入 LaMAria/Monado/EgoStatic 压力赛道。
 
 这样第一轮就能回答三个关键问题：
 
 - DA3 是否比标准 SLAM 更准；
-- DA3 是否比直接为 ego 训练的 EgoM2P 更稳，并在 ReViV 代码公开后复核最新方法；
+- DA3 是否比直接为 ego 训练的 EgoM2P/ReViV 更稳；
 - 离线几何误差的提升是否真的转化成更高的机器人 IK 成功率和更低抖动。
 
 ## 11. 可以形成的研究缺口
@@ -455,6 +455,6 @@ ADT 是本项目最合适的主数据集。其[数据格式说明](https://faceb
 
 对于当前 demo，可以直接把 DA3 输出的 W2C 外参求逆，并通过固定相机—头部外参转换为机器人目标 6DoF。工程上先按离线轨迹使用是合理的。
 
-对于正式 evaluation，建议以 **ADT + KinPoly** 为严格主榜，**EgoStatic + LaMAria/Monado + InCrowd-VI** 为泛化和长程压力榜；baseline 首轮使用 **DA3NESTED-GIANT-LARGE-1.1、EgoM2P、ViPE、DROID-SLAM、DPV-SLAM**，ReViV 暂作论文对照并等待其仓库开放。报告 raw/prefix/oracle 三种对齐，并把 coverage、尺度、抖动、跨窗口跳变和机器人 IK 成功率列为一等指标。
+对于正式 evaluation，应优先使用单列的原生彩色透视 A 榜，并把鱼眼矫正、灰度和设备/运动学 reference 分表；baseline 首轮使用 **DA3NESTED-GIANT-LARGE-1.1、ReViV、EgoM2P、ViPE、DROID-SLAM、ORB-SLAM3**。报告 raw/prefix/oracle 三种对齐，并把 coverage、尺度、抖动、跨窗口跳变和机器人 IK 成功率列为一等指标。
 
 这能避免把“DA3 在两两相机相对方向上得分高”误解成“DA3 已经稳定恢复了可直接驱动机器人的连续 metric 头部轨迹”。

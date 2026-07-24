@@ -4,18 +4,19 @@
 >
 > 任务：输入单目彩色、非鱼眼 ego RGB 视频，估计逐帧 6DoF 相机位姿；机器人头部或腕部视角优先，真人头戴或手持数据可作为补充。
 >
-> 文档状态：这是对现有实验、数据和 checkpoint 的审计，以及下一轮可执行实验设计。除第 2.3 节明确列出的 EgoBody + DA3 结果外，表中的新数据集和模型均不得写成已经完成的跑分。
+> 文档状态：这是资源、协议与可执行性的实验报告。本轮运行环境是 CPU，未安装模型环境、未编译 CUDA、未执行任何新模型推理；只有第 2.4 节的 EgoBody + 旧 DA3 数字是历史 pilot，其他数值均为数据完整性或论文引用，不是本项目新跑分。
 
 ## 1. 最终结论
 
-1. 当前 `core65` 不是用户所要求的“彩色、非鱼眼”主评测集。112 个 clip 中，52 个来自 Aria 鱼眼，22 个是灰度；只有 EgoBody 20 个和 Princeton365 18 个在输入层面同时满足彩色与透视条件，即 **38/112（33.9%）**，其中机器人 ego 为 **0 个**。
-2. ADT 的外部 mocap 轨迹很有价值，但原始 Aria RGB 使用 `Fisheye624`。ADT、HOT3D 和 InCrowd-VI 只能经统一标定去畸变后进入单列的 `rectified-common` 赛道，不能再叫原生非鱼眼主榜。灰度复制三通道不等于彩色视频。
-3. 原生彩色透视的机器人评测优先级应为：**Oxford-IHM**（机器人移动 RGB-D + 100 Hz mocap，先复核交付的相机模型）和 **OpenLORIS-Scene 的 D435i color/office**（移动机器人 + OptiTrack）。动态真值压力集用 **Bonn RGB-D Dynamic**，几何回归用 **TUM RGB-D**；已有的 **Princeton365** 作为高精度人类手持泛化集。
-4. EgoBody、HoloAssist、Stera-10M 和 RH20T 都符合真实交互或机器人操作域，但其轨迹分别来自设备跟踪、ARKit 或机器人运动学，应放在 `device/kinematic-reference` 表，不能与外部 mocap 真值混成一个排名。
-5. 当前代码真正跑通的是 **EgoBody + 旧版 DA3 checkpoint**。虽然 112 个 clip 和约 43 GB 多模型 checkpoint 已下载，项目还没有这些数据的统一 evaluation adapter，也没有 DA3 以外的方法 adapter，因此“资源已下载”不能写成“多模型 evaluation 已完成”。
-6. 模型主表需要同时覆盖通用几何、SLAM、动态视频和 ego 专项四类。最低组合建议为：`DA3-1.1/Streaming`、`DROID-SLAM`、`ORB-SLAM3`、`ViPE`、`VGGT-SLAM`、`ReViV`、`EgoM2P`；动态和手遮挡子表增加 `MegaSaM` 与 `HaWoR`。
-7. **ReViV 是第一微调对象，EgoM2P 是直接对照。** ReViV 的代码和权重已于 2026-07-21 后公开，旧报告中“仓库 404、只能论文对照”的结论已经过期。它原生支持 `--finetune` 和冻结 shared parameters 的 warm-up，摄像机表示也与本任务直接对应。
-8. 论文中的 ReViV/EgoM2P 数字不能直接作为本项目结论。ReViV 在 ADT 上的 ATE/RTE/RRE 为 `0.015/0.009/1.279°`，但每个 2 秒 clip 都使用整段 GT 做 Sim(3) 对齐。这是短窗口形状的 oracle，不衡量 metric scale、长时漂移、拼接跳变或部署失败率。
+1. `core65` 的设置偏差已经确认：112 个 clip 中有 52 个 Aria 鱼眼输入和 22 个灰度输入；只有 EgoBody 20 个与 Princeton365 18 个同时是彩色透视，且机器人 ego 为 0。它现在只作为 `legacy_diagnostic`，不再承担用户要求的主榜。
+2. 新的 A 级 pilot 已真实落盘并严格校验：TUM、Bonn Dynamic、OpenLORIS Office D435i color 各 4 段，共 **12 clips / 180 s / 1800 RGB frames / 907,006,401 bytes**。它满足原生彩色和 pinhole 输入，但只有 OpenLORIS 是机器人平台；规模只够 adapter/CI 回归，不能据此做统计性模型排名。
+3. 交互/机器人 B 级 pilot 已升级为 v2：DROID wrist、HoloAssist、RH20T cfg3 wrist、Stera-10M 各 4 段，共 **16 clips / 200 s / 2000 frames / 1,242,321,622 bytes**。DROID/RH20T 是机器人运动学 B2，HoloAssist/Stera 是设备跟踪 B1；四者不得混入外部 mocap A 榜。
+4. Oxford-IHM 仍是最值得补的“机器人 ego + 动态人 + 外部 mocap”数据，GDPR 申请已经提交、仍待审批。Stera-10M 和 NVIDIA Cosmos 的 gated access 已获批：Stera 只抽取 4 段 evaluation，Cosmos 缺失的 5 个 tokenizer 文件已补齐。
+5. 模型资源准备已完成：`thirdparty/` 有 **13 个顶层 git submodule**，清理下载 metadata/cache 后的 `ckpts` 为 **57,991,051,668 bytes**，验证结果是 **88 complete / 0 missing**。ReViV 的 256/512、camera 与 metric-depth 所需权重现在都已存在。
+6. “资源完整”仍不等于“evaluation 完成”。本轮 CPU 机器没有运行 DA3-1.1、ReViV、EgoM2P、DROID、ViPE、VGGT-SLAM 等推理；方法层目前仍只有已有 DA3/DA3-Streaming adapter，缺少统一 method adapter、失败协议和跨模型结果表。
+7. 主模型矩阵应覆盖通用几何、经典/学习式 SLAM、动态视频与 ego 专项四类。最低组合建议为 `DA3-1.1/Streaming`、`DROID-SLAM`、`ORB-SLAM3`、`ViPE`、`VGGT-SLAM`、`ReViV`、`EgoM2P`；动态和手遮挡子表增加 `MegaSaM` 与 `HaWoR`。
+8. **ReViV 是第一微调对象，EgoM2P 是直接对照。** 但 HoloAssist 已在 ReViV 预训练域内，所以相应结果必须标为 `pretrained-domain`，不能称 zero-shot；RH20T/DROID held-out task 才能回答机器人腕部 adaptation 的问题。
+9. 论文中的 ReViV/EgoM2P 数字不能当作本项目结论。ReViV 在 ADT 上的 `0.015/0.009/1.279°` 使用每个 2 秒 clip 的整段 GT 做 Sim(3) 对齐，只是短窗口 oracle，不衡量 metric scale、长时漂移、拼接跳变或部署失败率。
 
 ## 2. 对当前项目的审计
 
@@ -24,12 +25,17 @@
 | 项目 | 当前状态 | 审计判断 |
 |---|---|---|
 | 原始 demo | EgoBody 3 个 20 秒 clip，8 FPS，DA3 推理和可视化已完成 | 可用于坐标、同步、投影和对齐回归，不足以支持模型优劣结论 |
-| Evaluation 数据 | `data/ego_pose_eval_core65` 约 166 GB；验证为 112/112 clip 可用 | 下载层完整，但内容不满足新的硬输入条件 |
-| Checkpoint | `ckpts` 约 43 GB；验证记录为 48/48 文件完整 | 有 DA3-1.1、LingBot-Map、VGGT-SLAM、DROID、ViPE、EgoM2P、MegaSaM、HaWoR、VGGT-Omega 等 |
-| ReViV | 当前没有本地代码或 checkpoint | 最新且最重要的缺口；官方仓库和两组推理权重已经公开 |
-| Dataset adapter | 有 EgoBody 读取、同步和可视化；有 7 个数据集的下载/裁剪逻辑 | 下载器不等于评测 adapter；尚未统一输出时间戳、内参、畸变与 C2W |
+| Legacy 数据 | `core65` 为 112/112；清除仓库外 177,344,813,322-byte 中间目录（含 153 GB 下载缓存和重复输出）后，唯一保留副本为 13,968,075,942 bytes | 覆盖广，但混合鱼眼、灰度、preview、手持和设备参考，只作诊断 |
+| Native A pilot | 12/12 clips，180 s，1800 RGB frames，严格 verify 通过 | TUM/Bonn/OpenLORIS 已统一输出帧、时间、相机信息与 reference；样本量仍不足以排名 |
+| Robot B pilot | 16/16 clips，200 s，2000 RGB frames，严格 verify 通过 | DROID/HoloAssist/RH20T/Stera 均有动态 reference；B1/B2 与 A 榜隔离 |
+| Checkpoint | `ckpts` 57,991,051,668 bytes；88 complete / 0 missing | 所有声明权重均通过大小、格式与哈希检查；Hugging Face metadata/cache 已清理 |
+| ReViV | `thirdparty/ReViV` 与两条推理权重路径完整 | camera 与 metric-depth tokenizer 均已齐；尚未在本机创建模型环境或运行推理 |
+| Dataset adapter | 两个新 profile 已统一 RGB、frame manifest、相机 metadata 与轨迹 reference | 已解决下载和输入契约；还没有统一模型输出 `T_world_camera` adapter |
 | Method adapter | 只有 DA3/DA3-Streaming 接入现有评测流程 | 其余已下载模型还不能在同一协议下一键比较 |
 | 指标 | 已有 Sim(3)/SE(3)、ATE、约 1 秒 RPE、旋转误差、coverage、退化检测 | 缺多时间尺度 RPE、尺度漂移、reset/失跟、生存率、bootstrap CI 和统一失败计分 |
+
+`scripts/verify_eval_checkpoints.py --hash` 的本次退出码为 `0`，88 个声明文件
+全部通过大小、格式与哈希检查；退出码 `1` 才表示文件缺失或校验失败。
 
 当前实验仍加载 `/data/aigc/cyb/zxgu/ckpt/DA3NESTED-GIANT-LARGE`，不是新下载的 `DA3NESTED-GIANT-LARGE-1.1`。因此 DA3-1.1 也属于“资源准备完成、正式结果未跑”。
 
@@ -58,7 +64,48 @@
 
 另一个容易被忽略的问题是 ADT/HOT3D 当前保存的是官方 H.264 preview，而不是 raw VRS。实际抽帧仍可看到明显桶形畸变，且 preview 不能替代逐帧 online calibration。若要做严格矫正赛道，应从 raw VRS 按时间戳读取相机标定并记录虚拟 pinhole 参数。
 
-### 2.3 已有结果能说明什么
+### 2.3 本轮实际完成的数据实验
+
+本轮完成的是数据与 reference pipeline 实验，不是模型精度实验。两个固定 manifest
+均通过逐帧图像和 reference 文件 SHA-256、RGB mode、分辨率、pinhole 标志与
+固定帧数检查：
+
+| Profile / 数据 | Clip | 秒 | 输出帧 | 关键设置 |
+|---|---:|---:|---:|---|
+| Native / TUM | 4 | 60 | 600 | 原生 RGB；官方 mocap trajectory |
+| Native / Bonn Dynamic | 4 | 60 | 600 | 原生 RGB；动态人/物体 + OptiTrack |
+| Native / OpenLORIS Office | 4 | 60 | 600 | 只选 D435i color，排除 T265 fisheye；OptiTrack |
+| Robot / DROID wrist | 4 | 20 | 200 | 4 个实验室；按 H5 `estimated_capture` 真实时间，再按 H5 index 抽 MP4；动态 C2Base |
+| Robot / HoloAssist | 4 | 60 | 600 | 官方 test-v1_2；GoPro/Switch/DSLR 分层；动态 C2World |
+| Robot / RH20T cfg3 wrist | 4 | 60 | 600 | 4 个 task/scene；真实毫秒时间、TCP 和手眼标定；动态 C2AlignedBase |
+
+RH20T 的 pose 不是把 gripper pose 直接改名。按照官方 API 的列向量约定，
+cfg3 `tc_mat` 是 `T_camera_tcp`，而 `transformed/tcp_base.npy` 已包含 base/TCP
+坐标对齐，因此导出公式固定为：
+
+```text
+T_aligned_base_camera = T_aligned_base_aligned_tcp
+                      @ inv(align_tcp_matrix)
+                      @ inv(T_camera_tcp)
+```
+
+实现还在每个 calibration 上用官方 `extrinsics_base_aligned` 矩阵链做方向闭环，
+残差门槛为 `1e-8`。四段 RH20T 的 150 个输出都能找到同时间戳 TCP；由于
+原生采集约 8--9 Hz，统一 10 Hz 后分别有 129/129/126/121 个唯一源帧，最大
+最近帧时间误差为 67/68/68/70 ms。`task_0004` 原计划的 2--17 秒窗口跨过
+665 ms 采集空洞，最终固定为 1--16 秒，而不是放宽 250 ms 质量门。
+
+HoloAssist 必须标成 `pretrained-domain/device-reference`，因为 ReViV released
+weights 已使用 HoloAssist。DROID 和 RH20T 必须标成 `robot-kinematic/B2`。
+本轮没有产生 ATE、RPE、旋转误差、FPS 或显存数字。
+
+资源清理也已完成：RH20T 27,399,012,782-byte 归档通过整包 SHA-256
+`b49b2970...e38b6d3` 后只提取固定子集并删除；`core65` 的仓库外
+177,344,813,322-byte 中间目录（含 153 GB 可重建 remote-ZIP 缓存和重复
+evaluation 输出）也在两份数据分别通过 112/112 verify 后删除。完整状态见
+[`ego_pose_eval_resource_status.yaml`](../configs/ego_pose_eval_resource_status.yaml)。
+
+### 2.4 历史结果能说明什么
 
 已有三段 DA3 结果应继续保留，但标题应写为“EgoBody device-reference pilot”：
 
@@ -74,7 +121,7 @@
 
 | 优先级 | 数据集 | Ego 形态 | RGB 与镜头 | 位姿来源 | 用法与准入条件 |
 |---|---|---|---|---|---|
-| P0 | [Oxford-IHM](https://ori.ox.ac.uk/publications/datasets/oxford-indoor-human-motion-dataset-2024) | Toyota HSR 移动机器人视角，另有静态相机；约 60 min | robot-mounted RGB-D 彩色流 | 传感器、障碍和人体由 mocap 以 100 Hz 跟踪，官方称平均残差为亚毫米级 | 最贴近“机器人 ego + 动态人”。数据受 GDPR 申请限制；收到 rosbag 后必须先检查 `camera_info.distortion_model`、RGB frame 与 mocap rigid-body 外参，合格后才升为 headline |
+| P0 | [Oxford-IHM](https://ori.ox.ac.uk/publications/datasets/oxford-indoor-human-motion-dataset-2024) | Toyota HSR 移动机器人视角，另有静态相机；约 60 min | robot-mounted RGB-D 彩色流 | 传感器、障碍和人体由 mocap 以 100 Hz 跟踪，官方称平均残差为亚毫米级 | 最贴近“机器人 ego + 动态人”。GDPR 申请已提交、待审批；收到 rosbag 后必须先检查 `camera_info.distortion_model`、RGB frame 与 mocap rigid-body 外参，合格后才升为 headline |
 | P0 | [OpenLORIS-Scene](https://lifelong-robotic-vision.github.io/dataset/scene.html) `D435i color` | 约 1 m 高的轮式机器人，以人类步速或更慢移动 | 彩色 848x480 @ 30 Hz，FOV 69°x42°；不要误用 T265 双鱼眼 | office 为 OptiTrack；其他场景为 offline LiDAR SLAM | 立即可用的机器人原生透视候选。严格 A 表只用 office；其他场景单列为 LiDAR-SLAM reference |
 | P0 | [Bonn RGB-D Dynamic](https://www.ipb.uni-bonn.de/data/rgbd-dynamic-dataset/) | 移动/手持 RGB-D，相机周围有人和物体运动 | ASUS Xtion Pro LIVE 彩色流，论文采用 pinhole 模型 | OptiTrack Prime 13 | 24 dynamic + 2 static；箱子、气球、人群和遮挡非常适合动态压力榜。不是机器人头戴，主任务只输入 RGB |
 | P0 | [Princeton365](https://princeton365.cs.princeton.edu/) | user-view 手持 rig | 彩色透视，普通 radtan 畸变 | 隐藏标志板 + 360 相机辅助 rig；Vicon 验证 | 已下载，适合高精度 RGB 泛化和 coverage；不得标成 head-mounted |
@@ -87,12 +134,16 @@ Oxford-IHM 目前标记为“条件准入”而非无条件合格，是因为公
 | 数据集 | Ego 形态和规模 | 轨迹 | 最适合的角色 | 关键限制 |
 |---|---|---|---|---|
 | [EgoBody](https://github.com/sanweiliti/EgoBody) | HoloLens PV，125 sequences、199,111 ego RGB frames | HoloLens PV/device tracking | 复用现有工程；真人面对面交互、头动和遮挡 | device reference，不是独立 GT |
-| [HoloAssist](https://holoassist.github.io/) | HoloLens 彩色 ego，约 166 h；手、头、物体与动作信息丰富 | `Video/Pose_sync.txt`、`Head_sync.txt` 与标定 | ReViV 适配训练和 held-out 手部动作压力集 | 设备轨迹；ReViV 预训练已经使用该数据，不能把其测试集称为严格 zero-shot |
-| [Stera-10M](https://huggingface.co/datasets/fpvlabs/stera-10m) | 头戴 iPhone Pro；584 sessions、200 h、约 10M RGB frames，最长 104 min | 每帧 ARKit 6DoF | 长时真人操作、手遮挡和连续任务；适合 adaptation 与 survival 测试 | gated、约 1.6 TB；ARKit 是 device reference，不能证明厘米级绝对精度 |
-| [RH20T](https://rh20t.github.io/) | 1-2 个 robot in-hand RGB-D camera；110K+ 操作序列 | 100 Hz gripper Cartesian pose + camera/robot calibration | 最直接的机器人腕部彩色 ego 训练集和 B2 评测集 | camera pose 由运动学和手眼标定推得，误差包含机械臂与标定误差 |
-| [DROID](https://droid-dataset.github.io/) | 大规模真实机器人操作，多视角含腕部相机 | robot state + calibration | 机器人视觉域预训练或自监督适配 | 先审计每种 setup 是否能稳定恢复 camera C2W；不默认当外部真值榜 |
+| [HoloAssist](https://holoassist.github.io/) | HoloLens 彩色 ego，约 166 h；手、头、物体与动作信息丰富 | `Video/Pose_sync.txt`、`Head_sync.txt` 与标定 | 已落盘 4 个 test-v1_2 pilot；ReViV 适配训练和手部动作压力集 | B1 设备轨迹；ReViV 预训练已经使用该数据，不能把其测试集称为严格 zero-shot |
+| [Stera-10M](https://huggingface.co/datasets/fpvlabs/stera-10m) | 头戴 iPhone Pro；README 称 584 sessions，固定 revision 实际发布 575 个完整目录；200 h、约 10M RGB frames | 每帧 ARKit 6DoF | 已落盘 4 段、60 s、600 帧；覆盖走动取物、重物操作、人与人交接、近距离双手精细操作 | B1；access 已获批但全量约 1.6 TB，当前只保留 816,291,198-byte evaluation；ARKit 不能证明厘米级绝对精度 |
+| [RH20T](https://rh20t.github.io/) | 1-2 个 robot in-hand RGB-D camera；110K+ 操作序列 | 100 Hz gripper Cartesian pose + camera/robot calibration | 已落盘 cfg3 的 4 task/scene pilot；最直接的机器人腕部适配集 | 已导出动态 C2AlignedBase；B2 误差包含机械臂与手眼标定误差 |
+| [DROID](https://droid-dataset.github.io/) | 大规模真实机器人操作，多视角含腕部相机 | robot state + calibration | 已落盘 4 个跨实验室 wrist pilot；机器人视觉域适配 | 已导出动态 C2Base，但仍是 B2 运动学参考，不是外部真值 |
 
-Stera-10M 的确切公开数据卡统计是 200 h、584 sessions、约 10M 帧、最长 104 min。它适合回答“长视频能否持续输出”，不适合替代 mocap 精度榜。
+Stera-10M 数据卡统计是 200 h、584 sessions、约 10M 帧、最长 104 min；当前
+固定 revision 的文件树实际包含 575 个完整 session。四段 pilot 的 MP4 均为
+1280x720 @ 15 FPS，标定为 `plumb_bob`。MP4 与 HDF5 pose 按 frame index 一一
+对应；其中一个 session 的绝对 ARKit 时间存在 pause，因此窗口按 MP4 index
+抽取，并通过 250 ms pose-gap gate，不按绝对时间误采样。
 
 本表只说明彩色 ego 形态和参考类型，不自动授予 `native-perspective-color` 标签。Stera 等数据仍要从 `rgb_K/rgb_D` 或等价 calibration 确认投影模型；无法确认或实际使用鱼眼镜头的 session 转入 rectified/diagnostic 赛道。
 
@@ -108,7 +159,9 @@ Stera-10M 的确切公开数据卡统计是 200 h、584 sessions、约 10M 帧�
 
 ### 3.4 推荐的冻结测试集结构
 
-不在本文中虚构尚未核验的 sequence ID。拿到数据后，先按以下配额和 metadata 固化 manifest，再运行任何模型：
+本轮 adapter/CI pilot 的 sequence ID 已固定在两个 YAML manifest 中。下面是扩大到
+论文级统计时的目标配额；新增 sequence 必须先按 subject/scene/task 冻结，再运行
+任何模型：
 
 | 层级 | 数据 | 建议首轮配额 | 目的 |
 |---|---|---:|---|
@@ -127,11 +180,11 @@ Stera-10M 的确切公开数据卡统计是 200 h、584 sessions、约 10M 帧�
 
 | 优先级 | 方法 | 类型 | 动态/手部机制 | 可微调性与当前项目状态 | 实验角色 |
 |---|---|---|---|---|---|
-| P0 | [ReViV](https://github.com/lvsean/reviv4d) | ego 专项 400M masked multimodal transformer；2 s RGB 直接输出 camera/body/hands/gaze/depth | 联合学习 viewer 与 view，利用人体和手运动先验，不依赖预计算 SLAM | 官方训练、`--finetune`、冻结 shared parameters 和两组权重均已公开；本地尚缺 | **第一微调对象**和最新直接 ego baseline |
+| P0 | [ReViV](https://github.com/lvsean/reviv4d) | ego 专项 400M masked multimodal transformer；2 s RGB 直接输出 camera/body/hands/gaze/depth | 联合学习 viewer 与 view，利用人体和手运动先验，不依赖预计算 SLAM | 本地 submodule、256/512 推理权重、Cosmos metric-depth tokenizer 和训练代码均完整；尚未建环境/推理 | **第一微调对象**和最新直接 ego baseline |
 | P0 | [EgoM2P](https://github.com/ligengen/EgoM2P) | ego 专项多模态前馈模型；2 s RGB -> 60 camera poses | 从多个 ego 数据学习相机和视觉相关性 | 训练、post-training 和本地权重已有 | ReViV 的直接架构/预训练对照 |
 | P0 | [DA3-1.1 + DA3-Streaming](https://github.com/ByteDance-Seed/Depth-Anything-3) | 通用多视图 foundation geometry | 没有显式手 mask；通过几何与多帧先验处理动态 | 新权重已下载，现有 adapter 可复用；正式 1.1 结果未跑 | 延续当前主线，短片与长片都要跑 |
 | P0 | [DROID-SLAM](https://github.com/princeton-vl/DROID-SLAM) | learned dense SLAM | 鲁棒优化但默认静态世界 | 权重已下载；尚无统一 method adapter | EgoEgo、HaWoR 等工作的公共锚点 |
-| P0 | [ORB-SLAM3](https://github.com/UZ-SLAMLab/ORB_SLAM3) | 经典几何 SLAM | RANSAC/关键点外点抑制，无语义动态处理 | 无模型权重需求；需固定 vocabulary、参数和失败规则 | 必须有的非 foundation 基线 |
+| P0 | [ORB-SLAM3](https://github.com/UZ-SLAMLab/ORB_SLAM3) | 经典几何 SLAM | RANSAC/关键点外点抑制，无语义动态处理 | 源码与 42,527,984-byte vocabulary 已校验；仍需固定参数和失败规则 | 必须有的非 foundation 基线 |
 | P0 | [ViPE](https://github.com/nv-tlabs/vipe) | 通用动态视频几何系统；flow/tracks/metric depth + BA | 显式融合稠密 flow、稀疏轨迹和优化，适合真实动态视频 | 1.2 依赖与权重已下载；尚无 adapter | 动态和近 metric 通用强基线 |
 | P0 | [VGGT-SLAM](https://github.com/MIT-SPARK/VGGT-SLAM) | foundation submap + SLAM 后端 | 局部 foundation geometry + 全局图优化 | 权重已下载；尚无 adapter | 检验全局后端和回环的收益 |
 | P1 | [LingBot-Map](https://github.com/Robbyant/lingbot-map) | 长视频 streaming foundation model | 长时 cache/window，不专门建模手 | long checkpoint 已下载 | 3 min/10 min+ 长视频子表 |
@@ -159,6 +212,10 @@ ORB-SLAM3 计算成本较低，应尽量补上。HaWoR 和 MegaSaM 只在动态/
 - code 为 Apache-2.0，released weights 为限制非商业用途的 Sample Code License。
 
 因此旧计划的 ReViV 404 结论只代表 2026-07-23 当时状态，不能继续用于模型排期。
+本地固定 commit 为 `de23a67009685e3878e4bad49d33f023d4b7a085`，ReViV/EgoM2P
+共享的 256 路径、`reviv_500b` 组权重及 Cosmos-1.0 metric-depth tokenizer
+均通过文件级检查。资源层已不再阻塞 camera 或 metric-depth 分支；尚未完成的
+是 GPU 环境、method adapter 和正式推理。
 
 ### 4.3 论文数字的正确解读
 
@@ -211,7 +268,7 @@ camera_9d = concat(rotation_6d(T_rel), translation(T_rel))
 
 - HoloAssist 与 EgoBody：真人头戴、手和交互；按 subject/scene 留出验证集；
 - RH20T：机器人腕部、操作和近景手/夹爪；按 robot config/task 留出；
-- Stera-10M：长时真人操作，可在获批后加入，但先抽固定小子集；
+- Stera-10M：access 已获批；当前 4 个 evaluation session 封存不用作训练，后续训练只能从其余 session 按 contributor/environment 单独划分；
 - perspective robot simulator：直接输出精确 C2W，覆盖头部、腕部、快速转动、移动人和物体；相机配置必须锁定为非鱼眼。
 
 严格最终测试的 Oxford-IHM、OpenLORIS-office、Bonn、Princeton365 和 TUM 不进入微调。若未来决定用其中一部分训练，必须重建未接触的 final test split，并在表中标明 in-domain。
@@ -233,7 +290,7 @@ ReViV 不直接回归连续 pose，而是先把 camera trajectory 量化成 30 �
 
 | 阶段 | 设置 | 目的 |
 |---|---|---|
-| FT-0 | released ReViV 256/512 zero-shot；RGB -> camera only | 建立真实起点，并比较两个 checkpoint 的 camera 输出 |
+| FT-0 | released ReViV 256/512、未做目标域微调；RGB -> camera only | 建立真实起点；逐数据集标记 `zero-shot` 或 `pretrained-domain`，并比较两个 checkpoint 的 camera 输出 |
 | FT-1 | tokenizer encode-decode oracle | 测 camera representation ceiling |
 | FT-2 | `--finetune` + 只含 RGB/camera 的 data config；设置 `frozen_model_epochs`，冻结 shared transformer | 先适配 RGB/camera embeddings，降低小数据灾难性遗忘 |
 | FT-3 | 低学习率解冻 shared parameters；保存每个 epoch 的 strict validation | 学习机器人与透视镜头域差异 |
@@ -343,7 +400,7 @@ HOT3D/HoloAssist 有官方手部信息时优先使用；其他数据可用冻结
 
 ### 7.2 必做消融
 
-1. ReViV released zero-shot vs frozen-shared adaptation vs full adaptation。
+1. ReViV released/no-target-finetune vs frozen-shared adaptation vs full adaptation；HoloAssist 必须标 `pretrained-domain`。
 2. ReViV 256 vs 512 checkpoint。
 3. `human only / robot only / human + robot / human + robot + synthetic` 训练来源。
 4. 原 camera tokenizer vs target-adapted tokenizer。
@@ -399,21 +456,28 @@ Oxford-IHM、OpenLORIS-office、Bonn、Princeton365 和 TUM 分数据集出行�
 
 ## 9. 项目落地修改清单
 
-### P0：先让评测口径可信
+### 已完成
 
-1. 新增统一 `DatasetAdapter`，输出 RGB、timestamp、K、distortion、C2W、reference grade 和 split group。
-2. 首批实现 TUM、Bonn、OpenLORIS 和 Princeton365；Oxford-IHM 获批后再接入。
-3. 给现有 `core65` 增加显式 profile 状态：`legacy_mixed_inputs`；不要删除已下载数据。
-4. 新建 `rgb_perspective_strict` manifest，但只在真实核验 sequence 和标定后填写 ID。
-5. 新增 method adapters：先 DROID、ViPE、ReViV、EgoM2P，再 VGGT-SLAM/LingBot/MegaSaM/HaWoR。
-6. 把 evaluator 从 EgoBody 专用 pipeline 中拆出，统一 raw/prefix/oracle、失败和资源记录。
+1. 固定 `native_rgb` 与 `robot_interaction_rgb` 两个 manifest；真实 sequence、相机流、窗口、reference grade 和来源 revision 均已写入。
+2. TUM、Bonn、OpenLORIS、DROID、HoloAssist、RH20T、Stera 共 28 个 clip 已统一生成 RGB frames、时间戳、相机 metadata、动态 reference 和逐文件 hash，并通过 strict verify。
+3. `core65` 已在统一资源清单中标为 legacy mixed-input；仓库内保留 112 个评测 clip，删除仓库外 177,344,813,322-byte 中间目录（含 153 GB 可重建下载缓存和重复输出）。
+4. 13 个源码仓库已经成为 `thirdparty/` submodule；88 个 checkpoint 文件和 ORB vocabulary 已验证，checkpoint 缺失数为 0。
+5. RH20T 已实现真实时间采样、MP4 frame-index 解码、TCP/手眼变换、标定方向闭环和整包 SHA-256 gate。
+6. Stera 已固定 4 个 session：按 MP4 frame index 对齐同 index ARKit pose，组合 optical-to-link 外参，要求 `normal` tracking 并避开 timestamp pause；完整 MP4/HDF5 已删除。
+
+### P0：下一轮 GPU evaluation
+
+1. 新增统一 method output adapter：先 DA3-1.1、DROID、ViPE、ReViV、EgoM2P，再接 VGGT-SLAM/LingBot/MegaSaM/HaWoR/ORB-SLAM3。
+2. 把 evaluator 从 EgoBody 专用 pipeline 中拆出，统一 raw/prefix/oracle、多尺度 RPE、失败和资源记录。
+3. 在 GPU 机建立彼此隔离的模型环境；不要在当前 CPU 机编译 CUDA 或把依赖混进一个环境。
+4. 先跑 adapter smoke test，再跑 28-clip pilot；所有失败都进入 denominator，禁止只保留成功序列。
 
 ### P1：微调与长视频
 
-1. 接入 ReViV 代码、两套 checkpoint、Cosmos tokenizer 和许可证快照。
-2. 实现 camera tokenizer ceiling 测试和 RH20T/HoloAssist tokenization。
+1. 在 GPU 机验证已补齐的 Cosmos tokenizer 与 ReViV metric-depth 512 路径，资源完整不能替代运行验证。
+2. 实现 camera tokenizer ceiling 测试和 RH20T/HoloAssist/Stera tokenization。
 3. 实现 prediction-only overlap stitching 与 boundary metrics。
-4. 固化 train/val/final-test manifest 和训练数据 provenance。
+4. 固化 train/val/final-test manifest 和训练 provenance；本轮 28 个 pilot 默认封存为 evaluation，不进入微调训练。
 
 ### P2：论文级报告
 
@@ -424,13 +488,14 @@ Oxford-IHM、OpenLORIS-office、Bonn、Princeton365 和 TUM 分数据集出行�
 
 ## 10. 当前最合理的决策
 
-近期不要在现有 112 条 mixed-input profile 上直接跑完整模型矩阵。正确顺序是：
+近期不要在 112 条 mixed-input profile 上直接跑完整模型矩阵，也不要用 28 个
+pilot clip 宣称统计排名。当前合理顺序是：
 
-1. 先用已下载的 Princeton365，加小体量的 TUM、Bonn 和 OpenLORIS-office，建立 `native-perspective-color` evaluator。
-2. 同步申请 Oxford-IHM；收到数据后以 calibration gate 决定是否进入机器人 headline。
-3. 先接 ReViV zero-shot 和 camera tokenizer ceiling，再开始 fine-tune；EgoM2P 使用同一训练/验证数据作直接对照。
-4. 已下载的 ADT/HOT3D/InCrowd 不丢弃，统一矫正后进入 appendix；Monado/LaMAria 保留为灰度诊断。
-5. 最终主结论只来自外部真值、原生彩色透视数据；设备、运动学、鱼眼矫正和灰度结果分别支撑真实域、机器人操作、文献对齐和 failure analysis。
+1. 在 GPU 机先接 DA3-1.1、DROID、ViPE、ReViV、EgoM2P 的统一输出和失败协议，用两个新 profile 做 adapter smoke/CI。
+2. Oxford-IHM 已申请并等待审批；收到数据后以 RGB calibration 与 mocap 外参 gate 决定是否进入机器人 headline。Stera-10M 的 4 段短窗已冻结，长时 survival 子集另行设计，不能直接把全量拉入当前 profile。
+3. 扩充 A/B profile 到按 sequence/subject/task 可 bootstrap 的规模，再冻结 final test；现有 pilot 不作为训练数据回流。
+4. 先做 ReViV released checkpoint 与 camera tokenizer ceiling，再开始 fine-tune；EgoM2P 使用相同 train/val split 作直接对照。HoloAssist 结果始终标记 pretrained-domain。
+5. ADT/HOT3D/InCrowd 统一矫正后进入 appendix，Monado/LaMAria 保留为灰度诊断；最终主结论只来自外部真值、原生彩色透视数据。
 
 ## 11. 一手资料
 

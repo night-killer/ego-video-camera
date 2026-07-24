@@ -1,0 +1,292 @@
+schema_version: 1
+profile:
+  id: ego_pose_eval_robot_interaction_rgb_v2
+  description: "Native RGB robot-wrist and human-interaction ego pose evaluation subset"
+  target_fps: 10
+  clip_count: 16
+  duration_seconds: 200
+  random_seed: 20260724
+  dataset_order: [droid_wrist, holoassist, rh20t_wrist, stera10m]
+
+datasets:
+  droid_wrist:
+    title: DROID Wrist RGB
+    reference_grade: B2
+    reference_type: robot_kinematic_camera_to_base
+    access: public_gcs_https
+    license: CC-BY-4.0
+    source_page: https://droid-dataset.github.io/
+    raw_base_url: https://storage.googleapis.com/gresearch/robotics/droid_raw/1.0.1
+    release_version: 1.0.1
+    annotation_repo: KarlP/droid
+    annotation_revision: bcb840c3b496533e0adf548a54b51f2f00057837
+    intrinsics_url: https://huggingface.co/KarlP/droid/resolve/bcb840c3b496533e0adf548a54b51f2f00057837/intrinsics.json
+    intrinsics_bytes: 125812944
+    intrinsics_sha256: 78c76755b075ae53e74a28c543bb1b185c50aa976458e95fbc9ba880a8cd2d51
+    clip_count: 4
+    duration_seconds: 20
+    camera:
+      stream: wrist_left
+      projection_model: pinhole
+      distortion_model: rectified_zero_distortion
+      intrinsics_source: KarlP_DROID_posthoc_intrinsics
+      pose_dataset: observation/camera_extrinsics/{serial}_left
+      timestamp_dataset: observation/timestamp/cameras/{serial}_estimated_capture
+      pose_format: "tx ty tz rx ry rz; Euler xyz radians"
+      pose_direction: camera_to_robot_base
+    clips:
+      - sequence: AUTOLab+44bb9c36+2023-11-25-10h-11m-14s
+        lab: AUTOLab
+        relative_path: AUTOLab/success/2023-11-25/Sat_Nov_25_10:11:14_2023
+        metadata_file: metadata_AUTOLab+44bb9c36+2023-11-25-10h-11m-14s.json
+        metadata_bytes: 1742
+        trajectory_bytes: 3754935
+        wrist_serial: "18026681"
+        video_bytes: 19370492
+        trajectory_length: 785
+        start_s: 2
+        duration_s: 5
+        stratum: cross_lab_wrist_motion_autolab
+      - sequence: IPRL+7790ec0a+2023-04-19-17h-53m-26s
+        lab: IPRL
+        relative_path: IPRL/success/2023-04-19/Wed_Apr_19_17:53:26_2023
+        metadata_file: metadata_IPRL+7790ec0a+2023-04-19-17h-53m-26s.json
+        metadata_bytes: 1783
+        trajectory_bytes: 2737848
+        wrist_serial: "12391924"
+        video_bytes: 16139476
+        trajectory_length: 480
+        start_s: 2
+        duration_s: 5
+        stratum: cross_lab_wrist_motion_iprl
+      - sequence: REAL+abf65a9e+2023-04-06-14h-26m-59s
+        lab: REAL
+        relative_path: REAL/success/2023-04-06/Thu_Apr__6_14_26_59_2023
+        metadata_file: metadata_REAL+abf65a9e+2023-04-06-14h-26m-59s.json
+        metadata_bytes: 1740
+        trajectory_bytes: 6858051
+        wrist_serial: "11744905"
+        video_bytes: 4747399
+        trajectory_length: 1333
+        start_s: 2
+        duration_s: 5
+        stratum: cross_lab_low_resolution_real
+      - sequence: WEIRD+30c3da59+2024-01-08-17h-59m-55s
+        lab: WEIRD
+        relative_path: WEIRD/success/2024-01-08/Mon_Jan__8_17:59:55_2024
+        metadata_file: metadata_WEIRD+30c3da59+2024-01-08-17h-59m-55s.json
+        metadata_bytes: 1762
+        trajectory_bytes: 3624306
+        wrist_serial: "13263313"
+        video_bytes: 11334722
+        trajectory_length: 662
+        start_s: 2
+        duration_s: 5
+        stratum: cross_lab_wrist_motion_weird
+
+  holoassist:
+    title: HoloAssist RGB Interaction
+    reference_grade: B1
+    reference_type: hololens_device_tracking
+    access: public_azure_https_range
+    license: CDLA-Permissive-2.0
+    source_page: https://holoassist.github.io/
+    official_split_url: https://holoassist.github.io/label_files/data-splits-v1_2.zip
+    official_split_revision: 8e2f38a8a7f5846fb31ceee17be2e9186ee62cfb
+    video_tar_url: https://hl2data.z5.web.core.windows.net/holoassist-data-release/video_compress.tar
+    video_tar_bytes: 155285145600
+    cam_info_tar_url: https://hl2data.z5.web.core.windows.net/holoassist-data-release/cam_info.tar
+    cam_info_tar_bytes: 10815559680
+    clip_count: 4
+    duration_seconds: 60
+    camera:
+      stream: Video_compress
+      projection_model: pinhole
+      intrinsics_member: Export_py/Video/Intrinsics.txt
+      pose_member: Export_py/Video/Pose_sync.txt
+      timing_member: Export_py/Video/VideoMp4Timing.txt
+      pose_format: "video_time filetime 4x4_row_major"
+      pose_reference: HoloLens_world_device_tracking
+    clips:
+      - sequence: R004-7July-GoPro
+        split: test-v1_2
+        start_s: 2
+        duration_s: 15
+        stratum: gopro_hand_object_interaction
+      - sequence: R070-19July-GoPro
+        split: test-v1_2
+        start_s: 2
+        duration_s: 15
+        stratum: gopro_cross_session
+      - sequence: R006-7July-Switch
+        split: test-v1_2
+        start_s: 2
+        duration_s: 15
+        stratum: switch_hand_object_interaction
+      - sequence: R097-29July-DSLR
+        split: test-v1_2
+        start_s: 2
+        duration_s: 15
+        stratum: dslr_hand_object_interaction
+
+  rh20t_wrist:
+    title: RH20T Configuration 3 Wrist RGB
+    reference_grade: B2
+    reference_type: robot_kinematic_hand_eye
+    access: public_google_drive_with_byte_identical_hf_mirror
+    license: research_dataset_terms
+    source_page: https://rh20t.github.io/
+    archive_name: RH20T_cfg3.tar.gz
+    archive_root: RH20T_cfg3
+    google_drive_id: 1uwieq-EbA_eTXE668ekypQV1cO9PDfES
+    archive_bytes: 27399012782
+    archive_sha256: b49b297043f3ccf8386b620e11e9ccebc634ba5704e372ae7243480f6e38b6d3
+    mirror_repo: Malak-Mansour/RH20T
+    mirror_revision: 0c094d25e9ef907f669500abf64c385e2323c9fe
+    mirror_url: https://huggingface.co/datasets/Malak-Mansour/RH20T/resolve/0c094d25e9ef907f669500abf64c385e2323c9fe/RH20T_cfg3.tar.gz
+    api_repo: https://github.com/rh20t/rh20t_api.git
+    api_commit: aa3124434729ed622109a29b2cbb9f3bbb1c5eeb
+    configuration: 3
+    robot: ur5
+    in_hand_serial: "045322071843"
+    camera:
+      stream: cam_045322071843/color.mp4
+      projection_model: pinhole
+      distortion_model: no_coefficients_in_release
+      intrinsics_source: calib/{metadata.calib}/intrinsics.npy
+      source_resolution: [1280, 720]
+      released_video_resolution: [640, 360]
+      pose_source: transformed/tcp_base.npy
+      pose_direction: camera_to_aligned_robot_base
+      pose_format: "4x4 row-major; column-vector transform"
+      tcp_camera_matrix:
+        - [1, 0, 0, 0.027]
+        - [0, 1, 0, 0.0775]
+        - [0, 0, 1, 0.240]
+        - [0, 0, 0, 1]
+      align_tcp_matrix:
+        - [0, -1, 0, 0]
+        - [1, 0, 0, 0]
+        - [0, 0, 1, 0]
+        - [0, 0, 0, 1]
+      align_base_matrix:
+        - [-1, 0, 0, 0]
+        - [0, -1, 0, 0]
+        - [0, 0, 1, 0]
+        - [0, 0, 0, 1]
+    clip_count: 4
+    duration_seconds: 60
+    clips:
+      - sequence: task_0001_user_0016_scene_0001_cfg_0003
+        task: task_0001
+        start_s: 2
+        duration_s: 15
+        stratum: press_button_scene_0001
+      - sequence: task_0004_user_0016_scene_0004_cfg_0003
+        task: task_0004
+        start_s: 1
+        duration_s: 15
+        stratum: grasp_and_move_block_scene_0004
+        selection_note: avoids the source capture gap beginning at 16.189s
+      - sequence: task_0006_user_0016_scene_0007_cfg_0003
+        task: task_0006
+        start_s: 2
+        duration_s: 15
+        stratum: push_block_scene_0007
+      - sequence: task_0008_user_0016_scene_0010_cfg_0003
+        task: task_0008
+        start_s: 2
+        duration_s: 15
+        stratum: grasp_and_place_block_scene_0010
+
+  stera10m:
+    title: Stera-10M Head-Mounted RGB Interaction
+    reference_grade: B1
+    reference_type: arkit_device_tracking
+    access: gated_huggingface_approved
+    license: CC-BY-NC-4.0 with WiLoR/MANO carve-outs
+    source_page: https://huggingface.co/datasets/fpvlabs/stera-10m
+    repository: fpvlabs/stera-10m
+    revision: 548a1f26741647126e4a6347b29b46759e43ebb5
+    repository_session_count: 575
+    readme_session_count: 584
+    sdk_repo: https://github.com/fpv-labs/stera-sdk.git
+    sdk_commit: df6a5ec8919053c5cd448db83d4816e1faaaec62
+    source_fps: 15
+    maximum_pose_gap_s: 0.25
+    required_tracking_state: normal
+    clip_count: 4
+    duration_seconds: 60
+    camera:
+      stream: rgb.mp4
+      projection_model: pinhole
+      distortion_model: plumb_bob
+      source_width: 1280
+      source_height: 720
+      intrinsics_source: calibrations/rgb_K.npy
+      distortion_source: calibrations/rgb_D.npy
+      pose_source: annotation.hdf5:/cam-pose
+      source_pose_direction: camera_link_to_arkit_world
+      optical_transform_source: calibrations/R_optical_to_link.npy
+      pose_format: "3x3 rotation + xyz translation; column-vector transform"
+    clips:
+      - sequence: session_data_20260416_084056
+        start_s: 25.6
+        duration_s: 15
+        source_frames: 629
+        source_duration_s: 41.9
+        stratum: walking_cabinet_small_object_interaction
+        selection_note: walk to cabinet, manipulate packets, and return toward sink
+        source_files:
+          annotation.hdf5: {bytes: 23622539, sha256: 52e53687e0c12b3b83259590129aaf0b9437716f99304dc8d45b44ac36b7a583}
+          hierarchy.json: {bytes: 3420, sha256: c976926d9b68e659af9221055bab90e02a687a7b3177f4a9a31e4a34938a562c}
+          rgb.mp4: {bytes: 43531532, sha256: 0794a59e8cacd447c0d79494175b861cf14233b3ae27a9ca70e4aa85c80014cb}
+          calibrations/meta.json: {bytes: 401, sha256: ba6b580f945a025db19dd4fd685b250759ff73b8e7351436f48da23ce70cd612}
+          calibrations/rgb_K.npy: {bytes: 200, sha256: ffff6cc61e93e37b2de4e6466ee27d667a50291bf165c01fbda6e7846c1b2e66}
+          calibrations/rgb_D.npy: {bytes: 128, sha256: fdee2f2368bf2af9c942f32cce9d982e48dfc46889bf923e99bc9ac834a4ba46}
+          calibrations/R_optical_to_link.npy: {bytes: 200, sha256: 0abc7e4490487442eca4a070be61384d4347171e9c3370e68f74e93b2c6563a9}
+      - sequence: session_data_20260425_142753
+        start_s: 69.5
+        duration_s: 15
+        source_frames: 1424
+        source_duration_s: 94.9
+        stratum: walking_heavy_object_and_pot_interaction
+        selection_note: avoids the ARKit timestamp pause after source frame 1377
+        source_files:
+          annotation.hdf5: {bytes: 43606651, sha256: 5032818fcbbfe68a145f31dcee971add5a35d208337d5ac325097019edea373b}
+          hierarchy.json: {bytes: 4060, sha256: 1bde4e84c8dacf686f99ab0101ed1eff29c92a7ee26903eba469a519a5a0769f}
+          rgb.mp4: {bytes: 52070578, sha256: 4c16768585578e0eb7bc7bc4bb20c9c15f22e81e928c742b739e104fc5dd9e11}
+          calibrations/meta.json: {bytes: 401, sha256: ba6b580f945a025db19dd4fd685b250759ff73b8e7351436f48da23ce70cd612}
+          calibrations/rgb_K.npy: {bytes: 200, sha256: 5283682037d5849a28394694d40d5544875261c5fe163bbd17bcbc33edd9b4a3}
+          calibrations/rgb_D.npy: {bytes: 128, sha256: fdee2f2368bf2af9c942f32cce9d982e48dfc46889bf923e99bc9ac834a4ba46}
+          calibrations/R_optical_to_link.npy: {bytes: 200, sha256: 0abc7e4490487442eca4a070be61384d4347171e9c3370e68f74e93b2c6563a9}
+      - sequence: session_data_20260427_182220
+        start_s: 68
+        duration_s: 15
+        source_frames: 1298
+        source_duration_s: 86.5
+        stratum: locomotion_person_handoff
+        selection_note: chair and shelf adjustment followed by a device handoff to another person
+        source_files:
+          annotation.hdf5: {bytes: 48969596, sha256: ca8b29c2b86208940d715bba124a7e6c7e1b728b22222c94cfb7f74c81074f7f}
+          hierarchy.json: {bytes: 2648, sha256: 2a66f79a46dc50cd369516a12c979466afe6e13b9516ad00d5f542ccfe925c8f}
+          rgb.mp4: {bytes: 75625586, sha256: 37f48049ac62b3d2a0194f3b7bfa06aa01965e9a8a4e96e5ea2ecdff5d03960a}
+          calibrations/meta.json: {bytes: 401, sha256: ba6b580f945a025db19dd4fd685b250759ff73b8e7351436f48da23ce70cd612}
+          calibrations/rgb_K.npy: {bytes: 200, sha256: ba8acd0a1e2ac29aa15c1d61d9ed75cbea0cbee55fb1d1f74bf62ef3edea3a2f}
+          calibrations/rgb_D.npy: {bytes: 128, sha256: fdee2f2368bf2af9c942f32cce9d982e48dfc46889bf923e99bc9ac834a4ba46}
+          calibrations/R_optical_to_link.npy: {bytes: 200, sha256: 0abc7e4490487442eca4a070be61384d4347171e9c3370e68f74e93b2c6563a9}
+      - sequence: session_data_20260414_144830
+        start_s: 146
+        duration_s: 15
+        source_frames: 2525
+        source_duration_s: 168.3
+        stratum: close_hand_occlusion_fine_manipulation
+        selection_note: continuous knitting with 100 percent sampled hand-pose coverage
+        source_files:
+          annotation.hdf5: {bytes: 86820499, sha256: d17cc26598c3709b0e482b2f8cda338f8aa5aea2e5ea0f292ba7a40ff01bcdc2}
+          hierarchy.json: {bytes: 1176, sha256: 56a18644d41c5c5d39090cfdd512a6e2cb7bc613da4101b8d5bb8495fc8fd405}
+          rgb.mp4: {bytes: 95664486, sha256: 8bfef7081050752a8a99751753248e91949d2964b75b4a2603d55a2cfc155802}
+          calibrations/meta.json: {bytes: 401, sha256: ba6b580f945a025db19dd4fd685b250759ff73b8e7351436f48da23ce70cd612}
+          calibrations/rgb_K.npy: {bytes: 200, sha256: da27b8d3ab2591031ed65a5a1d5ee2f67986073de1d889d00c0eddb12a805092}
+          calibrations/rgb_D.npy: {bytes: 128, sha256: fdee2f2368bf2af9c942f32cce9d982e48dfc46889bf923e99bc9ac834a4ba46}
+          calibrations/R_optical_to_link.npy: {bytes: 200, sha256: 0abc7e4490487442eca4a070be61384d4347171e9c3370e68f74e93b2c6563a9}

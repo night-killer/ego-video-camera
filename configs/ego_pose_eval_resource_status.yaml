@@ -1,0 +1,148 @@
+schema_version: 1
+audited_at_utc: "2026-07-24"
+scope: ego RGB pinhole camera-pose evaluation and fine-tuning resources
+runtime_policy:
+  environment_installed: false
+  inference_run_on_cpu_host: false
+  reason: Model environments and CUDA extensions are intentionally deferred on this CPU host.
+
+source_repositories:
+  status: complete
+  storage: git_submodules
+  top_level_count: 13
+  recursive_audit: clean
+  repositories:
+    - {name: Depth-Anything-3, path: thirdparty/Depth-Anything-3, commit: 41736238f5bced4debf3f2a12375d2466874866d}
+    - {name: ReViV, path: thirdparty/ReViV, commit: de23a67009685e3878e4bad49d33f023d4b7a085}
+    - {name: EgoM2P, path: thirdparty/EgoM2P, commit: 5909857389da1c16c5f322dc696e0b5fbded724d}
+    - {name: DROID-SLAM, path: thirdparty/DROID-SLAM, commit: 2dfd39f0dcad44012ca7bbb8aa70b55edbfa9c99}
+    - {name: ORB_SLAM3, path: thirdparty/ORB_SLAM3, commit: 4452a3c4ab75b1cde34e5505a36ec3f9edcdc4c4}
+    - {name: ViPE, path: thirdparty/ViPE, commit: 95a8816947602ddc26fcb7a80bea4f9313059578}
+    - {name: VGGT-SLAM, path: thirdparty/VGGT-SLAM, commit: 35327ac28b7d193df9ccc39ba6346052bb6f1207}
+    - {name: LingBot-Map, path: thirdparty/LingBot-Map, commit: 1f480aeb8a47a24656090d46d053115b7fe60435}
+    - {name: MegaSaM, path: thirdparty/MegaSaM, commit: a27b4e633c5cc0828a62ed943ef9f6505705fd3f}
+    - {name: HaWoR, path: thirdparty/HaWoR, commit: 66c7d4108d58a716deccd192cb7645170cdc7bd7}
+    - {name: EgoEgo, path: thirdparty/EgoEgo, commit: 4dae8cb67b453f0a0042809bf37aafad5604615b}
+    - {name: VGGT-Omega, path: thirdparty/VGGT-Omega, commit: 39a0cb8af88554f15ddcb5354cd52bde588fa014}
+    - {name: Stera-SDK, path: thirdparty/Stera-SDK, commit: df6a5ec8919053c5cd448db83d4816e1faaaec62}
+
+checkpoints:
+  verification_manifest: ckpts/verification.json
+  verification_command: scripts/verify_eval_checkpoints.py --hash
+  verification_exit_code: 0
+  verification_exit_meaning: every declared checkpoint file is complete and hash-verified
+  disk_usage_bytes: 57991051668
+  disk_usage_gib_approx: 54
+  retained_download_partials_or_unregistered_files: false
+  counts:
+    complete: 88
+    gated_missing: 0
+  groups:
+    - {name: DA3 / DA3-Streaming, complete: 3, gated_missing: 0, bytes: 6759566189}
+    - {name: LingBot-Map, complete: 3, gated_missing: 0, bytes: 4808327410}
+    - {name: VGGT-SLAM 2.0, complete: 4, gated_missing: 0, bytes: 5378917452}
+    - {name: DROID-SLAM, complete: 1, gated_missing: 0, bytes: 16061701}
+    - {name: ReViV metric_depth, complete: 20, gated_missing: 0, bytes: 6620973594}
+    - {name: ReViV reviv_500b, complete: 14, gated_missing: 0, bytes: 5285785355}
+    - {name: ViPE 1.2.0, complete: 15, gated_missing: 0, bytes: 8622337585}
+    - {name: EgoM2P, complete: 2, gated_missing: 0, bytes: 6974797668}
+    - {name: EgoM2P / ReViV-256, complete: 6, gated_missing: 0, bytes: 422966143}
+    - {name: EgoEgo, complete: 5, gated_missing: 0, bytes: 276805989}
+    - {name: MegaSaM, complete: 6, gated_missing: 0, bytes: 2836240365}
+    - {name: HaWoR, complete: 6, gated_missing: 0, bytes: 5403704447}
+    - {name: HaWoR / MANO, complete: 2, gated_missing: 0, bytes: 7642747}
+    - {name: VGGT-Omega, complete: 1, gated_missing: 0, bytes: 4576706117}
+  public_groups_complete:
+    - DA3 / DA3-Streaming
+    - LingBot-Map
+    - VGGT-SLAM 2.0
+    - DROID-SLAM
+    - ReViV metric_depth
+    - ReViV reviv_500b
+    - ViPE 1.2.0
+    - EgoM2P
+    - EgoM2P / ReViV-256
+    - EgoEgo
+    - MegaSaM
+    - HaWoR
+    - HaWoR / MANO
+    - VGGT-Omega
+  orb_slam3_vocabulary:
+    status: complete
+    path: thirdparty/ORB_SLAM3/Vocabulary/ORBvoc.txt.tar.gz
+    format: gzip-compressed TAR containing ORBvoc.txt
+    bytes: 42527984
+    sha256: ff2d0e82a69a8f4c5c002e3a0dff82a00e5872e1659fac1b996f41166b92693b
+
+evaluation_data:
+  - id: ego_pose_eval_core65_v2
+    status: complete
+    role: legacy_mixed_input_diagnostic
+    config: configs/ego_pose_eval_core65.yaml
+    data_root: data/ego_pose_eval_core65
+    verify: ok
+    clips: 112
+    seconds: 3900
+    bytes: 13968075942
+    retained_rebuildable_download_cache: false
+    removed_intermediate_root: /data/aigc/cyb/zxgu/data/ego_pose_eval_core65
+    removed_intermediate_apparent_bytes: 177344813322
+    removed_intermediate_contents: duplicate evaluation output plus rebuildable remote-ZIP cache
+    limitations:
+      - 52 clips use color fisheye imagery.
+      - 22 clips use grayscale imagery.
+      - Reference grades and preview/raw acquisition modes are mixed.
+  - id: ego_pose_eval_native_rgb_v1
+    status: complete
+    config: configs/ego_pose_eval_native_rgb.yaml
+    data_root: data/ego_pose_eval_native_rgb
+    strict_verify: ok
+    clips: 12
+    seconds: 180
+    frames: 1800
+    bytes: 907006401
+    retained_full_archives: false
+    datasets:
+      - {name: TUM RGB-D, clips: 4, seconds: 60, frames: 600, reference_grade: A}
+      - {name: Bonn RGB-D Dynamic, clips: 4, seconds: 60, frames: 600, reference_grade: A}
+      - {name: OpenLORIS Office D435i color, clips: 4, seconds: 60, frames: 600, reference_grade: A}
+  - id: ego_pose_eval_robot_interaction_rgb_v2
+    status: complete
+    config: configs/ego_pose_eval_robot_interaction_rgb.yaml
+    data_root: data/ego_pose_eval_robot_interaction_rgb
+    strict_verify: ok
+    clips: 16
+    seconds: 200
+    frames: 2000
+    bytes: 1242321622
+    retained_full_archives: false
+    datasets:
+      - {name: DROID wrist RGB, clips: 4, seconds: 20, frames: 200, reference_grade: B2}
+      - {name: HoloAssist RGB interaction, clips: 4, seconds: 60, frames: 600, reference_grade: B1}
+      - {name: RH20T cfg3 wrist RGB, clips: 4, seconds: 60, frames: 600, reference_grade: B2}
+      - {name: Stera-10M head-mounted RGB, clips: 4, seconds: 60, frames: 600, reference_grade: B1}
+
+restricted_resources:
+  - name: Oxford-IHM
+    status: application-pending
+    access_page: https://ori-arg.github.io/oxford-indoor-human-motion-dataset/downloads/
+    observed_http_status: 200
+    reason: The GDPR-controlled access application was submitted and is awaiting owner approval.
+    substitute_used: false
+
+approved_resources:
+  - name: Stera-10M
+    status: evaluation-subset-complete
+    source: https://huggingface.co/datasets/fpvlabs/stera-10m
+    revision: 548a1f26741647126e4a6347b29b46759e43ebb5
+    observed_huggingface_gated: auto
+    retained_full_release: false
+    evaluation_subset: {clips: 4, seconds: 60, frames: 600, bytes: 816291198}
+  - name: NVIDIA Cosmos-1.0 tokenizer
+    status: complete
+    affected_component: ReViV metric_depth 512 pathway
+    revision: 62e95d83acc55dc4344af1cad4848bdd7f7e1d97
+    completed_files: 5
+    completed_bytes: 447911947
+
+temporarily_unavailable: []

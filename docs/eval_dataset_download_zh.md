@@ -1,10 +1,133 @@
 # Ego 6DoF Evaluation 数据下载说明
 
-> 固定 profile：`ego_pose_eval_core65_v2`
->
-> 目标数据量：7 个数据源、112 个 clip、3900 秒（65 分钟）、统一 10 FPS。ORE 不在本次 6DoF GT 下载范围内。
+本项目现在有两个主评测 profile，以及一个兼容旧实验的诊断 profile：
 
-## 1. 直接使用
+| Profile | 用途 | 已落盘规模 | Reference |
+|---|---|---:|---|
+| `ego_pose_eval_native_rgb_v1` | 原生彩色、透视相机主榜 pilot | 12 clips / 180 s / 1800 frames / 907,006,401 bytes | A：外部或数据集官方 GT |
+| `ego_pose_eval_robot_interaction_rgb_v2` | 机器人腕部与真人交互压力测试 | 16 clips / 200 s / 2000 frames / 1,242,321,622 bytes | B1/B2：设备跟踪或机器人运动学 |
+| `ego_pose_eval_core65_v2` | 旧版广覆盖诊断集 | 112 clips / 3900 s | 混合 reference 与相机设置，不进统一主榜 |
+
+机器可读的完整状态在
+[`configs/ego_pose_eval_resource_status.yaml`](../configs/ego_pose_eval_resource_status.yaml)。
+以下命令均使用仓库内已经存在的 `worldsearcher` 环境，不会安装依赖。
+
+## 1. 两个主评测 Profile
+
+### 1.1 原生 RGB / pinhole / A 级 pilot
+
+固定数据是 TUM RGB-D、Bonn RGB-D Dynamic 和 OpenLORIS Office 各 4 段，
+每段 15 秒、10 FPS。OpenLORIS 只选 D435i 的
+`d400_color_optical_frame`，明确排除 T265 fisheye 流。
+
+```bash
+/data/aigc/cyb/zxgu/env/worldsearcher/bin/python \
+  scripts/download_eval_datasets.py plan \
+  --plan configs/ego_pose_eval_native_rgb.yaml \
+  --data-root data/ego_pose_eval_native_rgb
+
+/data/aigc/cyb/zxgu/env/worldsearcher/bin/python \
+  scripts/download_eval_datasets.py download \
+  --plan configs/ego_pose_eval_native_rgb.yaml \
+  --data-root data/ego_pose_eval_native_rgb
+
+/data/aigc/cyb/zxgu/env/worldsearcher/bin/python \
+  scripts/download_eval_datasets.py verify \
+  --plan configs/ego_pose_eval_native_rgb.yaml \
+  --data-root data/ego_pose_eval_native_rgb
+```
+
+当前严格验证结果是三个数据源均 `4/4`，总计 `12 clips / 180 s /
+1800 RGB frames`。完整上游归档均未保留。
+
+### 1.2 Robot / interaction RGB / B 级 pilot
+
+固定数据为 DROID wrist、HoloAssist、RH20T cfg3 wrist 和 Stera-10M 各 4 段：
+
+```bash
+/data/aigc/cyb/zxgu/env/worldsearcher/bin/python \
+  scripts/download_eval_datasets.py plan \
+  --plan configs/ego_pose_eval_robot_interaction_rgb.yaml \
+  --data-root data/ego_pose_eval_robot_interaction_rgb
+
+/data/aigc/cyb/zxgu/env/worldsearcher/bin/python \
+  scripts/download_eval_datasets.py download \
+  --plan configs/ego_pose_eval_robot_interaction_rgb.yaml \
+  --data-root data/ego_pose_eval_robot_interaction_rgb \
+  --ffmpeg /data/aigc/cyb/zxgu/env/worldsearcher/bin/ffmpeg
+
+/data/aigc/cyb/zxgu/env/worldsearcher/bin/python \
+  scripts/download_eval_datasets.py verify \
+  --plan configs/ego_pose_eval_robot_interaction_rgb.yaml \
+  --data-root data/ego_pose_eval_robot_interaction_rgb
+```
+
+已有 RH20T 完整归档时可避免重新下载：
+
+```bash
+/data/aigc/cyb/zxgu/env/worldsearcher/bin/python \
+  scripts/download_eval_datasets.py download \
+  --plan configs/ego_pose_eval_robot_interaction_rgb.yaml \
+  --data-root data/ego_pose_eval_robot_interaction_rgb \
+  --datasets rh20t_wrist \
+  --rh20t-archive /path/to/RH20T_cfg3.tar.gz \
+  --ffmpeg /data/aigc/cyb/zxgu/env/worldsearcher/bin/ffmpeg
+```
+
+`--rh20t-archive` 指向的文件归调用者所有：脚本会检查固定的
+27,399,012,782 bytes 和 SHA-256，但不会删除它。脚本自己下载到 `_cache`
+的归档会在 4 段全部完成后删除；加 `--keep-source` 才保留。默认下载可在
+Google Drive 限流时使用固定 revision 的字节一致 Hugging Face 镜像，整包
+promotion 前仍必须通过 SHA-256。
+
+当前严格验证结果为：
+
+| 数据集 | Clip / 秒 / 帧 | Reference 与采样语义 |
+|---|---:|---|
+| DROID wrist | 4 / 20 / 200 | B2；按 H5 `estimated_capture` 时间采样，再按 H5 frame index 解码 MP4；动态 `camera_to_robot_base` |
+| HoloAssist | 4 / 60 / 600 | B1；按 `Pose_sync` video time 与 row index；动态 `camera_to_hololens_world` |
+| RH20T cfg3 wrist | 4 / 60 / 600 | B2；按 `timestamps.npy` 的真实毫秒时间选 MP4 frame index；由 TCP 与手眼标定导出 `camera_to_aligned_robot_base` |
+| Stera-10M | 4 / 60 / 600 | B1；1280x720 原生 RGB；按 MP4 frame index 对齐同 index ARKit pose，并导出 `camera_optical_to_arkit_world` |
+
+RH20T 的发布 MP4 容器标称 25 FPS，但真实采集时间约为 8--9 Hz。脚本不能按
+MP4 PTS 取帧，否则会把运动加速约三倍。统一到 10 Hz 时使用最近原生帧，
+`clip.json` 会逐段记录唯一源帧数、重复输出数和最大重采样误差；质量门拒绝
+误差超过 250 ms 的窗口。
+
+Stera 固定 revision 为 `548a1f26741647126e4a6347b29b46759e43ebb5`，仓库
+实际包含 575 个完整 session。脚本只下载 4 个固定 session 的 RGB、HDF5、
+hierarchy 和 calibration，并逐文件检查 size/SHA-256。MP4 是固定 15 FPS，
+且帧数与 HDF5 pose 数量一一对应；绝对 ARKit 时间可能包含采集 pause，所以
+必须按 MP4 frame index 取 pose。官方 pose 是 `camera_link -> ARKit world`，
+RGB reference 使用
+`R_world_optical = R_world_link @ R_optical_to_link`。窗口内 tracking 必须全为
+`normal`，相邻选中 pose gap 不得超过 250 ms。重建子集需要本机已经通过
+`hf auth login` 登录获批账号；token 不写入 manifest。
+
+DROID 和 RH20T 是运动学参考，HoloAssist 与 Stera 是设备跟踪参考，四者都
+不能进入外部 mocap A 榜。
+
+## 2. 主 Profile 输出与清理
+
+```text
+ego_pose_eval_{native_rgb,robot_interaction_rgb}/
+├── evaluation_manifest.json
+└── <dataset>/clips/<sequence>/
+    ├── frames/*.png
+    ├── frames.csv
+    ├── frame_manifest.csv
+    ├── reference/
+    │   ├── camera.json
+    │   └── <dataset-specific trajectory/calibration>
+    └── clip.json
+```
+
+`verify` 不只数文件，还会重算每张图和 reference 文件的 SHA-256，检查 RGB
+模式、分辨率、pinhole/fisheye 标志、frame manifest 与固定帧数。下载完成后
+不保留完整 TAR/TGZ/MP4/H5 episode；HoloAssist 只留下可恢复的远程 TAR 小型
+索引和官方 split 文件，Stera 的完整 MP4/HDF5 在 4 段生成后删除。
+
+## 3. Legacy `core65` 使用
 
 先只查看计划；该命令不联网、不写文件：
 
@@ -19,15 +142,17 @@
 ```bash
 /data/aigc/cyb/zxgu/env/worldsearcher/bin/python \
   scripts/download_eval_datasets.py download \
-  --data-root /data/aigc/cyb/zxgu/data/ego_pose_eval_core65 \
+  --data-root data/ego_pose_eval_core65 \
   --accept-aria-licenses \
   --accept-egobody-license \
   --egobody-netrc-file /data/aigc/cyb/zxgu/.secrets/egobody.netrc
 ```
 
-下载可反复执行：普通文件使用 `.part` 断点续传，远程 ZIP 只缓存 central
-directory 与选中成员的压缩区间。EgoBody 全部 clip 成功后会自动清除稀疏
-缓存；中途失败则保留缓存以便续传。加 `--keep-source` 才保留这些缓存。
+下载可反复执行：普通文件使用 `.part` 断点续传，远程 ZIP 缓存 central
+directory 与选中成员的压缩区间。部分 ZIP 的成员布局会让区间缓存很大；
+中途失败时保留它是为了续传，全部数据通过 `verify` 后应删除 `_cache`。
+当前已验证副本只保留在 `data/ego_pose_eval_core65`，没有保留该下载缓存；
+仓库外曾用于下载的重复中间目录也已在独立 verify 后删除。
 
 建议先按数据源分批：
 
@@ -36,7 +161,7 @@ directory 与选中成员的压缩区间。EgoBody 全部 clip 成功后会自�
 /data/aigc/cyb/zxgu/env/worldsearcher/bin/python \
   scripts/download_eval_datasets.py download \
   --datasets adt,egobody,incrowd_vi \
-  --data-root /data/aigc/cyb/zxgu/data/ego_pose_eval_core65 \
+  --data-root data/ego_pose_eval_core65 \
   --accept-aria-licenses \
   --accept-egobody-license \
   --egobody-netrc-file /data/aigc/cyb/zxgu/.secrets/egobody.netrc
@@ -45,13 +170,13 @@ directory 与选中成员的压缩区间。EgoBody 全部 clip 成功后会自�
 /data/aigc/cyb/zxgu/env/worldsearcher/bin/python \
   scripts/download_eval_datasets.py download \
   --datasets monado,lamaria \
-  --data-root /data/aigc/cyb/zxgu/data/ego_pose_eval_core65
+  --data-root data/ego_pose_eval_core65
 
 # 第三批：非严格头戴的 RGB 泛化
 /data/aigc/cyb/zxgu/env/worldsearcher/bin/python \
   scripts/download_eval_datasets.py download \
   --datasets princeton365 \
-  --data-root /data/aigc/cyb/zxgu/data/ego_pose_eval_core65
+  --data-root data/ego_pose_eval_core65
 ```
 
 下载后检查 112 条是否齐全：
@@ -59,10 +184,10 @@ directory 与选中成员的压缩区间。EgoBody 全部 clip 成功后会自�
 ```bash
 /data/aigc/cyb/zxgu/env/worldsearcher/bin/python \
   scripts/download_eval_datasets.py verify \
-  --data-root /data/aigc/cyb/zxgu/data/ego_pose_eval_core65
+  --data-root data/ego_pose_eval_core65
 ```
 
-## 2. 脚本实际下载什么
+## 4. Legacy 脚本实际下载什么
 
 | 数据源 | 固定量 | 默认最小下载方式 |
 |---|---:|---|
@@ -83,7 +208,7 @@ reference pose。若还要生成现有三联画 demo，可额外执行：
 /data/aigc/cyb/zxgu/env/worldsearcher/bin/python \
   scripts/download_eval_datasets.py download \
   --datasets egobody \
-  --data-root /data/aigc/cyb/zxgu/data/ego_pose_eval_core65 \
+  --data-root data/ego_pose_eval_core65 \
   --accept-egobody-license \
   --egobody-netrc-file /data/aigc/cyb/zxgu/.secrets/egobody.netrc \
   --egobody-with-exo
@@ -103,12 +228,12 @@ reference pose。若还要生成现有三联画 demo，可额外执行：
   --adt-cdn-file /path/to/ADT_download_urls.json \
   --hot3d-cdn-file /path/to/Hot3DAria_download_urls.json \
   --hot3d-downloader /path/to/hot3d/hot3d/data_downloader/dataset_downloader_base_main.py \
-  --data-root /data/aigc/cyb/zxgu/data/ego_pose_eval_core65
+  --data-root data/ego_pose_eval_core65
 ```
 
 ADT 官方链接清单有效期为 14 天。raw 模式只请求 ADT 的 VRS 与 main ground truth，以及 HOT3D 的 VRS、MPS trajectory/calibration 和当前清单中命中 hand/mask/metadata 的组；不会请求 semidense point cloud、eye gaze 或 depth。
 
-## 3. 磁盘和传输预期
+## 5. Legacy 磁盘和传输预期
 
 最终评测输入严格限制为 65 分钟，但上游发布单元不总能精确裁到这 65 分钟：
 
@@ -121,15 +246,17 @@ ADT 官方链接清单有效期为 14 天。raw 模式只请求 ADT 的 VRS 与 
 - Monado 与 LaMAria 不下载整包，只取所选 PNG 和小型 metadata；
 - 默认在成功生成 clip 后删除临时完整 MP4；加 `--keep-source` 才保留。
 
-因此建议为 preview profile 预留约 30–50 GB。`--aria-mode raw` 还需额外预留几十 GB，具体取决于当期官方归档大小。
+因此建议下载过程中为 preview profile 预留约 30–50 GB；清理缓存后，当前
+固定副本为 13,968,075,942 bytes。`--aria-mode raw` 还需额外预留几十 GB，
+具体取决于当期官方归档大小。
 
-## 4. 输出结构
+## 6. Legacy 输出结构
 
 ```text
 ego_pose_eval_core65/
 ├── evaluation_manifest.json
 ├── _cache/
-│   └── remote_zip/                 # 稀疏 ZIP 索引，不是完整归档
+│   └── remote_zip/                 # 仅下载过程中存在；成功后应删除
 ├── adt/
 │   ├── _sources/                   # 仅下载/处理中存在
 │   └── clips/<sequence>/
@@ -160,7 +287,7 @@ ego_pose_eval_core65/
 
 每个 `clip.json` 记录 source sequence、起止时间、分层标签、参考等级、文件大小与 SHA256；`evaluation_manifest.json` 记录每个数据源是完成还是因许可/临时清单缺失而暂停。
 
-## 5. 已知边界
+## 7. Legacy 已知边界
 
 1. **EgoBody 是 device reference，不是独立 mocap GT。** `pv_trajectory.csv`
    来自官方逐帧 `pv2world_transform`，`head_hand_eye.csv` 来自 HoloLens head

@@ -437,6 +437,201 @@ class RemoteTar:
             member.data_offset + member.size - 1,
         )
 
+    def index(
+        self,
+        cache_dir: str | Path,
+        checkpoint_members: int = 50,
+        required_names: Iterable[str] = (),
+    ) -> list[TarMember]:
+        """Build a resumable index for a possibly concatenated TAR.
+
+        When ``required_names`` is non-empty, return as soon as those exact
+        members have been indexed.  The incomplete index remains resumable if
+        a later caller asks for different members or for a complete scan.
+        """
+        cache_dir = Path(cache_dir)
+        cache_dir.mkdir(parents=True, exist_ok=True)
+        key = hashlib.sha256(self.remote.url.encode("utf-8")).hexdigest()[:20]
+        index_path = cache_dir / f"{key}.tar-index.json"
+        identity = {
+            "url": self.remote.url,
+            "size": self.remote.size,
+            "etag": self.remote.etag,
+            "last_modified": self.remote.last_modified,
+        }
+        entries: list[TarMember] = []
+        offset = 0
+        pax: dict[str, str] = {}
+        long_name: str | None = None
+        complete = False
+        required = {
+            name[2:] if name.startswith("./") else name
+            for name in required_names
+        }
+        if index_path.is_file():
+            try:
+                state = json.loads(index_path.read_text(encoding="utf-8"))
+                if (
+                    state.get("schema_version") == 1
+                    and state.get("identity") == identity
+                ):
+                    entries = [TarMember(**entry) for entry in state["entries"]]
+                    offset = int(state["next_offset"])
+                    pax = {str(k): str(v) for k, v in state.get("pax", {}).items()}
+                    value = state.get("long_name")
+                    long_name = str(value) if value is not None else None
+                    complete = bool(state.get("complete"))
+            except (KeyError, OSError, TypeError, ValueError):
+                entries = []
+                offset = 0
+                pax = {}
+                long_name = None
+                complete = False
+        if complete:
+            return entries
+        indexed_names = {
+            entry.name[2:] if entry.name.startswith("./") else entry.name
+            for entry in entries
+        }
+        if required and required <= indexed_names:
+            return entries
+
+        def save(is_complete: bool) -> None:
+            payload = {
+                "schema_version": 1,
+                "identity": identity,
+                "next_offset": offset,
+                "pax": pax,
+                "long_name": long_name,
+                "complete": is_complete,
+                "entries": [
+                    {
+                        "name": entry.name,
+                        "size": entry.size,
+                        "data_offset": entry.data_offset,
+                        "typeflag": entry.typeflag,
+                    }
+                    for entry in entries
+                ],
+            }
+            partial = index_path.with_name(index_path.name + ".part")
+            with partial.open("w", encoding="utf-8") as handle:
+                json.dump(payload, handle, indent=2, sort_keys=True)
+                handle.write("\n")
+                handle.flush()
+                os.fsync(handle.fileno())
+            os.replace(partial, index_path)
+
+        processed_since_checkpoint = 0
+        header_cache_start = -1
+        header_cache = b""
+
+        def read_header(header_offset: int) -> bytes:
+            nonlocal header_cache_start, header_cache
+            relative = header_offset - header_cache_start
+            if 0 <= relative and relative + 512 <= len(header_cache):
+                return header_cache[relative : relative + 512]
+            read_size = min(64 * 1024, self.remote.size - header_offset)
+            if read_size < 512:
+                raise ValueError(f"Truncated TAR header at offset {header_offset}")
+            header_cache_start = header_offset
+            header_cache = self.client.read(
+                self.remote, header_offset, header_offset + read_size - 1
+            )
+            return header_cache[:512]
+
+        while offset + 512 <= self.remote.size:
+            header = read_header(offset)
+            if not any(header):
+                located = self._find_header_after_zero_block(offset + 512)
+                if located is None:
+                    offset = self.remote.size
+                    break
+                offset, header = located
+            stored_checksum = _tar_number(header[148:156])
+            checksum_header = bytearray(header)
+            checksum_header[148:156] = b"        "
+            if sum(checksum_header) != stored_checksum:
+                raise ValueError(f"Invalid TAR header checksum at offset {offset}")
+            raw_name = header[:100].split(b"\0", 1)[0].decode(
+                "utf-8", "replace"
+            )
+            prefix = header[345:500].split(b"\0", 1)[0].decode(
+                "utf-8", "replace"
+            )
+            name = f"{prefix}/{raw_name}" if prefix else raw_name
+            size = _tar_number(header[124:136])
+            typeflag = header[156:157].decode("ascii", "replace") or "0"
+            data_offset = offset + 512
+            next_offset = data_offset + ((size + 511) // 512) * 512
+            if typeflag in {"x", "g"}:
+                payload = (
+                    self.client.read(
+                        self.remote, data_offset, data_offset + size - 1
+                    )
+                    if size
+                    else b""
+                )
+                fields = _pax_fields(payload)
+                if typeflag == "x":
+                    pax = fields
+            elif typeflag == "L":
+                payload = self.client.read(
+                    self.remote, data_offset, data_offset + size - 1
+                )
+                long_name = payload.rstrip(b"\0\n").decode("utf-8", "replace")
+            else:
+                effective_name = pax.get("path") or long_name or name
+                entries.append(
+                    TarMember(effective_name, size, data_offset, typeflag)
+                )
+                indexed_names.add(
+                    effective_name[2:]
+                    if effective_name.startswith("./")
+                    else effective_name
+                )
+                pax = {}
+                long_name = None
+                processed_since_checkpoint += 1
+            offset = next_offset
+            if required and required <= indexed_names:
+                save(False)
+                return entries
+            if processed_since_checkpoint >= max(1, checkpoint_members):
+                save(False)
+                processed_since_checkpoint = 0
+        save(True)
+        return entries
+
+    def _find_header_after_zero_block(
+        self, start: int, chunk_size: int = 1024 * 1024
+    ) -> tuple[int, bytes] | None:
+        """Find the next valid header after a TAR EOF marker or append padding."""
+        cursor = start
+        while cursor + 512 <= self.remote.size:
+            available = self.remote.size - cursor
+            aligned_size = min(chunk_size, available)
+            aligned_size -= aligned_size % 512
+            if aligned_size < 512:
+                return None
+            payload = self.client.read(
+                self.remote, cursor, cursor + aligned_size - 1
+            )
+            for relative in range(0, len(payload), 512):
+                header = payload[relative : relative + 512]
+                if not any(header):
+                    continue
+                try:
+                    stored_checksum = _tar_number(header[148:156])
+                except ValueError:
+                    continue
+                checksum_header = bytearray(header)
+                checksum_header[148:156] = b"        "
+                if sum(checksum_header) == stored_checksum:
+                    return cursor + relative, header
+            cursor += aligned_size
+        return None
+
     def extract(self, member: TarMember, destination: str | Path) -> Path:
         return self.client.copy_range(
             self.remote, member.data_offset, member.size, destination

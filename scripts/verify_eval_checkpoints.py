@@ -23,6 +23,48 @@ class Checkpoint:
 
 
 C = Checkpoint
+
+
+def _reviv_checkpoints() -> tuple[Checkpoint, ...]:
+    common_sizes = {
+        "reviv_tok_cam.pth": 718_878_062,
+        "reviv_tok_gaze.pth": 718_826_027,
+        "reviv_tok_lhand.pth": 720_085_992,
+        "reviv_tok_rhand.pth": 720_086_056,
+        "norm_stats/body_mean.npy": 632,
+        "norm_stats/body_std.npy": 632,
+        "norm_stats/cam_mean.npy": 200,
+        "norm_stats/cam_std.npy": 200,
+        "norm_stats/lhand_mean.npy": 152,
+        "norm_stats/lhand_std.npy": 152,
+        "norm_stats/rhand_mean.npy": 152,
+        "norm_stats/rhand_std.npy": 152,
+    }
+    set_specific = {
+        "metric_depth": {
+            "reviv_main.pth": 2_574_931_428,
+            "reviv_tok_body.pth": 720_220_907,
+        },
+        "reviv_500b": {
+            "reviv_main.pth": 1_687_821_271,
+            "reviv_tok_body.pth": 720_085_675,
+        },
+    }
+    records: list[Checkpoint] = []
+    for set_name, unique_sizes in set_specific.items():
+        for filename, size in {**unique_sizes, **common_sizes}.items():
+            records.append(
+                C(
+                    f"ReViV {set_name}",
+                    filename,
+                    f"reviv/{set_name}/{filename}",
+                    size,
+                )
+            )
+    return tuple(records)
+
+
+REVIV_CHECKPOINTS = _reviv_checkpoints()
 CHECKPOINTS = (
     C(
         "DA3 / DA3-Streaming",
@@ -99,6 +141,48 @@ CHECKPOINTS = (
         "droid-slam/droid.pth",
         16_061_701,
         "46476ef64cde45a97504910d6f3de2eef7b398ec1c6e4e668815c29076024526",
+    ),
+    *REVIV_CHECKPOINTS,
+    C(
+        "ReViV metric_depth",
+        "Cosmos-1.0 README",
+        "reviv/cosmos/Cosmos-1.0-Tokenizer-DV8x16x16/README.md",
+        30_903,
+    ),
+    C(
+        "ReViV metric_depth",
+        "Cosmos-1.0 autoencoder",
+        "reviv/cosmos/Cosmos-1.0-Tokenizer-DV8x16x16/autoencoder.jit",
+        223_576_773,
+        gated=True,
+    ),
+    C(
+        "ReViV metric_depth",
+        "Cosmos-1.0 config",
+        "reviv/cosmos/Cosmos-1.0-Tokenizer-DV8x16x16/config.json",
+        54,
+        gated=True,
+    ),
+    C(
+        "ReViV metric_depth",
+        "Cosmos-1.0 decoder",
+        "reviv/cosmos/Cosmos-1.0-Tokenizer-DV8x16x16/decoder.jit",
+        132_042_180,
+        gated=True,
+    ),
+    C(
+        "ReViV metric_depth",
+        "Cosmos-1.0 encoder",
+        "reviv/cosmos/Cosmos-1.0-Tokenizer-DV8x16x16/encoder.jit",
+        92_292_848,
+        gated=True,
+    ),
+    C(
+        "ReViV metric_depth",
+        "Cosmos-1.0 model config",
+        "reviv/cosmos/Cosmos-1.0-Tokenizer-DV8x16x16/model_config.yaml",
+        92,
+        gated=True,
     ),
     C(
         "ViPE 1.2.0",
@@ -215,39 +299,75 @@ CHECKPOINTS = (
         2_156_231_716,
     ),
     C(
-        "EgoM2P",
+        "EgoM2P / ReViV-256",
         "Cosmos README",
         "egom2p/cosmos-tokenizer/README.md",
         21_412,
         "d7338fbf966ac341b466f5d1d10c0e62a67421b6",
     ),
     C(
-        "EgoM2P",
+        "EgoM2P / ReViV-256",
         "Cosmos config",
         "egom2p/cosmos-tokenizer/config.json",
         54,
         "bcad561de5279b772db7dd4b76b11d07ddc7ced1",
     ),
     C(
-        "EgoM2P",
+        "EgoM2P / ReViV-256",
         "Cosmos model config",
         "egom2p/cosmos-tokenizer/model_config.yaml",
         92,
         "5be0900a5551d62cb295248f76186f2f665c51d0",
     ),
     C(
-        "EgoM2P",
+        "EgoM2P / ReViV-256",
+        "Cosmos autoencoder",
+        "egom2p/cosmos-tokenizer/autoencoder.jit",
+        211_093_069,
+    ),
+    C(
+        "EgoM2P / ReViV-256",
         "Cosmos encoder",
         "egom2p/cosmos-tokenizer/encoder.jit",
         86_641_076,
         "9a0e8459ab5e0ecfd0c00f215571de43e368f090c16adeb1a69fa835177bdea6",
     ),
     C(
-        "EgoM2P",
+        "EgoM2P / ReViV-256",
         "Cosmos decoder",
         "egom2p/cosmos-tokenizer/decoder.jit",
         125_210_440,
         "a6b82dd6f4d489bbeb728e54c828d5a676f17e6eba9b9dfe2dc7839928bee73f",
+    ),
+    C(
+        "EgoEgo",
+        "gravity network",
+        "egoego/stage1_gravitynet_2000.pt",
+        31_814_605,
+    ),
+    C(
+        "EgoEgo",
+        "ARES head network",
+        "egoego/stage1_headnet_ares_250.pt",
+        52_191_441,
+    ),
+    C(
+        "EgoEgo",
+        "GIMO head network",
+        "egoego/stage1_headnet_gimo_1000.pt",
+        52_191_377,
+    ),
+    C(
+        "EgoEgo",
+        "KinPoly head network",
+        "egoego/stage1_headnet_kinpoly_1000.pt",
+        52_191_377,
+    ),
+    C(
+        "EgoEgo",
+        "stage-2 diffusion model",
+        "egoego/stage2_diffusion_4.pt",
+        88_417_189,
     ),
     C(
         "MegaSaM",

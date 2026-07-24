@@ -1,0 +1,179 @@
+schema_version: 1
+profile:
+  id: ego_pose_eval_native_rgb_v1
+  description: "Native color, non-fisheye RGB camera-pose evaluation sanity subset"
+  target_fps: 10
+  clip_count: 12
+  duration_seconds: 180
+  random_seed: 20260724
+  dataset_order: [tum_rgbd, bonn_rgbd_dynamic, openloris_office]
+
+datasets:
+  tum_rgbd:
+    title: TUM RGB-D
+    reference_grade: A
+    reference_type: external_mocap
+    access: public_https
+    source_page: https://cvg.cit.tum.de/data/datasets/rgbd-dataset
+    clip_count: 4
+    duration_seconds: 60
+    cameras:
+      freiburg1:
+        stream: rgb
+        projection_model: pinhole
+        distortion_model: radial-tangential
+        fx: 517.3
+        fy: 516.5
+        cx: 318.6
+        cy: 255.3
+        distortion_coefficients: [0.2624, -0.9531, -0.0054, 0.0026, 1.1633]
+        intrinsics_source: official_TUM_RGB-D_freiburg1_calibration
+        pose_format: "timestamp tx ty tz qx qy qz qw"
+        pose_direction: camera_to_mocap_world
+      freiburg3:
+        stream: rgb
+        projection_model: pinhole
+        distortion_model: radial-tangential
+        fx: 535.4
+        fy: 539.2
+        cx: 320.1
+        cy: 247.6
+        distortion_coefficients: [0.0, 0.0, 0.0, 0.0, 0.0]
+        intrinsics_source: official_TUM_RGB-D_freiburg3_calibration
+        pose_format: "timestamp tx ty tz qx qy qz qw"
+        pose_direction: camera_to_mocap_world
+    clips:
+      - sequence: rgbd_dataset_freiburg1_xyz
+        url: https://cvg.cit.tum.de/rgbd/dataset/freiburg1/rgbd_dataset_freiburg1_xyz.tgz
+        source_bytes: 448204271
+        camera: freiburg1
+        start_s: 2
+        duration_s: 15
+        stratum: translation_and_rotation
+      - sequence: rgbd_dataset_freiburg1_desk
+        url: https://cvg.cit.tum.de/rgbd/dataset/freiburg1/rgbd_dataset_freiburg1_desk.tgz
+        source_bytes: 344011403
+        camera: freiburg1
+        start_s: 2
+        duration_s: 15
+        stratum: desk_clutter
+      - sequence: rgbd_dataset_freiburg3_sitting_static
+        url: https://cvg.cit.tum.de/rgbd/dataset/freiburg3/rgbd_dataset_freiburg3_sitting_static.tgz
+        source_bytes: 443506009
+        camera: freiburg3
+        start_s: 2
+        duration_s: 15
+        stratum: dynamic_person_static_camera
+      - sequence: rgbd_dataset_freiburg3_walking_xyz
+        url: https://cvg.cit.tum.de/rgbd/dataset/freiburg3/rgbd_dataset_freiburg3_walking_xyz.tgz
+        source_bytes: 527550055
+        camera: freiburg3
+        start_s: 2
+        duration_s: 15
+        stratum: dynamic_person_moving_camera
+
+  bonn_rgbd_dynamic:
+    title: Bonn RGB-D Dynamic
+    reference_grade: A
+    reference_type: external_mocap
+    access: public_https_range
+    source_page: https://www.ipb.uni-bonn.de/data/rgbd-dynamic-dataset/
+    base_url: https://www.ipb.uni-bonn.de/html/projects/rgbd_dynamic2019/
+    clip_count: 4
+    duration_seconds: 60
+    camera:
+      stream: rgb
+      projection_model: pinhole
+      distortion_model: radial-tangential
+      fx: 542.822841
+      fy: 542.576870
+      cx: 315.593520
+      cy: 237.756098
+      distortion_coefficients: [0.039903, -0.099343, -0.000730, -0.000144, 0.0]
+      intrinsics_source: official_Bonn_RGB-D_Dynamic_page
+      pose_format: "timestamp tx ty tz qx qy qz qw"
+      pose_reference: official_OptiTrack
+      marker_to_rgbd_sensor:
+        - [1.0157, 0.1828, -0.2389, 0.0113]
+        - [0.0009, -0.8431, -0.6413, -0.0098]
+        - [-0.3009, 0.6147, -0.8085, 0.0111]
+        - [0.0, 0.0, 0.0, 1.0]
+      ros_axis_transform:
+        - [-1.0, 0.0, 0.0, 0.0]
+        - [0.0, 0.0, 1.0, 0.0]
+        - [0.0, 1.0, 0.0, 0.0]
+        - [0.0, 0.0, 0.0, 1.0]
+    clips:
+      - sequence: rgbd_bonn_crowd
+        archive: rgbd_bonn_crowd.zip
+        source_bytes: 515941922
+        start_s: 2
+        duration_s: 15
+        stratum: crowd_dynamic
+      - sequence: rgbd_bonn_moving_obstructing_box
+        archive: rgbd_bonn_moving_obstructing_box.zip
+        source_bytes: 320845314
+        start_s: 2
+        duration_s: 15
+        stratum: object_occlusion
+      - sequence: rgbd_bonn_person_tracking
+        archive: rgbd_bonn_person_tracking.zip
+        source_bytes: 329482910
+        start_s: 2
+        duration_s: 15
+        stratum: person_tracking
+      - sequence: rgbd_bonn_static_close_far
+        archive: rgbd_bonn_static_close_far.zip
+        source_bytes: 1034619467
+        start_s: 2
+        duration_s: 15
+        stratum: static_control
+
+  openloris_office:
+    title: OpenLORIS-Scene Office D435i Color
+    reference_grade: A
+    reference_type: external_mocap
+    access: public_huggingface_range
+    source_page: https://lifelong-robotic-vision.github.io/dataset/scene.html
+    hf_repo: shixuesong/openloris-scene
+    revision: cbc03108723d08322b23d0338680bffa9404cce9
+    package_tar_url: https://huggingface.co/datasets/shixuesong/openloris-scene/resolve/cbc03108723d08322b23d0338680bffa9404cce9/package/office1-1_7-package.tar
+    package_tar_bytes: 10618337280
+    package_tar_sha256: 2a610f040aaf4939b7104fe8fe8c60de82bcf641c6d04d7263de751147f6ff22
+    clip_count: 4
+    duration_seconds: 60
+    camera_selection:
+      stream: color
+      camera_key: d400_color_optical_frame
+      projection_model: pinhole
+      distortion_model: radial-tangential
+      calibration_file: sensors.yaml
+      extrinsics_file: trans_matrix.yaml
+      excluded_streams: [t265_fisheye1_optical_frame, t265_fisheye2_optical_frame]
+      pose_format: "timestamp tx ty tz qx qy qz qw"
+      pose_reference: official_office_OptiTrack
+    clips:
+      - sequence: office1-1
+        archive_member: office1-1.7z
+        source_bytes: 1365585538
+        start_s: 2
+        duration_s: 15
+        stratum: robot_office_run_1
+      - sequence: office1-2
+        archive_member: office1-2.7z
+        source_bytes: 1347899302
+        start_s: 2
+        duration_s: 15
+        stratum: robot_office_run_2
+      - sequence: office1-5
+        archive_member: office1-5.7z
+        source_bytes: 2760991340
+        start_s: 2
+        duration_s: 15
+        stratum: robot_office_run_5
+      - sequence: office1-4
+        archive_member: office1-4.7z
+        source_bytes: 1158989665
+        start_s: 2
+        duration_s: 15
+        stratum: robot_office_run_4
