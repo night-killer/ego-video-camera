@@ -66,6 +66,9 @@ def semantic_pose_directions(
     if frame_kind == "camera":
         # EgoBody PV/HoloLens camera: +X right, +Y up, -Z gaze/forward.
         return rotation[:, 0], rotation[:, 1], -rotation[:, 2]
+    if frame_kind == "opencv_camera":
+        # OpenCV camera: +X right, +Y down and +Z gaze/forward.
+        return rotation[:, 0], -rotation[:, 1], rotation[:, 2]
     raise ValueError(f"Unsupported pose frame kind: {frame_kind}")
 
 

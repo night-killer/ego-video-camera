@@ -1,0 +1,306 @@
+schema_version: 1
+repo_root: ..
+
+benchmark:
+  name: ego_rgb_camera_pose_benchmark_v1
+  output_root: outputs/ego_pose_benchmark
+  target_fps: 10.0
+  timeout_sec: 7200
+  gpu: 0
+  bootstrap_seed: 20260724
+  bootstrap_samples: 10000
+  ffmpeg: ffmpeg
+
+datasets:
+  order:
+    - egobody
+    - princeton365
+    - tum_rgbd
+    - bonn_rgbd_dynamic
+    - openloris_office
+    - droid_wrist
+    - holoassist
+    - rh20t_wrist
+    - stera10m
+  expected_counts:
+    egobody: 20
+    princeton365: 18
+    tum_rgbd: 4
+    bonn_rgbd_dynamic: 4
+    openloris_office: 4
+    droid_wrist: 4
+    holoassist: 4
+    rh20t_wrist: 8
+    stera10m: 4
+  grade_aliases:
+    A: A
+    A-external: A
+    B1: B1
+    B-device: B1
+    B_device_reference: B1
+    B2: B2
+  sources:
+    - root: data/ego_pose_eval_core65
+      include: [egobody, princeton365]
+    - root: data/ego_pose_eval_native_rgb
+      include: [tum_rgbd, bonn_rgbd_dynamic, openloris_office]
+    - root: data/ego_pose_eval_robot_interaction_rgb
+      include: [droid_wrist, holoassist, rh20t_wrist, stera10m]
+
+# One fixed sequence per dataset. These keys are also used by both ablations.
+ablation_subset:
+  - egobody/recording_20210907_S04_S03_01
+  - princeton365/new_indoor_14
+  - tum_rgbd/rgbd_dataset_freiburg1_desk
+  - bonn_rgbd_dynamic/rgbd_bonn_crowd
+  - openloris_office/office1-1
+  - droid_wrist/AUTOLab+44bb9c36+2023-11-25-10h-11m-14s
+  - holoassist/R004-7July-GoPro
+  - rh20t_wrist/task_0001_user_0016_scene_0001_cfg_0003
+  - stera10m/session_data_20260414_144830
+
+methods:
+  - id: da3_streaming
+    family: da3
+    display_name: DA3-Streaming
+    adapter: ego_video_camera.benchmark.workers.da3:run_streaming
+    conda_env: worldsearcher
+    repo: thirdparty/Depth-Anything-3
+    checkpoints:
+      - ckpts/da3/DA3NESTED-GIANT-LARGE-1.1/config.json
+      - ckpts/da3/DA3NESTED-GIANT-LARGE-1.1/model.safetensors
+      - ckpts/vggt-slam/dino_salad.ckpt
+      - thirdparty/dinov2
+    seeds: [0]
+    input_intrinsics: inferred
+    causal: false
+    metric_scale: false
+    parameters:
+      chunk_size: 120
+      overlap: 60
+      loop_enable: true
+      align_lib: torch
+      dinov2_torchhub_checkpoint_index: 3
+      torchhub_checkpoint_indices: [3]
+
+  - id: vggt_omega
+    family: vggt_omega
+    display_name: VGGT-Omega
+    adapter: ego_video_camera.benchmark.workers.vggt_omega:run
+    conda_env: worldsearcher
+    repo: thirdparty/VGGT-Omega
+    checkpoints: [ckpts/vggt-omega/VGGT-Omega-1B-512/vggt_omega_1b_512.pt]
+    seeds: [0]
+    input_intrinsics: inferred
+    causal: false
+    metric_scale: false
+    parameters: {image_resolution: 518, window_size: 200, overlap: 40}
+
+  - id: lingbot_map
+    family: lingbot_map
+    display_name: LingBot-Map
+    adapter: ego_video_camera.benchmark.workers.lingbot_map:run
+    conda_env: worldsearcher
+    repo: thirdparty/LingBot-Map
+    checkpoints:
+      - ckpts/lingbot-map/lingbot-map-long.pt
+      - ckpts/lingbot-map/skyseg_batch.onnx
+    seeds: [0]
+    input_intrinsics: inferred
+    causal: true
+    metric_scale: false
+    parameters: {image_size: 518, num_scale_frames: 8, keyframe_interval: 1}
+
+  - id: vggt_slam
+    family: vggt_slam
+    display_name: VGGT-SLAM
+    adapter: ego_video_camera.benchmark.workers.vggt_slam:run
+    conda_env: vggt_slam
+    repo: thirdparty/VGGT-SLAM
+    checkpoints:
+      - ckpts/vggt-slam/vggt-1b/model.pt
+      - ckpts/vggt-slam/dino_salad.ckpt
+      - thirdparty/dinov2
+    seeds: [0]
+    input_intrinsics: inferred
+    causal: false
+    metric_scale: false
+    parameters:
+      submap_size: 16
+      overlap: 1
+      max_loops: 1
+      conf_threshold: 25.0
+      dinov2_torchhub_checkpoint_index: 2
+      torchhub_checkpoint_indices: [2]
+
+  - id: vipe
+    family: vipe
+    display_name: ViPE
+    adapter: ego_video_camera.benchmark.workers.vipe:run
+    conda_env: worldsearcher
+    repo: thirdparty/ViPE
+    checkpoints:
+      - ckpts/vipe/da3metric-large/model.safetensors
+      - ckpts/droid-slam/droid.pth
+    seeds: [0]
+    input_intrinsics: provided
+    causal: false
+    metric_scale: true
+    parameters: {depth_model: dav3, optimize_intrinsics: false}
+
+  - id: reviv_512
+    family: reviv
+    display_name: ReViV-512
+    adapter: ego_video_camera.benchmark.workers.reviv:run
+    conda_env: reviv
+    repo: thirdparty/ReViV
+    checkpoints:
+      - ckpts/reviv/metric_depth/reviv_main.pth
+      - ckpts/reviv/metric_depth/reviv_tok_cam.pth
+      - ckpts/reviv/metric_depth/norm_stats/cam_mean.npy
+      - ckpts/reviv/metric_depth/norm_stats/cam_std.npy
+      - ckpts/reviv/cosmos/Cosmos-1.0-Tokenizer-DV8x16x16/encoder.jit
+    seeds: [0, 1, 2]
+    input_intrinsics: not_used
+    causal: false
+    metric_scale: true
+    parameters: {resolution: 512, rgb_frames: 32, window_sec: 2.0, overlap_sec: 1.0}
+
+  - id: egom2p
+    family: egom2p
+    display_name: EgoM2P
+    adapter: ego_video_camera.benchmark.workers.egom2p:run
+    conda_env: egom2p
+    repo: thirdparty/EgoM2P
+    checkpoints:
+      - ckpts/egom2p/checkpoint-main.pth
+      - ckpts/egom2p/checkpoint-cam.pth
+      - ckpts/egom2p/cosmos-tokenizer/encoder.jit
+    seeds: [0, 1, 2]
+    input_intrinsics: not_used
+    causal: false
+    metric_scale: true
+    parameters: {resolution: 256, rgb_frames: 16, window_sec: 2.0, overlap_sec: 1.0}
+
+  - id: droid_slam
+    family: droid_slam
+    display_name: DROID-SLAM
+    adapter: ego_video_camera.benchmark.workers.droid_slam:run
+    conda_env: droid_slam
+    repo: thirdparty/DROID-SLAM
+    checkpoints: [ckpts/droid-slam/droid.pth]
+    seeds: [0, 1, 2]
+    input_intrinsics: provided
+    causal: false
+    metric_scale: false
+    parameters: {buffer: 512, warmup: 8, filter_thresh: 2.4, keyframe_thresh: 4.0}
+
+  - id: orb_slam3
+    family: orb_slam3
+    display_name: ORB-SLAM3
+    adapter: ego_video_camera.benchmark.workers.orb_slam3:run
+    conda_env: worldsearcher
+    repo: thirdparty/ORB_SLAM3
+    checkpoints: [thirdparty/ORB_SLAM3/Vocabulary/ORBvoc.txt.tar.gz]
+    seeds: [0, 1, 2]
+    input_intrinsics: provided
+    causal: true
+    metric_scale: false
+    parameters: {executable: build/benchmark/orb_slam3_monocular, vocabulary_member: ORBvoc.txt}
+
+  - id: megasam
+    family: megasam
+    display_name: MegaSaM
+    adapter: ego_video_camera.benchmark.workers.megasam:run
+    conda_env: megasam
+    repo: thirdparty/MegaSaM
+    checkpoints:
+      - ckpts/mega-sam/megasam_final.pth
+      - ckpts/mega-sam/depth-anything-v1/checkpoints/depth_anything_vitl14.pth
+      - ckpts/mega-sam/unidepth-v2-vitl14/model.safetensors
+      - ckpts/mega-sam/raft-things.pth
+      # Shared local checkout; network torch.hub is disabled.
+      - thirdparty/dinov2
+    seeds: [0, 1, 2]
+    input_intrinsics: inferred
+    causal: false
+    metric_scale: true
+    parameters:
+      full_ba: true
+      optimize_intrinsics: true
+      dinov2_torchhub_checkpoint_index: 4
+      torchhub_checkpoint_indices: [4]
+
+  - id: hawor_camera
+    family: hawor
+    display_name: HaWoR camera module
+    adapter: ego_video_camera.benchmark.workers.hawor:run
+    conda_env: hawor
+    repo: thirdparty/HaWoR
+    checkpoints:
+      - ckpts/hawor/external/detector.pt
+      - ckpts/hawor/hawor/checkpoints/hawor.ckpt
+      - ckpts/hawor/hawor/checkpoints/infiller.pt
+      - ckpts/hawor/external/droid.pth
+      - ckpts/hawor/external/metric_depth_vit_large_800k.pth
+      - ckpts/MANO/MANO_LEFT.pkl
+      - ckpts/MANO/MANO_RIGHT.pkl
+    seeds: [0, 1, 2]
+    input_intrinsics: inferred
+    causal: false
+    metric_scale: true
+    parameters: {stage_at_target_fps: true, use_hand_masks: true}
+
+  - id: egoego_adapted
+    family: egoego
+    display_name: EgoEgo-adapted
+    adapter: ego_video_camera.benchmark.workers.egoego:run
+    conda_env: egoego
+    repo: thirdparty/EgoEgo
+    checkpoints:
+      - ckpts/egoego/stage1_gravitynet_2000.pt
+      - ckpts/egoego/stage1_headnet_ares_250.pt
+      - ckpts/droid-slam/droid.pth
+      - ckpts/mega-sam/raft-things.pth
+    seeds: [0, 1, 2]
+    input_intrinsics: provided
+    causal: false
+    metric_scale: true
+    parameters: {head_model: ares, gt_horizontal_alignment: false, raft_iterations: 20}
+
+  - id: da3_direct
+    family: da3
+    display_name: DA3 direct (ablation)
+    adapter: ego_video_camera.benchmark.workers.da3:run_direct
+    conda_env: worldsearcher
+    repo: thirdparty/Depth-Anything-3
+    checkpoints:
+      - ckpts/da3/DA3NESTED-GIANT-LARGE-1.1/config.json
+      - ckpts/da3/DA3NESTED-GIANT-LARGE-1.1/model.safetensors
+    seeds: [0]
+    input_intrinsics: inferred
+    causal: false
+    metric_scale: false
+    canonical: false
+    subset_from: ablation_subset
+    parameters: {ref_view_strategy: saddle_balanced}
+
+  - id: reviv_256
+    family: reviv
+    display_name: ReViV-256 (ablation)
+    adapter: ego_video_camera.benchmark.workers.reviv:run
+    conda_env: reviv
+    repo: thirdparty/ReViV
+    checkpoints:
+      - ckpts/reviv/reviv_500b/reviv_main.pth
+      - ckpts/reviv/reviv_500b/reviv_tok_cam.pth
+      - ckpts/reviv/reviv_500b/norm_stats/cam_mean.npy
+      - ckpts/reviv/reviv_500b/norm_stats/cam_std.npy
+      - ckpts/egom2p/cosmos-tokenizer/encoder.jit
+    seeds: [0, 1, 2]
+    input_intrinsics: not_used
+    causal: false
+    metric_scale: true
+    canonical: false
+    subset_from: ablation_subset
+    parameters: {resolution: 256, rgb_frames: 16, window_sec: 2.0, overlap_sec: 1.0}

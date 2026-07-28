@@ -250,7 +250,13 @@ def run_da3_streaming(
     chunk_size: int = 60,
     overlap: int = 30,
     confidence_threshold: float = 1.5,
+    output_pose_basis: str = "egobody_pv",
 ) -> dict:
+    if output_pose_basis not in {"egobody_pv", "opencv"}:
+        raise ValueError(
+            "output_pose_basis must be 'egobody_pv' or 'opencv', got "
+            f"{output_pose_basis!r}"
+        )
     if not torch.cuda.is_available():
         raise RuntimeError("Real DA3 inference requires a CUDA GPU; use mock mode on this CPU host")
     if len(image_paths) != len(frame_ids) or len(image_paths) != len(timestamps):
@@ -282,6 +288,7 @@ def run_da3_streaming(
             "effective_overlap": effective_overlap,
             "loop_closure": False,
             "confidence_threshold": confidence_threshold,
+            "output_pose_basis": output_pose_basis,
             "input_count": len(staged),
         },
     )
@@ -292,44 +299,62 @@ def run_da3_streaming(
         raise RuntimeError(
             f"DA3 returned {len(official_c2w)} poses for {len(image_paths)} images"
         )
-    egobody_pv_c2w = da3_streaming_c2w_to_egobody_pv(official_c2w)
+    if output_pose_basis == "egobody_pv":
+        downstream_c2w = da3_streaming_c2w_to_egobody_pv(official_c2w)
+        downstream_convention = POSE_CONVENTION
+    else:
+        downstream_c2w = official_c2w
+        downstream_convention = OFFICIAL_STITCHED_POSE_CONVENTION
     records = []
     confidence_values = _read_confidence_medians(
         output / "da3_streaming", runner.chunk_indices, len(image_paths)
     )
-    for index, (official_pose, egobody_pv_pose, intrinsic) in enumerate(
-        zip(official_c2w, egobody_pv_c2w, intrinsics)
+    for index, (official_pose, downstream_pose, intrinsic) in enumerate(
+        zip(official_c2w, downstream_c2w, intrinsics)
     ):
         normalized_confidence = (
             float(confidence_values[index]) if np.isfinite(confidence_values[index]) else None
         )
         valid = bool(
-            np.isfinite(egobody_pv_pose).all()
+            np.isfinite(downstream_pose).all()
             and normalized_confidence is not None
             and normalized_confidence >= confidence_threshold
         )
-        records.append(
-            {
-                "frame_id": int(frame_ids[index]),
-                "timestamp": int(timestamps[index]),
-                "source_image": str(Path(image_paths[index]).resolve()),
-                "raw_extrinsics": invert_pose(official_pose),
-                "raw_extrinsics_convention": (
-                    "world-to-camera inverse of official_stitched_c2w"
-                ),
-                "stitched_c2w": official_pose,
-                "stitched_c2w_convention": OFFICIAL_STITCHED_POSE_CONVENTION,
-                "egobody_pv_c2w": egobody_pv_pose,
-                "egobody_pv_w2c": invert_pose(egobody_pv_pose),
-                "predicted_intrinsics": intrinsic,
-                "confidence_raw_median": None if normalized_confidence is None else normalized_confidence + 1.0,
-                "confidence_normalized_median": normalized_confidence,
-                "low_confidence": normalized_confidence is None or normalized_confidence < confidence_threshold,
-                "valid": valid,
-                "interpolated": False,
-                "pose_convention": POSE_CONVENTION,
-            }
-        )
+        record = {
+            "frame_id": int(frame_ids[index]),
+            "timestamp": int(timestamps[index]),
+            "source_image": str(Path(image_paths[index]).resolve()),
+            "raw_extrinsics": invert_pose(official_pose),
+            "raw_extrinsics_convention": (
+                "world-to-camera inverse of official_stitched_c2w"
+            ),
+            "stitched_c2w": official_pose,
+            "stitched_c2w_convention": OFFICIAL_STITCHED_POSE_CONVENTION,
+            "c2w": downstream_pose,
+            "w2c": invert_pose(downstream_pose),
+            "predicted_intrinsics": intrinsic,
+            "confidence_raw_median": (
+                None
+                if normalized_confidence is None
+                else normalized_confidence + 1.0
+            ),
+            "confidence_normalized_median": normalized_confidence,
+            "low_confidence": (
+                normalized_confidence is None
+                or normalized_confidence < confidence_threshold
+            ),
+            "valid": valid,
+            "interpolated": False,
+            "pose_convention": downstream_convention,
+        }
+        if output_pose_basis == "egobody_pv":
+            record.update(
+                {
+                    "egobody_pv_c2w": downstream_pose,
+                    "egobody_pv_w2c": invert_pose(downstream_pose),
+                }
+            )
+        records.append(record)
     config_json = json.loads((checkpoint / "config.json").read_text(encoding="utf-8"))
     metadata = {
         "model_name": config_json.get("model_name"),
@@ -345,25 +370,35 @@ def run_da3_streaming(
         "effective_window_overlap": effective_overlap,
         "loop_closure": False,
         "input_count": len(staged),
-        "pose_convention": POSE_CONVENTION,
+        "pose_convention": downstream_convention,
         "official_stitched_pose_convention": OFFICIAL_STITCHED_POSE_CONVENTION,
-        "camera_basis_change_right_multiply": DA3_STREAMING_TO_EGOBODY_PV_CAMERA,
+        "output_pose_basis": output_pose_basis,
+        "camera_basis_change_right_multiply": (
+            DA3_STREAMING_TO_EGOBODY_PV_CAMERA
+            if output_pose_basis == "egobody_pv"
+            else None
+        ),
         "records": records,
     }
     write_json(output / "da3_poses_raw.json", metadata)
-    np.savez_compressed(
-        output / "da3_poses_raw.npz",
-        c2w=official_c2w,
-        w2c=np.asarray([invert_pose(pose) for pose in official_c2w]),
-        c2w_egobody_pv=egobody_pv_c2w,
-        w2c_egobody_pv=np.asarray(
-            [invert_pose(pose) for pose in egobody_pv_c2w]
-        ),
-        intrinsics=intrinsics,
-        confidence=confidence_values,
-        frame_ids=np.asarray(frame_ids),
-        timestamps=np.asarray(timestamps),
-    )
+    arrays = {
+        "c2w": official_c2w,
+        "w2c": np.asarray([invert_pose(pose) for pose in official_c2w]),
+        "intrinsics": intrinsics,
+        "confidence": confidence_values,
+        "frame_ids": np.asarray(frame_ids),
+        "timestamps": np.asarray(timestamps),
+    }
+    if output_pose_basis == "egobody_pv":
+        arrays.update(
+            {
+                "c2w_egobody_pv": downstream_c2w,
+                "w2c_egobody_pv": np.asarray(
+                    [invert_pose(pose) for pose in downstream_c2w]
+                ),
+            }
+        )
+    np.savez_compressed(output / "da3_poses_raw.npz", **arrays)
     del runner
     gc.collect()
     torch.cuda.empty_cache()

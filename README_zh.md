@@ -1,5 +1,9 @@
 # EgoBody + DA3 Ego/Exo 位姿 Demo
 
+DROID/RH20T 机器人腕部 RGB 的独立 DA3-Streaming 入口、固定 7 段选择、
+exo 数据准备和 GPU 命令见 [DA3 机器人交互 Ego/Exo Demo](docs/robot_interaction_da3_demo_zh.md)。
+该入口使用 `run_robot_demo.sh`，不会改变下述 EgoBody 入口和产物。
+
 本仓库从 EgoBody 的 egocentric RGB 估计 DA3 相机轨迹，并把 GT 与 DA3 结果分别投影到同一张、未经去畸变的 master Kinect RGB 上。最终视频为 1920×1080 三联画：左侧 Ego RGB，右上仅显示绿色 GT，右下仅显示橙色 DA3。
 
 面向“彩色、非鱼眼、机器人 ego 优先”的下一轮数据集、模型微调和统一评测设计，见 [彩色透视 Ego Video 位姿估计实验报告](docs/ego_pose_rgb_pinhole_finetune_report_zh.md)。该报告同时审计了现有 `core65` 的鱼眼/灰度偏差、当前仅有 DA3 可运行的问题，以及最新 ReViV 的微调方案。

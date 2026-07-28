@@ -170,6 +170,7 @@ activemq-data/
 
 # Evaluation checkpoints are large local artifacts.
 ckpts/
+thirdparty/dinov2/
 
 .venv
 env/

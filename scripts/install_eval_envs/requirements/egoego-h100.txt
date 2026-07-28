@@ -1,0 +1,13 @@
+numpy==1.26.4
+opencv-python-headless==4.11.0.86
+scipy
+scikit-learn
+scikit-image
+joblib
+imageio==2.19.3
+imageio-ffmpeg==0.4.7
+trimesh
+einops==0.4.1
+evo
+tqdm
+smplx==0.1.28

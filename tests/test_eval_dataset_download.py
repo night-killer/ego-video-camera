@@ -1,3 +1,4 @@
+import hashlib
 import io
 import json
 import tarfile
@@ -8,8 +9,11 @@ import numpy as np
 import pytest
 import yaml
 
+import ego_video_camera.eval_dataset_download as eval_dataset_download
 from ego_video_camera.eval_dataset_download import (
+    DatasetDownloadError,
     _crop_egobody_gaze_member,
+    _download_stera_file,
     _hot3d_data_groups,
     _index_egobody_color_archive,
     _normalize_incrowd_xyzw_trajectory,
@@ -283,6 +287,72 @@ def test_stera_pose_is_converted_from_link_to_rgb_optical_frame():
     np.testing.assert_allclose(result[:3, :3], rotation_optical_to_link)
     np.testing.assert_allclose(result[:3, 3], translation_world)
     np.testing.assert_allclose(result[3], [0, 0, 0, 1])
+
+
+def test_stera_download_is_revision_pinned_and_authenticated(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    payload = b"frozen-stera-source"
+    revision = "a" * 40
+    destination = tmp_path / "source" / "rgb.mp4"
+    observed = {}
+
+    monkeypatch.setattr("huggingface_hub.get_token", lambda: "approved-token")
+
+    def fake_download(url, path, **kwargs):
+        observed.update(url=url, path=path, kwargs=kwargs)
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(payload)
+        return path
+
+    monkeypatch.setattr(eval_dataset_download, "download_https", fake_download)
+    result = _download_stera_file(
+        {"repository": "fpvlabs/stera-10m", "revision": revision},
+        "session_data_test",
+        "rgb.mp4",
+        {
+            "bytes": len(payload),
+            "sha256": hashlib.sha256(payload).hexdigest(),
+        },
+        destination,
+    )
+
+    assert result.read_bytes() == payload
+    assert observed["url"] == (
+        "https://huggingface.co/datasets/fpvlabs/stera-10m/resolve/"
+        f"{revision}/session_data_test/rgb.mp4?download=true"
+    )
+    assert observed["kwargs"]["request_headers"] == {
+        "Authorization": "Bearer approved-token"
+    }
+    assert observed["kwargs"]["trust_env"] is False
+
+
+def test_stera_download_rejects_hash_mismatch(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+):
+    destination = tmp_path / "rgb.mp4"
+    attempts = 0
+    monkeypatch.setattr("huggingface_hub.get_token", lambda: "approved-token")
+
+    def fake_download(url, path, **kwargs):
+        nonlocal attempts
+        attempts += 1
+        path.write_bytes(b"wrong")
+        return path
+
+    monkeypatch.setattr(eval_dataset_download, "download_https", fake_download)
+    with pytest.raises(DatasetDownloadError, match="size/hash mismatch"):
+        _download_stera_file(
+            {"repository": "fpvlabs/stera-10m", "revision": "b" * 40},
+            "session_data_test",
+            "rgb.mp4",
+            {"bytes": 5, "sha256": hashlib.sha256(b"right").hexdigest()},
+            destination,
+        )
+
+    assert attempts == 2
+    assert not destination.exists()
 
 
 def test_rh20t_hand_eye_transform_outputs_camera_to_aligned_base():

@@ -34,6 +34,26 @@ datasets:
       timestamp_dataset: observation/timestamp/cameras/{serial}_estimated_capture
       pose_format: "tx ty tz rx ry rz; Euler xyz radians"
       pose_direction: camera_to_robot_base
+    demo_exo:
+      sync_tolerance_ms: 50
+      minimum_synchronized_ratio: 0.95
+      minimum_projection_inside_ratio: 0.70
+      camera_selection: maximum_projection_inside_ratio_then_border_margin
+      sequences:
+        AUTOLab+44bb9c36+2023-11-25-10h-11m-14s:
+          serial: "24400334"
+          video_bytes: 33151952
+        IPRL+7790ec0a+2023-04-19-17h-53m-26s:
+          serial: "28221883"
+          video_bytes: 19342385
+        REAL+abf65a9e+2023-04-06-14h-26m-59s:
+          serial: "23960472"
+          excluded: true
+          maximum_translation_span_m: 0.01
+          reason: "Projection inside ratio is zero and the wrist trajectory is degenerate"
+        WEIRD+30c3da59+2024-01-08-17h-59m-55s:
+          serial: "23804457"
+          video_bytes: 22226367
     clips:
       - sequence: AUTOLab+44bb9c36+2023-11-25-10h-11m-14s
         lab: AUTOLab
@@ -174,6 +194,40 @@ datasets:
         - [0, -1, 0, 0]
         - [0, 0, 1, 0]
         - [0, 0, 0, 1]
+    demo_exo:
+      serial: "f0172289"
+      source_resolution: [1280, 720]
+      sync_tolerance_ms: 50
+      minimum_synchronized_ratio: 0.95
+      minimum_projection_inside_ratio: 0.70
+      camera_selection: maximum_minimum_border_margin_across_selected_clips
+      # Demo-only scenes with complete f0172289 video/timestamps and valid projection.
+      # The base `clips` list below remains the frozen 4-clip RGB evaluation subset.
+      clips:
+        - sequence: task_0012_user_0010_scene_0008_cfg_0003
+          task: task_0012
+          start_s: 10.5
+          duration_s: 15
+          stratum: f0172289_valid_scene_0008
+          selection_note: synchronized/inside ratio 0.960; 3s prefix translation span 0.115m
+        - sequence: task_0015_user_0010_scene_0005_cfg_0003
+          task: task_0015
+          start_s: 11.5
+          duration_s: 15
+          stratum: f0172289_valid_scene_0005
+          selection_note: synchronized/inside ratio 0.9533; 3s prefix translation span 0.249m
+        - sequence: task_0016_user_0010_scene_0009_cfg_0003
+          task: task_0016
+          start_s: 5.7
+          duration_s: 15
+          stratum: f0172289_valid_scene_0009
+          selection_note: synchronized/inside ratio 0.9533; 3s prefix translation span 0.145m
+        - sequence: task_0017_user_0010_scene_0002_cfg_0003
+          task: task_0017
+          start_s: 10.6
+          duration_s: 15
+          stratum: f0172289_valid_scene_0002
+          selection_note: synchronized/inside ratio 0.960; 3s prefix translation span 0.202m
     clip_count: 4
     duration_seconds: 60
     clips:

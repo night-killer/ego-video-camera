@@ -1,0 +1,52 @@
+data_root: data/ego_pose_eval_robot_interaction_rgb
+output_root: outputs/robot_interaction_da3_demo
+dataset_plan: configs/ego_pose_eval_robot_interaction_rgb.yaml
+datasets: [droid_wrist, rh20t_wrist]
+sequence_ids: []
+
+runtime:
+  python_path: /data/aigc/cyb/zxgu/env/worldsearcher/bin/python
+  ffmpeg_path: /data/aigc/cyb/zxgu/env/worldsearcher/bin/ffmpeg
+  ffprobe_path: /data/aigc/cyb/zxgu/env/worldsearcher/bin/ffprobe
+  device: cuda
+  cpu_mock_mode: false
+
+da3:
+  source_root: thirdparty/Depth-Anything-3
+  checkpoint_path: /data/aigc/cyb/zxgu/ckpt/DA3NESTED-GIANT-LARGE
+  checkpoint_status: user_validated_local
+  use_ray_pose: true
+  sample_fps: 10
+  input_resolution: 504
+  streaming: true
+  window_size: 60
+  window_overlap: 30
+  loop_closure: false
+  confidence_threshold: 1.5
+  interpolate_invalid: false
+  pose_basis: opencv_right_down_forward
+
+clip:
+  calibration_prefix_sec: 3
+  maximum_prefix_ratio: 0.30
+  sync_tolerance_ms: 50
+
+alignment:
+  modes: [sim3_prefix, sim3_full, se3_full]
+  minimum_translation_span_m: 0.10
+  minimum_rank_ratio: 0.001
+
+visualization:
+  canvas_width: 1920
+  canvas_height: 1080
+  axis_length_m: 0.20
+  trajectory_history_sec: 5
+  render_axes: true
+  render_trajectory: true
+  render_confidence: true
+  render_errors: true
+
+video:
+  codec: libx264
+  pixel_format: yuv420p
+  faststart: true

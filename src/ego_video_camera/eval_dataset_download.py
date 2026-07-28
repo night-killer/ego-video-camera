@@ -103,6 +103,7 @@ class DownloadContext:
     hot3d_downloader: Path | None
     rh20t_archive: Path | None
     archive_tool: str
+    robot_with_exo: bool = False
 
 
 def _write_json(path: Path, payload: Any) -> None:
@@ -1941,10 +1942,10 @@ def download_droid_wrist(ctx: DownloadContext) -> list[dict[str, Any]]:
             records.append(record)
             success = True
         finally:
-            if success and not ctx.keep_source:
+            if success and not ctx.keep_source and not ctx.robot_with_exo:
                 trajectory_path.unlink(missing_ok=True)
                 video_path.unlink(missing_ok=True)
-    if not ctx.keep_source:
+    if not ctx.keep_source and not ctx.robot_with_exo:
         intrinsics_path.unlink(missing_ok=True)
         if cache_root.exists():
             _remove_owned_eval_cache(cache_root, ctx.data_root)
@@ -2822,7 +2823,9 @@ def download_stera10m(ctx: DownloadContext) -> list[dict[str, Any]]:
     return records
 
 
-def _rh20t_scene_members(dataset: dict[str, Any]) -> set[str]:
+def _rh20t_scene_members(
+    dataset: dict[str, Any], *, include_robot_exo: bool = False
+) -> set[str]:
     archive_root = str(dataset["archive_root"])
     members: set[str] = set()
     for clip in dataset["clips"]:
@@ -2836,11 +2839,26 @@ def _rh20t_scene_members(dataset: dict[str, Any]) -> set[str]:
                 f"{base}/transformed/tcp_base.npy",
             }
         )
+        if include_robot_exo:
+            serial = str(dataset["demo_exo"]["serial"])
+            members.update(
+                {
+                    f"{base}/cam_{serial}/color.mp4",
+                    f"{base}/cam_{serial}/timestamps.npy",
+                }
+            )
     return members
 
 
-def _rh20t_stage_is_complete(stage_root: Path, dataset: dict[str, Any]) -> bool:
-    for name in _rh20t_scene_members(dataset):
+def _rh20t_stage_is_complete(
+    stage_root: Path,
+    dataset: dict[str, Any],
+    *,
+    include_robot_exo: bool = False,
+) -> bool:
+    for name in _rh20t_scene_members(
+        dataset, include_robot_exo=include_robot_exo
+    ):
         path = stage_root / PurePosixPath(name)
         if not path.is_file() or path.stat().st_size <= 0:
             return False
@@ -2870,14 +2888,20 @@ def _stage_rh20t_archive(
     stage_root: Path,
     dataset: dict[str, Any],
     data_root: Path,
+    *,
+    include_robot_exo: bool = False,
 ) -> Path:
-    if _rh20t_stage_is_complete(stage_root, dataset):
+    if _rh20t_stage_is_complete(
+        stage_root, dataset, include_robot_exo=include_robot_exo
+    ):
         return stage_root / str(dataset["archive_root"])
     if stage_root.exists():
         _remove_owned_eval_cache(stage_root, data_root)
     stage_root.mkdir(parents=True, exist_ok=True)
     archive_root = str(dataset["archive_root"])
-    required = _rh20t_scene_members(dataset)
+    required = _rh20t_scene_members(
+        dataset, include_robot_exo=include_robot_exo
+    )
     found: set[str] = set()
     calibration_pattern = re.compile(
         rf"^{re.escape(archive_root)}/calib/[^/]+/"
@@ -2920,7 +2944,9 @@ def _stage_rh20t_archive(
         raise DatasetDownloadError(
             f"RH20T archive lacks selected scene members: {sorted(missing)}"
         )
-    if not _rh20t_stage_is_complete(stage_root, dataset):
+    if not _rh20t_stage_is_complete(
+        stage_root, dataset, include_robot_exo=include_robot_exo
+    ):
         raise DatasetDownloadError(
             "RH20T selected scenes reference missing calibration arrays"
         )
@@ -3242,7 +3268,9 @@ def download_rh20t_wrist(ctx: DownloadContext) -> list[dict[str, Any]]:
         return [record for record in expected_records if record is not None]
 
     archive_path: Path | None = None
-    if not _rh20t_stage_is_complete(stage_root, dataset):
+    if not _rh20t_stage_is_complete(
+        stage_root, dataset, include_robot_exo=ctx.robot_with_exo
+    ):
         if ctx.rh20t_archive is not None:
             archive_path = ctx.rh20t_archive
             if not archive_path.is_file():
@@ -3266,7 +3294,11 @@ def download_rh20t_wrist(ctx: DownloadContext) -> list[dict[str, Any]]:
                 f"RH20T cfg3 archive SHA-256 mismatch: {actual_archive_sha256}"
             )
         archive_root = _stage_rh20t_archive(
-            archive_path, stage_root, dataset, ctx.data_root
+            archive_path,
+            stage_root,
+            dataset,
+            ctx.data_root,
+            include_robot_exo=ctx.robot_with_exo,
         )
     else:
         archive_root = stage_root / str(dataset["archive_root"])
@@ -3450,7 +3482,12 @@ def download_rh20t_wrist(ctx: DownloadContext) -> list[dict[str, Any]]:
             records.append(record)
         completed = len(records) == len(dataset["clips"])
     finally:
-        if completed and not ctx.keep_source and cache_root.exists():
+        if (
+            completed
+            and not ctx.keep_source
+            and not ctx.robot_with_exo
+            and cache_root.exists()
+        ):
             _remove_owned_eval_cache(cache_root, ctx.data_root)
     return records
 
@@ -4338,6 +4375,20 @@ def execute_download(ctx: DownloadContext, names: Iterable[str]) -> dict[str, An
         started = time.time()
         try:
             records = DOWNLOADERS[name](ctx)
+            if ctx.robot_with_exo and name in {"droid_wrist", "rh20t_wrist"}:
+                # Lazy import keeps the generic downloader independent of the
+                # optional robot demo preparation layer.
+                from .robot_exo import prepare_robot_exo
+
+                prepare_robot_exo(
+                    ctx.plan,
+                    ctx.data_root,
+                    ctx.ffmpeg,
+                    workers=ctx.workers,
+                    keep_source=ctx.keep_source,
+                    rh20t_archive=ctx.rh20t_archive,
+                    datasets=(name,),
+                )
             state = {
                 "status": "complete",
                 "elapsed_s": round(time.time() - started, 3),
@@ -4431,8 +4482,13 @@ def _verify_strict_rgb_clip(
 
 
 def verify_download(
-    plan: dict[str, Any], data_root: Path, names: Iterable[str]
+    plan: dict[str, Any],
+    data_root: Path,
+    names: Iterable[str],
+    *,
+    robot_with_exo: bool = False,
 ) -> dict[str, Any]:
+    names = tuple(names)
     result: dict[str, Any] = {"datasets": {}, "ok": True}
     for name in names:
         dataset = plan["datasets"][name]
@@ -4515,6 +4571,16 @@ def verify_download(
         result["datasets"][name] = status
         if missing:
             result["ok"] = False
+    if robot_with_exo:
+        robot_names = tuple(
+            name for name in names if name in {"droid_wrist", "rh20t_wrist"}
+        )
+        if robot_names:
+            from .robot_exo import verify_robot_exo
+
+            robot_report = verify_robot_exo(plan, data_root, robot_names)
+            result["robot_exo"] = robot_report
+            result["ok"] = bool(result["ok"] and robot_report["ok"])
     return result
 
 
@@ -4575,6 +4641,14 @@ def build_parser(default_plan: Path) -> argparse.ArgumentParser:
         action="store_true",
         help="Also fetch synchronized master-Kinect RGB for selected EgoBody frames",
     )
+    parser.add_argument(
+        "--robot-with-exo",
+        action="store_true",
+        help=(
+            "Also prepare the fixed synchronized exterior-camera streams for the "
+            "DROID/RH20T robot demo"
+        ),
+    )
     parser.add_argument("--adt-cdn-file", type=Path)
     parser.add_argument("--hot3d-cdn-file", type=Path)
     parser.add_argument("--hot3d-downloader", type=Path)
@@ -4621,7 +4695,12 @@ def main(argv: list[str] | None = None) -> int:
             print("Dry-run: no network requests or filesystem writes were made.")
         return 0
     if args.action == "verify":
-        report = verify_download(plan, args.data_root.resolve(), names)
+        report = verify_download(
+            plan,
+            args.data_root.resolve(),
+            names,
+            robot_with_exo=args.robot_with_exo,
+        )
         print(json.dumps(report, indent=2, ensure_ascii=False))
         return 0 if report["ok"] else 2
     ffmpeg = _resolve_executable(args.ffmpeg)
@@ -4663,6 +4742,7 @@ def main(argv: list[str] | None = None) -> int:
         ),
         accept_egobody_license=args.accept_egobody_license,
         egobody_with_exo=args.egobody_with_exo,
+        robot_with_exo=args.robot_with_exo,
         adt_cdn_file=args.adt_cdn_file.resolve() if args.adt_cdn_file else None,
         hot3d_cdn_file=(
             args.hot3d_cdn_file.resolve() if args.hot3d_cdn_file else None
