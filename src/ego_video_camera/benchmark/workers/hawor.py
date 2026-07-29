@@ -118,6 +118,23 @@ def run(context: WorkerContext):
     with np.load(slam_path, allow_pickle=False) as result:
         vectors = np.asarray(result["traj"], dtype=np.float64)
         scale = float(np.asarray(result["scale"]).reshape(-1)[0])
+        scale_source = (
+            str(np.asarray(result["scale_source"]).reshape(-1)[0])
+            if "scale_source" in result.files
+            else "legacy"
+        )
+        scale_sample_count = (
+            int(np.asarray(result["scale_sample_count"]).reshape(-1)[0])
+            if "scale_sample_count" in result.files
+            else -1
+        )
+        coarse_disparity_fallback_count = (
+            int(
+                np.asarray(result["coarse_disparity_fallback_count"]).reshape(-1)[0]
+            )
+            if "coarse_disparity_fallback_count" in result.files
+            else 0
+        )
     if vectors.shape != (len(context.frames), 7):
         raise ValueError(
             f"HaWoR returned trajectory {vectors.shape}, expected {(len(context.frames), 7)}"
@@ -130,6 +147,9 @@ def run(context: WorkerContext):
             "target_fps_frames_staged_directly": True,
             "hand_masks_used": bool(context.parameters.get("use_hand_masks", True)),
             "metric_scale": scale,
+            "metric_scale_source": scale_source,
+            "metric_scale_sample_count": scale_sample_count,
+            "coarse_disparity_fallback_count": coarse_disparity_fallback_count,
             "native_output": str(slam_path),
         },
     )

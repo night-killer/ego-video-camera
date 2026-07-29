@@ -5,7 +5,7 @@ import os
 import shutil
 from collections import Counter
 from pathlib import Path
-from typing import Any, Callable, Iterable, Sequence
+from typing import Any, Callable, Iterable, Mapping, Sequence
 
 from ..serialization import read_json, write_json
 from .registry import load_frames, write_worker_manifest
@@ -40,14 +40,22 @@ def worker_command(
     manifest_path: Path,
     *,
     conda_executable: str = "conda",
+    conda_prefix: Path | None = None,
 ) -> list[str]:
+    python_command = (
+        [str(conda_prefix / "bin" / "python")]
+        if conda_prefix is not None
+        else [
+            conda_executable,
+            "run",
+            "-n",
+            run.method.conda_env,
+            "--no-capture-output",
+            "python",
+        ]
+    )
     command = [
-        conda_executable,
-        "run",
-        "-n",
-        run.method.conda_env,
-        "--no-capture-output",
-        "python",
+        *python_command,
         "-m",
         "ego_video_camera.benchmark.worker",
         "--manifest",
@@ -62,6 +70,21 @@ def worker_command(
     for checkpoint in run.method.checkpoint_paths:
         command.extend(("--checkpoint", str(checkpoint)))
     return command
+
+
+def _conda_environment_prefix(
+    environment: Mapping[str, str], conda_env: str
+) -> Path | None:
+    roots = environment.get("CONDA_ENVS_PATH", "")
+    return next(
+        (
+            Path(root).expanduser().resolve() / conda_env
+            for root in roots.split(os.pathsep)
+            if root
+            and (Path(root).expanduser() / conda_env / "conda-meta").is_dir()
+        ),
+        None,
+    )
 
 
 def _read_optional(path: Path) -> dict[str, Any] | None:
@@ -156,15 +179,7 @@ def _clear_attempt_outputs(run: RunSpec) -> None:
 def _prepend_conda_runtime_libraries(
     environment: dict[str, str], conda_env: str
 ) -> None:
-    roots = environment.get("CONDA_ENVS_PATH", "")
-    prefix = next(
-        (
-            Path(root).expanduser() / conda_env
-            for root in roots.split(os.pathsep)
-            if root and (Path(root).expanduser() / conda_env / "conda-meta").is_dir()
-        ),
-        None,
-    )
+    prefix = _conda_environment_prefix(environment, conda_env)
     if prefix is None:
         return
 
@@ -190,10 +205,8 @@ def _environment(config: dict[str, Any], run: RunSpec) -> dict[str, str]:
     environment = os.environ.copy()
     repo_root = Path(config["_repo_root"])
     source = str(repo_root / "src")
-    existing_pythonpath = environment.get("PYTHONPATH")
-    environment["PYTHONPATH"] = (
-        source if not existing_pythonpath else os.pathsep.join((source, existing_pythonpath))
-    )
+    environment.pop("PYTHONHOME", None)
+    environment["PYTHONPATH"] = source
     environment.update(
         {
             "CUDA_VISIBLE_DEVICES": str(config["benchmark"].get("gpu", 0)),
@@ -201,8 +214,16 @@ def _environment(config: dict[str, Any], run: RunSpec) -> dict[str, str]:
             "HF_HUB_OFFLINE": "1",
             "TOKENIZERS_PARALLELISM": "false",
             "PYTHONUNBUFFERED": "1",
+            "PYTHONNOUSERSITE": "1",
         }
     )
+    prefix = _conda_environment_prefix(environment, run.method.conda_env)
+    if prefix is not None:
+        environment["CONDA_PREFIX"] = str(prefix)
+        environment["CONDA_DEFAULT_ENV"] = run.method.conda_env
+        environment["PATH"] = os.pathsep.join(
+            (str(prefix / "bin"), environment.get("PATH", ""))
+        )
     _prepend_conda_runtime_libraries(environment, run.method.conda_env)
     temporary = run.output_dir / "work" / "tmp"
     temporary.mkdir(parents=True, exist_ok=True)
@@ -235,7 +256,10 @@ def execute_runs(
     conda = shutil.which("conda") or "conda"
     if command_builder is None:
         command_builder = lambda run, manifest: worker_command(
-            run, manifest, conda_executable=conda
+            run,
+            manifest,
+            conda_executable=conda,
+            conda_prefix=_conda_environment_prefix(os.environ, run.method.conda_env),
         )
     if dry_run:
         commands = []

@@ -12,6 +12,7 @@ from typing import Any, Iterable
 
 import numpy as np
 
+from ..openloris import DEFAULT_COLOR_CAMERA, read_camera_intrinsics
 from ..serialization import write_json
 from .schema import FrameRecord, MethodSpec, SequenceRecord
 
@@ -108,7 +109,7 @@ def _camera_json(sequence: SequenceRecord) -> tuple[Path | None, dict[str, Any]]
     return None, {}
 
 
-def _intrinsics(sequence: SequenceRecord, frame_count: int) -> np.ndarray | None:
+def sequence_intrinsics(sequence: SequenceRecord, frame_count: int) -> np.ndarray | None:
     if sequence.dataset_id == "princeton365":
         paths = sorted((sequence.clip_dir / "reference").glob("*.user_camera_mtx.npy"))
         if not paths:
@@ -121,6 +122,32 @@ def _intrinsics(sequence: SequenceRecord, frame_count: int) -> np.ndarray | None
             [
                 [camera["fx"], 0.0, camera["cx"]],
                 [0.0, camera["fy"], camera["cy"]],
+                [0.0, 0.0, 1.0],
+            ],
+            dtype=np.float64,
+        )
+        return np.repeat(matrix[None], frame_count, axis=0)
+    if sequence.dataset_id == "openloris_office":
+        calibration_path = sequence.clip_dir / "reference" / "sensors.yaml"
+        if not calibration_path.is_file():
+            return None
+        calibration = read_camera_intrinsics(
+            calibration_path, str(camera.get("camera_key", DEFAULT_COLOR_CAMERA))
+        )
+        expected_size = (
+            int(calibration["source_calibration_width"]),
+            int(calibration["source_calibration_height"]),
+        )
+        actual_size = (int(camera.get("width", -1)), int(camera.get("height", -1)))
+        if actual_size != expected_size:
+            raise ValueError(
+                f"{sequence.key} camera size {actual_size} does not match "
+                f"calibration size {expected_size}"
+            )
+        matrix = np.asarray(
+            [
+                [calibration["fx"], 0.0, calibration["cx"]],
+                [0.0, calibration["fy"], calibration["cy"]],
                 [0.0, 0.0, 1.0],
             ],
             dtype=np.float64,
@@ -212,7 +239,7 @@ def load_frames(
             f"{sequence.key} has {len(paths)} frames, expected {sequence.frame_count}"
         )
     timestamps = _timestamp_ns(rows, sequence.target_fps)
-    intrinsics = _intrinsics(sequence, len(rows))
+    intrinsics = sequence_intrinsics(sequence, len(rows))
     frames = []
     for index, (row, path) in enumerate(zip(rows, paths)):
         if materialize and not path.is_file():

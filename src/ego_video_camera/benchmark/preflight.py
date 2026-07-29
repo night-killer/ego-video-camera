@@ -6,7 +6,11 @@ import subprocess
 from pathlib import Path
 from typing import Any, Iterable
 
+import numpy as np
+
+from .registry import sequence_intrinsics
 from .schema import MethodSpec, SequenceRecord
+from .workers.vggt_omega import validate_image_resolution
 
 
 def _conda_environments() -> tuple[set[str], str | None]:
@@ -56,6 +60,23 @@ def preflight_report(
         add("tool", "conda", False, conda_error)
     for method in method_list:
         add("repository", method.repo, method.repo.is_dir(), method.method_id)
+        if method.family == "vggt_omega":
+            try:
+                resolution = validate_image_resolution(method.parameters)
+            except (TypeError, ValueError) as error:
+                add(
+                    "method_parameter",
+                    f"{method.method_id}.image_resolution",
+                    False,
+                    str(error),
+                )
+            else:
+                add(
+                    "method_parameter",
+                    f"{method.method_id}.image_resolution",
+                    True,
+                    f"validated at {resolution}",
+                )
         for checkpoint in method.checkpoint_paths:
             add("checkpoint", checkpoint, checkpoint.exists(), method.method_id)
         for index in method.parameters.get("torchhub_checkpoint_indices", []):
@@ -91,6 +112,27 @@ def preflight_report(
     for sequence in sequence_list:
         add("input", sequence.input_path, sequence.input_path.exists(), sequence.key)
         add("metadata", sequence.clip_json, sequence.clip_json.is_file(), sequence.key)
+        required_by = sorted(
+            method.method_id
+            for method in method_list
+            if method.input_intrinsics == "provided"
+            and (not method.subset or sequence.key in method.subset)
+        )
+        if required_by:
+            try:
+                intrinsics = sequence_intrinsics(sequence, sequence.frame_count)
+                ok = bool(
+                    intrinsics is not None
+                    and intrinsics.shape == (sequence.frame_count, 3, 3)
+                    and np.isfinite(intrinsics).all()
+                )
+                detail = f"required by {', '.join(required_by)}"
+                if not ok:
+                    detail = f"intrinsics unavailable; {detail}"
+            except (OSError, TypeError, ValueError) as error:
+                ok = False
+                detail = f"required by {', '.join(required_by)}: {error}"
+            add("intrinsics", sequence.key, ok, detail)
     failed = [check for check in checks if not check["ok"]]
     return {
         "schema_version": 1,

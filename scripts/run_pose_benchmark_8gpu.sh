@@ -213,17 +213,25 @@ done
 PIDS=()
 
 log "reconciling the full matrix on GPU ${GPUS[0]} (${SHARD_FAILURES} failed shards)"
+RECONCILE_STATUS=0
 "${PYTHON}" "${RUNNER}" \
   --config "${SHARD_DIR}/config-0.yaml" run --resume \
-  > "${OUTPUT_ROOT}/reconcile.console.json"
+  > "${OUTPUT_ROOT}/reconcile.console.json" || RECONCILE_STATUS=$?
 
 log "evaluating completed predictions"
+EVALUATE_STATUS=0
 "${PYTHON}" "${RUNNER}" \
   --config "${CONFIG}" --output-root "${OUTPUT_ROOT}" evaluate --resume \
-  > "${OUTPUT_ROOT}/evaluate.console.json"
+  > "${OUTPUT_ROOT}/evaluate.console.json" || EVALUATE_STATUS=$?
 
 log "generating reports"
+REPORT_STATUS=0
 "${PYTHON}" "${RUNNER}" \
-  --config "${CONFIG}" --output-root "${OUTPUT_ROOT}" report
+  --config "${CONFIG}" --output-root "${OUTPUT_ROOT}" report || REPORT_STATUS=$?
+
+if (( RECONCILE_STATUS != 0 || EVALUATE_STATUS != 0 || REPORT_STATUS != 0 )); then
+  log "benchmark incomplete: reconcile=${RECONCILE_STATUS}, evaluate=${EVALUATE_STATUS}, report=${REPORT_STATUS}"
+  exit 1
+fi
 
 log "benchmark complete: ${OUTPUT_ROOT}/report"

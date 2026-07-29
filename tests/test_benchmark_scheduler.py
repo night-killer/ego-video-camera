@@ -6,6 +6,7 @@ from pathlib import Path
 import numpy as np
 
 from ego_video_camera.benchmark.scheduler import (
+    _conda_environment_prefix,
     _environment,
     classify_failure,
     execute_runs,
@@ -79,6 +80,53 @@ def test_worker_command_uses_conda_run_contract(tmp_path: Path):
     ]
 
 
+def test_worker_command_prefers_exact_conda_prefix(tmp_path: Path):
+    run = _run_spec(tmp_path)
+    prefix = tmp_path / "envs" / "mock"
+    command = worker_command(
+        run,
+        tmp_path / "manifest.json",
+        conda_executable="conda",
+        conda_prefix=prefix,
+    )
+    assert command[:3] == [
+        str(prefix / "bin" / "python"),
+        "-m",
+        "ego_video_camera.benchmark.worker",
+    ]
+
+
+def test_conda_environment_prefix_uses_configured_root(tmp_path: Path):
+    prefix = tmp_path / "envs" / "mock"
+    (prefix / "conda-meta").mkdir(parents=True)
+
+    assert _conda_environment_prefix(
+        {"CONDA_ENVS_PATH": str(tmp_path / "envs")}, "mock"
+    ) == prefix.resolve()
+
+
+def test_scheduler_dry_run_uses_configured_conda_prefix(
+    tmp_path: Path, monkeypatch
+):
+    run = _run_spec(tmp_path)
+    prefix = tmp_path / "envs" / "mock"
+    (prefix / "conda-meta").mkdir(parents=True)
+    monkeypatch.setenv("CONDA_ENVS_PATH", str(tmp_path / "envs"))
+    config = {
+        "_repo_root": str(tmp_path),
+        "benchmark": {"output_root": str(tmp_path / "output")},
+    }
+
+    result = execute_runs(config, [run], dry_run=True)
+
+    command = result["commands"][0]["command"]
+    assert command[:3] == [
+        str(prefix.resolve() / "bin" / "python"),
+        "-m",
+        "ego_video_camera.benchmark.worker",
+    ]
+
+
 def test_worker_environment_prioritizes_target_torch_libraries(
     tmp_path: Path, monkeypatch
 ):
@@ -97,6 +145,8 @@ def test_worker_environment_prioritizes_target_torch_libraries(
     monkeypatch.setenv(
         "LD_LIBRARY_PATH", os.pathsep.join((foreign_library, driver_library))
     )
+    monkeypatch.setenv("PYTHONHOME", "/foreign/python")
+    monkeypatch.setenv("PYTHONPATH", "/foreign/python/site-packages")
     config = {
         "_repo_root": str(tmp_path),
         "benchmark": {"gpu": 0},
@@ -111,6 +161,12 @@ def test_worker_environment_prioritizes_target_torch_libraries(
         foreign_library,
         driver_library,
     ]
+    assert "PYTHONHOME" not in environment
+    assert environment["PYTHONPATH"] == str(tmp_path / "src")
+    assert environment["PYTHONNOUSERSITE"] == "1"
+    assert environment["CONDA_PREFIX"] == str(env_prefix.resolve())
+    assert environment["CONDA_DEFAULT_ENV"] == "mock"
+    assert environment["PATH"].split(os.pathsep)[0] == str(env_prefix.resolve() / "bin")
 
 
 def test_pose_vectors_convert_xyzw_quaternions_to_c2w_matrices():

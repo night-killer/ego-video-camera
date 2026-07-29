@@ -94,11 +94,23 @@ def _indexed_matrix_reference(
     path: Path, frames: list[FrameRecord], prefix: str
 ) -> tuple[np.ndarray, np.ndarray]:
     rows = _csv_rows(path)
-    lookup = {int(row["output_index"]): row for row in rows}
+    if rows and "output_index" in rows[0]:
+        lookup = {int(row["output_index"]): row for row in rows}
+        frame_key = lambda frame: frame.frame_id
+    elif rows and "filename" in rows[0]:
+        lookup = {Path(row["filename"]).name: row for row in rows}
+        frame_key = lambda frame: frame.image_path.name
+    elif rows:
+        raise ValueError(
+            f"Reference {path} must contain either output_index or filename"
+        )
+    else:
+        lookup = {}
+        frame_key = lambda frame: frame.frame_id
     poses = np.full((len(frames), 4, 4), np.nan, dtype=np.float64)
     valid = np.zeros(len(frames), dtype=bool)
     for index, frame in enumerate(frames):
-        row = lookup.get(frame.frame_id)
+        row = lookup.get(frame_key(frame))
         if row is None:
             continue
         try:

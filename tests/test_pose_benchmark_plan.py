@@ -22,12 +22,13 @@ def test_full_benchmark_inventory_and_matrix_are_fixed():
     runs = build_run_matrix(methods, sequences, config["benchmark"]["output_root"])
     summary = matrix_summary(runs)
 
-    assert len(methods) == 14
-    assert sum(method.canonical for method in methods) == 12
+    assert len(methods) == 13
+    assert sum(method.canonical for method in methods) == 11
+    assert "egoego_adapted" not in {method.method_id for method in methods}
     assert len(sequences) == 70
     assert len({sequence.key for sequence in sequences}) == 70
-    assert summary["run_count"] == 1856
-    assert summary["canonical_run_count"] == 1820
+    assert summary["run_count"] == 1646
+    assert summary["canonical_run_count"] == 1610
     assert summary["ablation_run_count"] == 36
 
 

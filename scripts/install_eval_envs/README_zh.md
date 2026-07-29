@@ -26,7 +26,6 @@ PTX。除 `prepare_worldsearcher.sh` 外，各脚本不会修改 `worldsearcher`
 | DROID-SLAM | `droid_slam` | Python 3.10、Torch 2.6/cu124；DROID/lietorch/torch-scatter 重编 `sm_90` |
 | MegaSaM | `megasam` | Python 3.10、Torch 2.0.1/cu118；xFormers 和 DROID 栈重编 `sm_90` |
 | HaWoR | `hawor` | Python 3.10、Torch 2.0.1/cu118；PyTorch3D 和内置 DROID 栈重编 `sm_90` |
-| EgoEgo-adapted | `egoego` | Python 3.10、Torch 2.0.1/cu118；只装 camera worker 依赖，不装 Mujoco/gym |
 
 另外会创建两个只用于编译、不会被 scheduler 调用的共享前缀：
 
@@ -35,8 +34,11 @@ PTX。除 `prepare_worldsearcher.sh` 外，各脚本不会修改 `worldsearcher`
 /data/aigc/cyb/zxgu/env/_eval_cuda124
 ```
 
-这样 MegaSaM、HaWoR、EgoEgo 共用一份 CUDA 11.8 toolkit，DROID/ReViV
+这样 MegaSaM、HaWoR 共用一份 CUDA 11.8 toolkit，DROID/ReViV
 共用一份 CUDA 12.4 toolkit，不在每个环境中重复安装 nvcc。
+
+仓库仍保留 `install_egoego.sh` 供历史实验使用，但 EgoEgo 不属于正式 benchmark，
+无需安装或通过 `verify_all_envs.sh` 验证。
 
 ORB-SLAM3 还会在同一根目录创建 `orb_slam3_build` 编译/运行时环境，以及
 `_eval_sources`、`_eval_build`、`_eval_pangolin06` 三个源码/构建前缀；它们
@@ -90,7 +92,6 @@ bash scripts/install_eval_envs/install_egom2p.sh
 bash scripts/install_eval_envs/install_droid_slam.sh
 bash scripts/install_eval_envs/install_megasam.sh
 bash scripts/install_eval_envs/install_hawor.sh
-bash scripts/install_eval_envs/install_egoego.sh
 ```
 
 ORB-SLAM3 的 C++ 依赖也安装到 `/data/aigc/cyb/zxgu/env/orb_slam3_build`，
@@ -128,9 +129,11 @@ VGGT-Omega 的项目元数据仍声明 `numpy<2`，所以 H100 上必须各跑�
 
 ## 5. Eval 调用
 
-调度器使用 `conda run -n <conda_env>`，因此每次运行 benchmark 的 shell
-都必须设置 `CONDA_ENVS_PATH`。建议让 `worldsearcher` 的 ffmpeg 和 Python
-也排在 PATH 前面：
+调度器根据 `CONDA_ENVS_PATH` 将环境名解析为绝对 prefix，并直接使用
+`<prefix>/bin/python` 及该环境的运行库，因此每次运行 benchmark 的 shell 都
+必须设置 `CONDA_ENVS_PATH`。这样可以避免 GPU 节点上的同名环境或 Conda
+二次解析覆盖指定环境。建议让 `worldsearcher` 的 ffmpeg 和 Python 也排在
+PATH 前面：
 
 ```bash
 cd /data/aigc/cyb/zxgu/code/ego-video-camera
@@ -140,16 +143,18 @@ export PATH=/data/aigc/cyb/zxgu/env/worldsearcher/bin:$PATH
 PYTHON=/data/aigc/cyb/zxgu/env/worldsearcher/bin/python
 ```
 
-先检查 70 个 clips、权重、环境、DINOv2 和 ORB executable：
+先按正式配置检查 70 个 clips、权重、环境、DINOv2 和 ORB executable：
 
 ```bash
-$PYTHON scripts/verify_eval_checkpoints.py --hash
 $PYTHON scripts/run_pose_benchmark.py inventory
 $PYTHON scripts/run_pose_benchmark.py preflight
 $PYTHON scripts/run_pose_benchmark.py plan
 ```
 
-在正式 1856-run 矩阵前，至少对每个环境选一个短序列做真实推理。下面是
+`scripts/verify_eval_checkpoints.py --hash` 会额外审计仓库中保留的历史 EgoEgo
+checkpoint，不是运行正式 benchmark 的前置条件。
+
+在正式 1646-run 矩阵前，至少对每个环境选一个短序列做真实推理。下面是
 单方法示例；替换 `--methods` 即可逐个验证：
 
 ```bash
@@ -182,9 +187,9 @@ $PYTHON scripts/run_pose_benchmark.py all --resume
 ## 6. 兼容性边界
 
 ReViV、EgoM2P、DROID 和 ViPE 使用原生支持 Hopper 的现代 CUDA 栈。
-MegaSaM、HaWoR、EgoEgo 是从 CUDA 11.x 老环境迁移到 H100 的兼容构建；
+MegaSaM、HaWoR 是从 CUDA 11.x 老环境迁移到 H100 的兼容构建；
 脚本解决的是依赖、编译架构和 import 问题，不能替代加载真实 checkpoint 的
 端到端 smoke test。尤其应检查 MegaSaM 的 xFormers、HaWoR 的 PyTorch3D
-rasterizer，以及三套 DROID backend 第一次实际 CUDA kernel 调用。HaWoR 的
+rasterizer，以及各套 DROID backend 第一次实际 CUDA kernel 调用。HaWoR 的
 旧版 MMCV/Chumpy 使用固定版本和非隔离构建，不能再单独升级 pip、setuptools
 或 YAPF 后覆盖安装。

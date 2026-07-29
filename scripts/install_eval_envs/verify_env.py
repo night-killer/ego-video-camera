@@ -61,6 +61,7 @@ def check_worldsearcher(root: Path) -> None:
     prepend(root / "thirdparty" / "LingBot-Map")
     import_file("_ego_eval_lingbot_demo", root / "thirdparty" / "LingBot-Map" / "demo.py")
     importlib.import_module("cv2")
+    importlib.import_module("gdown")
 
     if importlib.util.find_spec("vipe_ext") is None:
         raise RuntimeError("vipe_ext is not installed; run prepare_worldsearcher.sh")

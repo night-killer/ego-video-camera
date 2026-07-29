@@ -148,6 +148,11 @@ def test_mock_worker_evaluation_and_report_end_to_end(tmp_path: Path):
         assert Path(path).is_file()
     markdown = Path(report["artifacts"]["markdown"]).read_text(encoding="utf-8")
     assert "A 榜单" in markdown
+    assert "A、B1、B2 表示参考轨迹的来源和可信度，不表示片段难度" in markdown
+    assert "benchmark_rotation_rmse.png" in markdown
+    assert "benchmark_rpe_1s.png" in markdown
+    assert Path(report["artifacts"]["rotation_plot"]).read_bytes().startswith(b"\x89PNG")
+    assert Path(report["artifacts"]["rpe_1s_plot"]).read_bytes().startswith(b"\x89PNG")
 
 
 def test_report_marks_missing_results_pending(tmp_path: Path):
@@ -204,6 +209,48 @@ def test_report_ignores_stale_evaluation_after_failure(tmp_path: Path):
     assert report["run_metrics"][0]["evaluation_status"] == "failed"
     assert report["leaderboard"][0].get("primary_ate_m_rmse") is None
     assert report["leaderboard"][0]["rank"] is None
+
+
+def test_report_does_not_rank_partial_seed_results(tmp_path: Path):
+    method = _method(tmp_path)
+    sequence = _sequence(tmp_path, "partial", 1)
+    runs = []
+    for seed in (0, 1):
+        output_dir = tmp_path / f"seed_{seed}"
+        output_dir.mkdir()
+        if seed == 0:
+            write_json(
+                output_dir / "evaluation.json",
+                {
+                    "primary_protocol": "initial_se3",
+                    "protocols": {
+                        "initial_se3": {"metrics": {"ate_m_rmse": 0.1}}
+                    },
+                },
+            )
+            write_json(
+                output_dir / "run.json",
+                {"status": "success", "evaluation": {"status": "success"}},
+            )
+        else:
+            write_json(output_dir / "run.json", {"status": "method_failed"})
+        runs.append(
+            RunSpec(
+                run_id=f"mock/dataset/partial/seed_{seed}",
+                method=method,
+                sequence=sequence,
+                seed=seed,
+                output_dir=output_dir,
+            )
+        )
+
+    report = generate_report(_config(tmp_path), runs)
+
+    assert report["sequence_metrics"][0]["status"] == "partial"
+    assert report["leaderboard"][0]["status"] == "partial"
+    assert report["leaderboard"][0]["rank"] is None
+    markdown = Path(report["artifacts"]["markdown"]).read_text(encoding="utf-8")
+    assert "| pending | Mock | partial |" in markdown
 
 
 def test_evaluation_resume_retries_only_failed_evaluation(tmp_path: Path):
@@ -264,3 +311,53 @@ def test_evaluation_resume_retries_only_failed_evaluation(tmp_path: Path):
     assert state["evaluation"]["status"] == "success"
     assert "inference_status" not in state
     assert result["run_id"] == run.run_id
+
+
+def test_evaluation_key_error_is_isolated_per_run(tmp_path: Path, monkeypatch):
+    method = _method(tmp_path)
+    runs = []
+    for sequence_id in ("bad", "good"):
+        output_dir = tmp_path / sequence_id
+        output_dir.mkdir()
+        write_json(output_dir / "run.json", {"status": "success"})
+        write_json(output_dir / "worker_manifest.json", {"frames": []})
+        runs.append(
+            RunSpec(
+                run_id=f"mock/dataset/{sequence_id}/seed_0",
+                method=method,
+                sequence=_sequence(tmp_path, sequence_id, 1),
+                seed=0,
+                output_dir=output_dir,
+            )
+        )
+
+    def load_frames(sequence, **_kwargs):
+        if sequence.sequence_id == "bad":
+            raise KeyError("missing_reference_column")
+        return []
+
+    monkeypatch.setattr(evaluation_module, "load_frames", load_frames)
+    monkeypatch.setattr(evaluation_module, "load_reference", lambda *_args: object())
+    monkeypatch.setattr(evaluation_module, "read_trajectory", lambda *_args: object())
+    monkeypatch.setattr(
+        evaluation_module, "validate_prediction", lambda *_args: None
+    )
+    monkeypatch.setattr(
+        evaluation_module,
+        "evaluate_trajectory",
+        lambda *_args, **_kwargs: {
+            "primary_protocol": "initial_se3",
+            "protocols": {"initial_se3": {"status": "ok", "metrics": {}}},
+        },
+    )
+
+    result = evaluate_runs(_config(tmp_path), runs, resume=True)
+
+    assert result["status_counts"] == {"evaluation_failed": 1, "success": 1}
+    failed = json.loads((runs[0].output_dir / "run.json").read_text())
+    succeeded = json.loads((runs[1].output_dir / "run.json").read_text())
+    assert failed["status"] == "evaluation_failed"
+    assert failed["inference_status"] == "success"
+    assert failed["evaluation"]["error_type"] == "KeyError"
+    assert succeeded["status"] == "success"
+    assert succeeded["evaluation"]["status"] == "success"

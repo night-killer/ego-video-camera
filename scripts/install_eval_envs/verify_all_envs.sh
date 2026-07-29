@@ -11,7 +11,7 @@ require_h100
 [[ -x "${REPO_ROOT}/build/benchmark/orb_slam3_monocular" ]] || \
   die "missing ORB-SLAM3 benchmark runner"
 
-methods=(worldsearcher vggt_slam reviv egom2p droid_slam megasam hawor egoego)
+methods=(worldsearcher vggt_slam reviv egom2p droid_slam megasam hawor)
 for method in "${methods[@]}"; do
   prefix="$(env_path "${method}")"
   [[ -x "${prefix}/bin/python" ]] || die "missing environment ${prefix}"
@@ -19,4 +19,3 @@ for method in "${methods[@]}"; do
 done
 
 log "all benchmark environments passed import and H100 checks"
-

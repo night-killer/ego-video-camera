@@ -1,11 +1,18 @@
 from __future__ import annotations
 
+import sys
 from types import SimpleNamespace
 from typing import Iterator
 
 import numpy as np
 
 from .common import WorkerContext, poses_from_t_q
+
+
+def _add_import_path(context: WorkerContext) -> None:
+    path = str(context.repo / "droid_slam")
+    if path not in sys.path:
+        sys.path.insert(0, path)
 
 
 def _stream(context: WorkerContext) -> Iterator[tuple[int, object, object]]:
@@ -31,6 +38,7 @@ def _stream(context: WorkerContext) -> Iterator[tuple[int, object, object]]:
 
 
 def run(context: WorkerContext):
+    _add_import_path(context)
     from droid import Droid
 
     first = next(_stream(context))

@@ -38,6 +38,7 @@ from .egobody_io import (
     sample_records,
 )
 from .http_archives import HttpRangeClient, RemoteTar, RemoteZip, TarMember
+from .openloris import read_camera_intrinsics
 from .remote_zip import RemoteZipCache
 
 
@@ -1597,6 +1598,18 @@ def download_openloris_office(ctx: DownloadContext) -> list[dict[str, Any]]:
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 os.replace(staging / member, destination)
                 references.append(destination)
+            try:
+                camera = {
+                    **dataset["camera_selection"],
+                    **read_camera_intrinsics(
+                        reference_dir / "sensors.yaml",
+                        str(dataset["camera_selection"]["camera_key"]),
+                    ),
+                }
+            except (OSError, ValueError) as error:
+                raise DatasetDownloadError(
+                    f"Unable to read OpenLORIS color intrinsics for {sequence}"
+                ) from error
             record = _strict_rgb_record(
                 "openloris_office",
                 dataset,
@@ -1605,7 +1618,7 @@ def download_openloris_office(ctx: DownloadContext) -> list[dict[str, Any]]:
                 sampled,
                 images,
                 references,
-                dataset["camera_selection"],
+                camera,
                 ctx.target_fps,
                 [
                     "native D435i color stream selected; T265 fisheye streams are excluded",

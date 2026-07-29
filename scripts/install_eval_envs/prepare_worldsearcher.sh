@@ -18,10 +18,12 @@ PY
 )"
 log "worldsearcher core before install: ${before_versions}"
 
-# ViPE imports rerun and pycg even with visualization disabled. Install only
-# the pinned packages and do not let pip resolve the shared environment.
+# ViPE imports rerun, pycg and gdown even when their optional paths are unused.
+# Install only pinned packages and do not let pip resolve the shared environment.
 "${WORLDSEARCHER}/bin/python" -m pip install --no-deps \
-  "pyarrow==24.0.0" "python-pycg==1.0.3" "rerun-sdk==0.32.0"
+  "pyarrow==24.0.0" "python-pycg==1.0.3" "rerun-sdk==0.32.0" \
+  "PySocks==1.7.1" "soupsieve==2.6" "beautifulsoup4==4.12.3" \
+  "gdown==5.2.0"
 
 activate_cuda_toolchain "${WORLDSEARCHER}" "${WORLDSEARCHER}"
 log "building ViPE v1.2.0 for worldsearcher's Torch/CUDA and sm_90"

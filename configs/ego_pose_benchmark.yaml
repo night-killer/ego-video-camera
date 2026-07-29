@@ -94,7 +94,7 @@ methods:
     input_intrinsics: inferred
     causal: false
     metric_scale: false
-    parameters: {image_resolution: 518, window_size: 200, overlap: 40}
+    parameters: {image_resolution: 512, window_size: 200, overlap: 40}
 
   - id: lingbot_map
     family: lingbot_map
@@ -250,23 +250,6 @@ methods:
     causal: false
     metric_scale: true
     parameters: {stage_at_target_fps: true, use_hand_masks: true}
-
-  - id: egoego_adapted
-    family: egoego
-    display_name: EgoEgo-adapted
-    adapter: ego_video_camera.benchmark.workers.egoego:run
-    conda_env: egoego
-    repo: thirdparty/EgoEgo
-    checkpoints:
-      - ckpts/egoego/stage1_gravitynet_2000.pt
-      - ckpts/egoego/stage1_headnet_ares_250.pt
-      - ckpts/droid-slam/droid.pth
-      - ckpts/mega-sam/raft-things.pth
-    seeds: [0, 1, 2]
-    input_intrinsics: provided
-    causal: false
-    metric_scale: true
-    parameters: {head_model: ares, gt_horizontal_alignment: false, raft_iterations: 20}
 
   - id: da3_direct
     family: da3

@@ -6,7 +6,27 @@ from ..windowing import local_window_trajectory, stitch_pose_windows, window_sli
 from .common import WorkerContext, w2c_to_c2w
 
 
+PATCH_SIZE = 16
+CHECKPOINT_RESOLUTION = 512
+
+
+def validate_image_resolution(parameters: dict) -> int:
+    resolution = int(parameters.get("image_resolution", CHECKPOINT_RESOLUTION))
+    if resolution != CHECKPOINT_RESOLUTION:
+        raise ValueError(
+            "VGGT-Omega-1B-512 requires image_resolution=512, "
+            f"got {resolution}"
+        )
+    if resolution % PATCH_SIZE != 0:
+        raise ValueError(
+            f"VGGT-Omega image_resolution must be divisible by {PATCH_SIZE}, "
+            f"got {resolution}"
+        )
+    return resolution
+
+
 def run(context: WorkerContext):
+    resolution = validate_image_resolution(context.parameters)
     import torch
     from vggt_omega.models import VGGTOmega
     from vggt_omega.utils.load_fn import load_and_preprocess_images
@@ -20,7 +40,6 @@ def run(context: WorkerContext):
 
     window_size = int(context.parameters.get("window_size", 200))
     overlap = int(context.parameters.get("overlap", 40))
-    resolution = int(context.parameters.get("image_resolution", 518))
     windows = []
     for window_index, bounds in enumerate(window_slices(len(context.frames), window_size, overlap)):
         rows = context.frames[bounds]

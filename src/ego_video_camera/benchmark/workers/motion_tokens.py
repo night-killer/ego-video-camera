@@ -8,6 +8,23 @@ from ..windowing import local_window_trajectory, resample_c2w
 from .common import decode_camera_9d
 
 
+def _read_rgb(path: str) -> np.ndarray:
+    import cv2
+
+    image = cv2.imread(path, cv2.IMREAD_COLOR)
+    if image is not None:
+        return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+
+    from PIL import Image
+
+    try:
+        with Image.open(path) as source:
+            source.load()
+            return np.asarray(source.convert("RGB"), dtype=np.uint8)
+    except (OSError, ValueError) as error:
+        raise FileNotFoundError(f"Cannot read {path}") from error
+
+
 def rgb_clip(frame_rows: list[dict[str, Any]], frame_count: int, resolution: int) -> np.ndarray:
     import cv2
 
@@ -17,10 +34,7 @@ def rgb_clip(frame_rows: list[dict[str, Any]], frame_count: int, resolution: int
     frames = []
     for index in sample_indices:
         path = frame_rows[int(index)]["image_path"]
-        image = cv2.imread(path, cv2.IMREAD_COLOR)
-        if image is None:
-            raise FileNotFoundError(f"Cannot read {path}")
-        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        image = _read_rgb(path)
         height, width = image.shape[:2]
         side = min(height, width)
         top, left = (height - side) // 2, (width - side) // 2

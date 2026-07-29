@@ -503,7 +503,13 @@ def evaluate_runs(
                 "primary_protocol": result["primary_protocol"],
             }
             status = "success"
-        except (OSError, ValueError, RuntimeError, np.linalg.LinAlgError) as error:
+        except (
+            KeyError,
+            OSError,
+            ValueError,
+            RuntimeError,
+            np.linalg.LinAlgError,
+        ) as error:
             state["inference_status"] = state.get("status")
             state["status"] = RunStatus.EVALUATION_FAILED.value
             state["evaluation"] = {

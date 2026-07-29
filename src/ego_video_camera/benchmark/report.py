@@ -35,6 +35,31 @@ CORE_METRICS = (
 )
 
 
+PLOT_SPECS = (
+    {
+        "artifact": "png",
+        "filename": "benchmark_metrics.png",
+        "metric": "primary_ate_m_rmse",
+        "xlabel": "ATE RMSE (m, lower is better)",
+        "title": "Absolute Trajectory Error",
+    },
+    {
+        "artifact": "rotation_plot",
+        "filename": "benchmark_rotation_rmse.png",
+        "metric": "primary_rotation_deg_rmse",
+        "xlabel": "Rotation RMSE (deg, lower is better)",
+        "title": "Rotation Error",
+    },
+    {
+        "artifact": "rpe_1s_plot",
+        "filename": "benchmark_rpe_1s.png",
+        "metric": "primary_rpe_translation_m_1p0s_rmse",
+        "xlabel": "RPE 1 s RMSE (m, lower is better)",
+        "title": "1-second Relative Translation Error",
+    },
+)
+
+
 def _read_dict(path: Path) -> dict[str, Any] | None:
     try:
         value = read_json(path)
@@ -220,8 +245,9 @@ def leaderboard_rows(
         sequences = grouped_sequences[key]
         runs = grouped_runs[key]
         successful_sequences = [row for row in sequences if row["successful_seed_count"] > 0]
+        complete_sequences = [row for row in sequences if row["status"] == "complete"]
         successful_runs = [row for row in runs if row["evaluation_status"] == "success"]
-        if len(successful_sequences) == len(sequences):
+        if len(complete_sequences) == len(sequences):
             status = "complete"
         elif successful_sequences:
             status = "partial"
@@ -343,6 +369,41 @@ def _markdown(
     if not status_counts:
         lines.append("| pending | 0 |")
 
+    lines.extend(
+        [
+            "",
+            "## 参考轨迹等级",
+            "",
+            "A、B1、B2 表示参考轨迹的来源和可信度，不表示片段难度；不同等级分别统计，不混合排名。",
+            "",
+            "| 等级 | 参考来源 | 是否严格 GT | 本 benchmark 数据集 |",
+            "|---|---|---|---|",
+            "| A | 外部 mocap、高精度外部定位或公开数据集提供的独立真值 | 是或可作为高质量独立真值 | Princeton365、TUM RGB-D、Bonn RGB-D Dynamic、OpenLORIS Office |",
+            "| B1 | HoloLens tracking、ARKit 等设备自身的 VIO/跟踪轨迹 | 否，属于 device/VIO reference | EgoBody、HoloAssist、Stera10M |",
+            "| B2 | 机器人正运动学结合手眼标定得到的相机轨迹 | 否，属于 kinematic reference | DROID wrist、RH20T wrist |",
+            "",
+            "## 三项主要误差",
+            "",
+            "三项均为误差，都是越低越好。误差棒是按 sequence bootstrap 得到的 95% 置信区间；图中只包含结果完整的正式方法。",
+            "",
+            "- **ATE RMSE**：全局绝对位置误差，反映整体轨迹精度和累计漂移。",
+            "- **旋转 RMSE**：逐帧相机朝向的角度误差。",
+            "- **RPE 1s RMSE**：相隔 1 秒两帧间的相对平移误差，反映短期运动估计和局部漂移。",
+            "",
+            "### ATE RMSE",
+            "",
+            "![ATE RMSE by reference grade](benchmark_metrics.png)",
+            "",
+            "### 旋转 RMSE",
+            "",
+            "![Rotation RMSE by reference grade](benchmark_rotation_rmse.png)",
+            "",
+            "### RPE 1s RMSE",
+            "",
+            "![RPE 1s RMSE by reference grade](benchmark_rpe_1s.png)",
+        ]
+    )
+
     grade_order = ["A", "B1", "B2"]
     extras = sorted({str(row["reference_grade"]) for row in leaderboard} - set(grade_order))
     for grade in grade_order + extras:
@@ -426,7 +487,14 @@ def _placeholder_png(path: Path, width: int = 960, height: int = 320) -> None:
     path.write_bytes(payload)
 
 
-def write_plot(path: Path, leaderboard: list[dict[str, Any]]) -> str | None:
+def write_plot(
+    path: Path,
+    leaderboard: list[dict[str, Any]],
+    *,
+    metric: str = "primary_ate_m_rmse",
+    xlabel: str = "ATE RMSE (m, lower is better)",
+    title: str = "Absolute Trajectory Error",
+) -> str | None:
     try:
         import matplotlib
 
@@ -444,27 +512,28 @@ def write_plot(path: Path, leaderboard: list[dict[str, Any]]) -> str | None:
             for row in leaderboard
             if row["reference_grade"] == grade
             and row["canonical"]
-            and _number(row.get("primary_ate_m_rmse")) is not None
+            and row["status"] == "complete"
+            and _number(row.get(metric)) is not None
         ]
-        rows.sort(key=lambda row: float(row["primary_ate_m_rmse"]), reverse=True)
+        rows.sort(key=lambda row: float(row[metric]), reverse=True)
         if not rows:
             axis.text(0.5, 0.5, "pending", ha="center", va="center", fontsize=16)
             axis.set_xticks([])
             axis.set_yticks([])
             axis.set_title(f"Grade {grade}")
             continue
-        values = np.asarray([row["primary_ate_m_rmse"] for row in rows], dtype=float)
-        low = np.asarray([row["primary_ate_m_rmse_ci_low"] for row in rows], dtype=float)
-        high = np.asarray([row["primary_ate_m_rmse_ci_high"] for row in rows], dtype=float)
-        errors = np.vstack((values - low, high - values))
+        values = np.asarray([row[metric] for row in rows], dtype=float)
+        low = np.asarray([row[f"{metric}_ci_low"] for row in rows], dtype=float)
+        high = np.asarray([row[f"{metric}_ci_high"] for row in rows], dtype=float)
+        errors = np.maximum(0.0, np.vstack((values - low, high - values)))
         positions = np.arange(len(rows))
         colors = ["#2f6f6d" if index % 2 == 0 else "#b85c38" for index in positions]
         axis.barh(positions, values, xerr=errors, color=colors, alpha=0.9, capsize=2)
         axis.set_yticks(positions, [str(row["method_display_name"]) for row in rows], fontsize=8)
-        axis.set_xlabel("ATE RMSE (m)")
+        axis.set_xlabel(xlabel)
         axis.set_title(f"Grade {grade}")
         axis.grid(axis="x", alpha=0.25)
-    figure.suptitle("Ego RGB Camera Pose Benchmark")
+    figure.suptitle(f"Ego RGB Camera Pose Benchmark: {title}")
     figure.savefig(path, dpi=180)
     plt.close(figure)
     return None
@@ -515,14 +584,25 @@ def generate_report(
         "leaderboard_csv": report_dir / "leaderboard.csv",
         "sequence_csv": report_dir / "sequence_metrics.csv",
         "run_csv": report_dir / "run_metrics.csv",
-        "png": report_dir / "benchmark_metrics.png",
     }
+    for spec in PLOT_SPECS:
+        paths[str(spec["artifact"])] = report_dir / str(spec["filename"])
     write_csv(paths["run_csv"], runs_rows)
     write_csv(paths["sequence_csv"], sequences_rows)
     write_csv(paths["leaderboard_csv"], leaderboard)
-    plot_warning = write_plot(paths["png"], leaderboard)
-    if plot_warning:
-        payload["plot_warning"] = plot_warning
+    plot_warnings = []
+    for spec in PLOT_SPECS:
+        plot_warning = write_plot(
+            paths[str(spec["artifact"])],
+            leaderboard,
+            metric=str(spec["metric"]),
+            xlabel=str(spec["xlabel"]),
+            title=str(spec["title"]),
+        )
+        if plot_warning:
+            plot_warnings.append(f"{spec['metric']}: {plot_warning}")
+    if plot_warnings:
+        payload["plot_warning"] = "; ".join(plot_warnings)
     paths["markdown"].write_text(
         _markdown(payload, leaderboard, status_counts), encoding="utf-8"
     )

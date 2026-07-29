@@ -7,6 +7,22 @@ import numpy as np
 from .common import WorkerContext
 
 
+def _frame_tensors(image: np.ndarray, intrinsic: np.ndarray, device):
+    import torch
+
+    rgb = (
+        torch.from_numpy(image.copy())
+        .to(device=device, dtype=torch.float32)
+        .div_(255.0)
+    )
+    camera = torch.tensor(
+        [intrinsic[0, 0], intrinsic[1, 1], intrinsic[0, 2], intrinsic[1, 2]],
+        device=device,
+        dtype=torch.float32,
+    )
+    return rgb, camera
+
+
 def _install_private_droid(context: WorkerContext) -> None:
     torch_home = context.output_dir / "work" / "torch_home"
     destination = torch_home / "hub" / "droid_slam"
@@ -29,6 +45,7 @@ def run(context: WorkerContext):
     from vipe.utils.model_cache import ModelCache
 
     _install_private_droid(context)
+    device = torch.device("cuda")
 
     class ManifestStream(VideoStream):
         def __init__(self):
@@ -59,12 +76,11 @@ def run(context: WorkerContext):
                     raise FileNotFoundError(row["image_path"])
                 image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
                 intrinsic = np.asarray(row["intrinsic"], dtype=np.float32)
+                rgb, camera = _frame_tensors(image, intrinsic, device)
                 yield VideoFrame(
                     raw_frame_idx=index,
-                    rgb=torch.from_numpy(image.copy()).float().div(255.0),
-                    intrinsics=torch.as_tensor(
-                        [intrinsic[0, 0], intrinsic[1, 1], intrinsic[0, 2], intrinsic[1, 2]]
-                    ),
+                    rgb=rgb,
+                    intrinsics=camera,
                     camera_type=CameraType.PINHOLE,
                 )
 
@@ -74,7 +90,7 @@ def run(context: WorkerContext):
     config.visualize = False
     cache = ModelCache()
     cache._models["depth/dav3"] = DepthAnything3Model(weights_path=str(context.checkpoint(0)))
-    system = SLAMSystem(torch.device("cuda"), config, model_cache=cache)
+    system = SLAMSystem(device, config, model_cache=cache)
     context.mark_model_ready()
     output = system.run([ManifestStream()], camera_type=CameraType.PINHOLE)
     c2w = output.trajectory.matrix().detach().float().cpu().numpy()
