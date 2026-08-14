@@ -1,0 +1,5269 @@
+{
+  "schema_version": "egobody_demo_selection_v1",
+  "source": {
+    "url": "https://raw.githubusercontent.com/IDEA-Research/Motion-X/main/mocap-dataset-process/egobody_description_all.csv",
+    "local_path": "egobody_description_all.csv",
+    "sha256": "97da5af056948a086c199046932bf8c3a064f3d034d5517da7d077bce1fb8cdd",
+    "row_count": 980,
+    "note": "Public Motion-X manual EgoBody action intervals; no RGB archive downloaded"
+  },
+  "frame_convention": {
+    "source_fps": 30,
+    "motion_x_intervals": "frame_start_inclusive, frame_end_inclusive",
+    "emitted_windows": "frame_start_inclusive, frame_end_exclusive",
+    "ego_body_archive_resolution": "resolve hololens_sequence by recording_name from egocentric_color ZIP index"
+  },
+  "selection": {
+    "desktop": "wearer-only semantic action intervals, 20 s non-overlap; ranked by PV camera rotation proxy when available",
+    "walking": "union of walk/wander/run intervals by recording, 6 s non-overlap; actor roles retained",
+    "desktop_count": 40,
+    "walking_count": 40,
+    "count": 80
+  },
+  "categories": {
+    "desktop_head_motion": {
+      "count": 40,
+      "duration_s": 20,
+      "subject_role": "camera_wearer",
+      "clips": [
+        {
+          "clip_id": "DESK_001",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210907_S03_S04_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            500,
+            501
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 500,
+              "frame_start_inclusive": 1421,
+              "frame_end_inclusive": 1893
+            },
+            {
+              "row_id": 501,
+              "frame_start_inclusive": 1893,
+              "frame_end_inclusive": 2180
+            }
+          ],
+          "source_action_labels": [
+            "take_class_look_book",
+            "take_class_sit_down"
+          ],
+          "source_action_labels_raw": [
+            "take_class_look_book_clip1",
+            "take_class_sit_down_clip2"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1421,
+          "frame_end_exclusive": 2021,
+          "frame_end_inclusive": 2020,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 179.74284096062254,
+          "head_mean_angular_velocity_deg_s": 29.098702130324263,
+          "head_p95_angular_velocity_deg_s": 99.28569443478128,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_002",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210907_S04_S03_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            502,
+            503
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 502,
+              "frame_start_inclusive": 2001,
+              "frame_end_inclusive": 2569
+            },
+            {
+              "row_id": 503,
+              "frame_start_inclusive": 2569,
+              "frame_end_inclusive": 2940
+            }
+          ],
+          "source_action_labels": [
+            "take_class_listen",
+            "take_class_teach"
+          ],
+          "source_action_labels_raw": [
+            "take_class_listen_clip1",
+            "take_class_teach_clip5"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2001,
+          "frame_end_exclusive": 2601,
+          "frame_end_inclusive": 2600,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 81.23031578169004,
+          "head_mean_angular_velocity_deg_s": 46.50333549755174,
+          "head_p95_angular_velocity_deg_s": 201.15459582667765,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 0.9283333333333333,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_003",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210907_S04_S03_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            504,
+            505
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 504,
+              "frame_start_inclusive": 1601,
+              "frame_end_inclusive": 2101
+            },
+            {
+              "row_id": 505,
+              "frame_start_inclusive": 2101,
+              "frame_end_inclusive": 2750
+            }
+          ],
+          "source_action_labels": [
+            "take_class_listen"
+          ],
+          "source_action_labels_raw": [
+            "take_class_listen_clip2",
+            "take_class_listen_clip3"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1601,
+          "frame_end_exclusive": 2201,
+          "frame_end_inclusive": 2200,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 84.64727118855096,
+          "head_mean_angular_velocity_deg_s": 24.05557601575857,
+          "head_p95_angular_velocity_deg_s": 108.65678522487997,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 0.9733333333333334,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_004",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210911_S06_S07_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            527,
+            528
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 527,
+              "frame_start_inclusive": 901,
+              "frame_end_inclusive": 1403
+            },
+            {
+              "row_id": 528,
+              "frame_start_inclusive": 1403,
+              "frame_end_inclusive": 1905
+            }
+          ],
+          "source_action_labels": [
+            "catch_toss_pick_up_pen"
+          ],
+          "source_action_labels_raw": [
+            "catch_toss_pick_up_pen_clip17",
+            "catch_toss_pick_up_pen_clip18"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 901,
+          "frame_end_exclusive": 1501,
+          "frame_end_inclusive": 1500,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 69.43895041335593,
+          "head_mean_angular_velocity_deg_s": 28.882249734467,
+          "head_p95_angular_velocity_deg_s": 104.93866530019156,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 0.94,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_005",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210911_S07_S06_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            537,
+            538
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 537,
+              "frame_start_inclusive": 901,
+              "frame_end_inclusive": 1350
+            },
+            {
+              "row_id": 538,
+              "frame_start_inclusive": 1350,
+              "frame_end_inclusive": 1800
+            }
+          ],
+          "source_action_labels": [
+            "kick_pen"
+          ],
+          "source_action_labels_raw": [
+            "kick_pen_clip5",
+            "kick_pen_clip6"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 901,
+          "frame_end_exclusive": 1501,
+          "frame_end_inclusive": 1500,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 115.7361357423735,
+          "head_mean_angular_velocity_deg_s": 14.574997285657645,
+          "head_p95_angular_velocity_deg_s": 53.988661307306955,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_006",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210911_S07_S06_03",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            539,
+            540
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 539,
+              "frame_start_inclusive": 1861,
+              "frame_end_inclusive": 2235
+            },
+            {
+              "row_id": 540,
+              "frame_start_inclusive": 2235,
+              "frame_end_inclusive": 2600
+            }
+          ],
+          "source_action_labels": [
+            "kick_pen"
+          ],
+          "source_action_labels_raw": [
+            "kick_pen_clip7",
+            "kick_pen_clip8"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1861,
+          "frame_end_exclusive": 2461,
+          "frame_end_inclusive": 2460,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 115.7361357423735,
+          "head_mean_angular_velocity_deg_s": 15.137596493829097,
+          "head_p95_angular_velocity_deg_s": 48.192265783692136,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_007",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210918_S05_S06_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            564,
+            565
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 564,
+              "frame_start_inclusive": 751,
+              "frame_end_inclusive": 1288
+            },
+            {
+              "row_id": 565,
+              "frame_start_inclusive": 1288,
+              "frame_end_inclusive": 1778
+            }
+          ],
+          "source_action_labels": [
+            "pantry_stand_demostrate_coffee_machine"
+          ],
+          "source_action_labels_raw": [
+            "pantry_stand_demostrate_coffee_machine_clip1",
+            "pantry_stand_demostrate_coffee_machine_clip2"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 751,
+          "frame_end_exclusive": 1351,
+          "frame_end_inclusive": 1350,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 110.65347094500478,
+          "head_mean_angular_velocity_deg_s": 16.156482541181106,
+          "head_p95_angular_velocity_deg_s": 42.84357403989671,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 0.8766666666666667,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_008",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210923_S03_S14_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            649,
+            650
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 649,
+              "frame_start_inclusive": 1211,
+              "frame_end_inclusive": 1732
+            },
+            {
+              "row_id": 650,
+              "frame_start_inclusive": 1732,
+              "frame_end_inclusive": 2355
+            }
+          ],
+          "source_action_labels": [
+            "draw_with_hands"
+          ],
+          "source_action_labels_raw": [
+            "draw_with_hands_clip11",
+            "draw_with_hands_clip12"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1211,
+          "frame_end_exclusive": 1811,
+          "frame_end_inclusive": 1810,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 127.68085713740419,
+          "head_mean_angular_velocity_deg_s": 16.59399337902159,
+          "head_p95_angular_velocity_deg_s": 49.55140008025113,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_009",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210923_S14_S03_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            642,
+            643
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 642,
+              "frame_start_inclusive": 841,
+              "frame_end_inclusive": 1041
+            },
+            {
+              "row_id": 643,
+              "frame_start_inclusive": 1041,
+              "frame_end_inclusive": 1458
+            }
+          ],
+          "source_action_labels": [
+            "lounge_sit_and_lean_against_table_casual_chat",
+            "lounge_sit_down_and_lean_against_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_sit_and_lean_against_table_casual_chat_clip1",
+            "lounge_sit_down_and_lean_against_table_casual_chat_clip1"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 841,
+          "frame_end_exclusive": 1441,
+          "frame_end_inclusive": 1440,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 65.07037641863262,
+          "head_mean_angular_velocity_deg_s": 20.66253119062724,
+          "head_p95_angular_velocity_deg_s": 88.70716107428532,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 0.9566666666666667,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_010",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210929_S15_S11_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            660,
+            661
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 660,
+              "frame_start_inclusive": 2961,
+              "frame_end_inclusive": 3461
+            },
+            {
+              "row_id": 661,
+              "frame_start_inclusive": 3461,
+              "frame_end_inclusive": 3990
+            }
+          ],
+          "source_action_labels": [
+            "studnet_attend_class"
+          ],
+          "source_action_labels_raw": [
+            "studnet_attend_class_clip8",
+            "studnet_attend_class_clip9"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3261,
+          "frame_end_exclusive": 3861,
+          "frame_end_inclusive": 3860,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 39.245867608740554,
+          "head_mean_angular_velocity_deg_s": 6.660241738706664,
+          "head_p95_angular_velocity_deg_s": 31.809417276107133,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_011",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210929_S15_S11_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            662,
+            663
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 662,
+              "frame_start_inclusive": 4011,
+              "frame_end_inclusive": 4422
+            },
+            {
+              "row_id": 663,
+              "frame_start_inclusive": 4422,
+              "frame_end_inclusive": 4920
+            }
+          ],
+          "source_action_labels": [
+            "studnet_attend_class"
+          ],
+          "source_action_labels_raw": [
+            "studnet_attend_class_clip10",
+            "studnet_attend_class_clip11"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 4011,
+          "frame_end_exclusive": 4611,
+          "frame_end_inclusive": 4610,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 41.99242841045297,
+          "head_mean_angular_velocity_deg_s": 6.949320329326531,
+          "head_p95_angular_velocity_deg_s": 28.460470746436553,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_012",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20211004_S20_S12_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            745,
+            746
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 745,
+              "frame_start_inclusive": 1935,
+              "frame_end_inclusive": 2535
+            },
+            {
+              "row_id": 746,
+              "frame_start_inclusive": 2535,
+              "frame_end_inclusive": 3135
+            }
+          ],
+          "source_action_labels": [
+            "studnet_attend_class"
+          ],
+          "source_action_labels_raw": [
+            "studnet_attend_class_clip13",
+            "studnet_attend_class_clip14"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1951,
+          "frame_end_exclusive": 2551,
+          "frame_end_inclusive": 2550,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 90.475591993215,
+          "head_mean_angular_velocity_deg_s": 18.45911650034349,
+          "head_p95_angular_velocity_deg_s": 49.45434748602024,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_013",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220312_S29_S28_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            853,
+            854
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 853,
+              "frame_start_inclusive": 2001,
+              "frame_end_inclusive": 2501
+            },
+            {
+              "row_id": 854,
+              "frame_start_inclusive": 2501,
+              "frame_end_inclusive": 3001
+            }
+          ],
+          "source_action_labels": [
+            "catch_toss_pick_up_pen"
+          ],
+          "source_action_labels_raw": [
+            "catch_toss_pick_up_pen_clip27",
+            "catch_toss_pick_up_pen_clip28"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2101,
+          "frame_end_exclusive": 2701,
+          "frame_end_inclusive": 2700,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 111.16574227153643,
+          "head_mean_angular_velocity_deg_s": 12.523188960012074,
+          "head_p95_angular_velocity_deg_s": 46.77890771470263,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_014",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220318_S32_S31_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            924,
+            925
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 924,
+              "frame_start_inclusive": 2541,
+              "frame_end_inclusive": 2941
+            },
+            {
+              "row_id": 925,
+              "frame_start_inclusive": 2941,
+              "frame_end_inclusive": 3341
+            }
+          ],
+          "source_action_labels": [
+            "explain_on_blackboard"
+          ],
+          "source_action_labels_raw": [
+            "explain_on_blackboard_clip1",
+            "explain_on_blackboard_clip2"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2541,
+          "frame_end_exclusive": 3141,
+          "frame_end_inclusive": 3140,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 44.901843759817226,
+          "head_mean_angular_velocity_deg_s": 9.748565079402754,
+          "head_p95_angular_velocity_deg_s": 36.803553386202104,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_015",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220318_S33_S34_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            949,
+            950
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 949,
+              "frame_start_inclusive": 3190,
+              "frame_end_inclusive": 3690
+            },
+            {
+              "row_id": 950,
+              "frame_start_inclusive": 3690,
+              "frame_end_inclusive": 4190
+            }
+          ],
+          "source_action_labels": [
+            "explain_on_blackboard"
+          ],
+          "source_action_labels_raw": [
+            "explain_on_blackboard_clip12",
+            "explain_on_blackboard_clip13"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3291,
+          "frame_end_exclusive": 3891,
+          "frame_end_inclusive": 3890,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 180.0,
+          "head_mean_angular_velocity_deg_s": 20.96939365573196,
+          "head_p95_angular_velocity_deg_s": 80.4787456711967,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_016",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220318_S34_S33_03",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            942,
+            943
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 942,
+              "frame_start_inclusive": 1701,
+              "frame_end_inclusive": 2201
+            },
+            {
+              "row_id": 943,
+              "frame_start_inclusive": 2201,
+              "frame_end_inclusive": 2701
+            }
+          ],
+          "source_action_labels": [
+            "explain_on_blackboard"
+          ],
+          "source_action_labels_raw": [
+            "explain_on_blackboard_clip5",
+            "explain_on_blackboard_clip6"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1701,
+          "frame_end_exclusive": 2301,
+          "frame_end_inclusive": 2300,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 180.0,
+          "head_mean_angular_velocity_deg_s": 14.029810477110523,
+          "head_p95_angular_velocity_deg_s": 59.53406310910967,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_017",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220415_S35_S36_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            975,
+            976,
+            977
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 975,
+              "frame_start_inclusive": 1350,
+              "frame_end_inclusive": 1780
+            },
+            {
+              "row_id": 976,
+              "frame_start_inclusive": 1780,
+              "frame_end_inclusive": 2200
+            },
+            {
+              "row_id": 977,
+              "frame_start_inclusive": 2200,
+              "frame_end_inclusive": 2600
+            }
+          ],
+          "source_action_labels": [
+            "perform_baking",
+            "perform_cutting"
+          ],
+          "source_action_labels_raw": [
+            "perform_baking_clip1",
+            "perform_baking_clip2",
+            "perform_cutting_clip2"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1601,
+          "frame_end_exclusive": 2201,
+          "frame_end_inclusive": 2200,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 106.71907468501422,
+          "head_mean_angular_velocity_deg_s": 14.068592881289364,
+          "head_p95_angular_velocity_deg_s": 42.10530967585903,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_018",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220415_S36_S35_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            959,
+            960
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 959,
+              "frame_start_inclusive": 1401,
+              "frame_end_inclusive": 1901
+            },
+            {
+              "row_id": 960,
+              "frame_start_inclusive": 1901,
+              "frame_end_inclusive": 2401
+            }
+          ],
+          "source_action_labels": [
+            "discuss_about_book"
+          ],
+          "source_action_labels_raw": [
+            "discuss_about_book_clip6",
+            "discuss_about_book_clip7"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1401,
+          "frame_end_exclusive": 2001,
+          "frame_end_inclusive": 2000,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 77.93142281665452,
+          "head_mean_angular_velocity_deg_s": 13.530017688277605,
+          "head_p95_angular_velocity_deg_s": 50.43913405668632,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_019",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210911_S06_S07_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            530,
+            531
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 530,
+              "frame_start_inclusive": 2445,
+              "frame_end_inclusive": 2993
+            },
+            {
+              "row_id": 531,
+              "frame_start_inclusive": 2993,
+              "frame_end_inclusive": 3590
+            }
+          ],
+          "source_action_labels": [
+            "catch_toss_pick_up_pen"
+          ],
+          "source_action_labels_raw": [
+            "catch_toss_pick_up_pen_clip20",
+            "catch_toss_pick_up_pen_clip21"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2701,
+          "frame_end_exclusive": 3301,
+          "frame_end_inclusive": 3300,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 56.679013763437005,
+          "head_mean_angular_velocity_deg_s": 31.120926220991052,
+          "head_p95_angular_velocity_deg_s": 90.98194922690797,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 0.9666666666666667,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_020",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210918_S05_S06_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            566,
+            567
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 566,
+              "frame_start_inclusive": 1778,
+              "frame_end_inclusive": 2283
+            },
+            {
+              "row_id": 567,
+              "frame_start_inclusive": 2283,
+              "frame_end_inclusive": 2865
+            }
+          ],
+          "source_action_labels": [
+            "pantry_stand_demostrate_coffee_machine"
+          ],
+          "source_action_labels_raw": [
+            "pantry_stand_demostrate_coffee_machine_clip3",
+            "pantry_stand_demostrate_coffee_machine_clip4"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1951,
+          "frame_end_exclusive": 2551,
+          "frame_end_inclusive": 2550,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 31.60861440476477,
+          "head_mean_angular_velocity_deg_s": 12.268384685570165,
+          "head_p95_angular_velocity_deg_s": 39.77782824430338,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 0.8916666666666667,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_021",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210923_S03_S14_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            651,
+            652
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 651,
+              "frame_start_inclusive": 2355,
+              "frame_end_inclusive": 2856
+            },
+            {
+              "row_id": 652,
+              "frame_start_inclusive": 2856,
+              "frame_end_inclusive": 3250
+            }
+          ],
+          "source_action_labels": [
+            "draw_with_hands"
+          ],
+          "source_action_labels_raw": [
+            "draw_with_hands_clip13",
+            "draw_with_hands_clip14"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2411,
+          "frame_end_exclusive": 3011,
+          "frame_end_inclusive": 3010,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 42.20755831617601,
+          "head_mean_angular_velocity_deg_s": 11.328843521444025,
+          "head_p95_angular_velocity_deg_s": 42.47212325377198,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_022",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210929_S15_S11_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            657,
+            658
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 657,
+              "frame_start_inclusive": 1461,
+              "frame_end_inclusive": 1961
+            },
+            {
+              "row_id": 658,
+              "frame_start_inclusive": 1961,
+              "frame_end_inclusive": 2461
+            }
+          ],
+          "source_action_labels": [
+            "studnet_attend_class"
+          ],
+          "source_action_labels_raw": [
+            "studnet_attend_class_clip5",
+            "studnet_attend_class_clip6"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1461,
+          "frame_end_exclusive": 2061,
+          "frame_end_inclusive": 2060,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 37.99356131785924,
+          "head_mean_angular_velocity_deg_s": 6.412751859027308,
+          "head_p95_angular_velocity_deg_s": 27.459223393510353,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_023",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20211004_S20_S12_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            744,
+            745
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 744,
+              "frame_start_inclusive": 1351,
+              "frame_end_inclusive": 1935
+            },
+            {
+              "row_id": 745,
+              "frame_start_inclusive": 1935,
+              "frame_end_inclusive": 2535
+            }
+          ],
+          "source_action_labels": [
+            "studnet_attend_class"
+          ],
+          "source_action_labels_raw": [
+            "studnet_attend_class_clip12",
+            "studnet_attend_class_clip13"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1351,
+          "frame_end_exclusive": 1951,
+          "frame_end_inclusive": 1950,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 35.89310451865487,
+          "head_mean_angular_velocity_deg_s": 6.044046974324258,
+          "head_p95_angular_velocity_deg_s": 29.340835954948545,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_024",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220312_S29_S28_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            856,
+            857
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 856,
+              "frame_start_inclusive": 3501,
+              "frame_end_inclusive": 4001
+            },
+            {
+              "row_id": 857,
+              "frame_start_inclusive": 4001,
+              "frame_end_inclusive": 4501
+            }
+          ],
+          "source_action_labels": [
+            "catch_toss_pick_up_pen"
+          ],
+          "source_action_labels_raw": [
+            "catch_toss_pick_up_pen_clip30",
+            "catch_toss_pick_up_pen_clip31"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3901,
+          "frame_end_exclusive": 4501,
+          "frame_end_inclusive": 4500,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 71.53761592651179,
+          "head_mean_angular_velocity_deg_s": 16.529748497082647,
+          "head_p95_angular_velocity_deg_s": 44.75399185773362,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_025",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220318_S32_S31_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            925,
+            926
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 925,
+              "frame_start_inclusive": 2941,
+              "frame_end_inclusive": 3341
+            },
+            {
+              "row_id": 926,
+              "frame_start_inclusive": 3341,
+              "frame_end_inclusive": 3741
+            }
+          ],
+          "source_action_labels": [
+            "explain_on_blackboard"
+          ],
+          "source_action_labels_raw": [
+            "explain_on_blackboard_clip2",
+            "explain_on_blackboard_clip3"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3141,
+          "frame_end_exclusive": 3741,
+          "frame_end_inclusive": 3740,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 33.03857853146448,
+          "head_mean_angular_velocity_deg_s": 12.320077359225872,
+          "head_p95_angular_velocity_deg_s": 35.355676253951124,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_026",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220318_S33_S34_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            948,
+            949
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 948,
+              "frame_start_inclusive": 2691,
+              "frame_end_inclusive": 3190
+            },
+            {
+              "row_id": 949,
+              "frame_start_inclusive": 3190,
+              "frame_end_inclusive": 3690
+            }
+          ],
+          "source_action_labels": [
+            "explain_on_blackboard"
+          ],
+          "source_action_labels_raw": [
+            "explain_on_blackboard_clip11",
+            "explain_on_blackboard_clip12"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2691,
+          "frame_end_exclusive": 3291,
+          "frame_end_inclusive": 3290,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 126.18668974120646,
+          "head_mean_angular_velocity_deg_s": 14.609070224513252,
+          "head_p95_angular_velocity_deg_s": 58.1828842853761,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_027",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220318_S34_S33_03",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            943,
+            944
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 943,
+              "frame_start_inclusive": 2201,
+              "frame_end_inclusive": 2701
+            },
+            {
+              "row_id": 944,
+              "frame_start_inclusive": 2701,
+              "frame_end_inclusive": 3201
+            }
+          ],
+          "source_action_labels": [
+            "explain_on_blackboard"
+          ],
+          "source_action_labels_raw": [
+            "explain_on_blackboard_clip6",
+            "explain_on_blackboard_clip7"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2301,
+          "frame_end_exclusive": 2901,
+          "frame_end_inclusive": 2900,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 84.99730021135194,
+          "head_mean_angular_velocity_deg_s": 20.18563488569675,
+          "head_p95_angular_velocity_deg_s": 60.201983732373535,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_028",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220415_S35_S36_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            974,
+            975
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 974,
+              "frame_start_inclusive": 1001,
+              "frame_end_inclusive": 1350
+            },
+            {
+              "row_id": 975,
+              "frame_start_inclusive": 1350,
+              "frame_end_inclusive": 1780
+            }
+          ],
+          "source_action_labels": [
+            "perform_cutting"
+          ],
+          "source_action_labels_raw": [
+            "perform_cutting_clip1",
+            "perform_cutting_clip2"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1001,
+          "frame_end_exclusive": 1601,
+          "frame_end_inclusive": 1600,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 29.12485099644212,
+          "head_mean_angular_velocity_deg_s": 7.056359292040575,
+          "head_p95_angular_velocity_deg_s": 27.720805109046033,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_029",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220415_S36_S35_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            960,
+            961
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 960,
+              "frame_start_inclusive": 1901,
+              "frame_end_inclusive": 2401
+            },
+            {
+              "row_id": 961,
+              "frame_start_inclusive": 2401,
+              "frame_end_inclusive": 2901
+            }
+          ],
+          "source_action_labels": [
+            "discuss_about_book"
+          ],
+          "source_action_labels_raw": [
+            "discuss_about_book_clip7",
+            "discuss_about_book_clip8"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2001,
+          "frame_end_exclusive": 2601,
+          "frame_end_inclusive": 2600,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 52.83343302565358,
+          "head_mean_angular_velocity_deg_s": 21.068699335984796,
+          "head_p95_angular_velocity_deg_s": 74.16425684708433,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_030",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210911_S06_S07_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            528,
+            529
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 528,
+              "frame_start_inclusive": 1403,
+              "frame_end_inclusive": 1905
+            },
+            {
+              "row_id": 529,
+              "frame_start_inclusive": 1905,
+              "frame_end_inclusive": 2445
+            }
+          ],
+          "source_action_labels": [
+            "catch_toss_pick_up_pen"
+          ],
+          "source_action_labels_raw": [
+            "catch_toss_pick_up_pen_clip18",
+            "catch_toss_pick_up_pen_clip19"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1501,
+          "frame_end_exclusive": 2101,
+          "frame_end_inclusive": 2100,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 35.00273545480213,
+          "head_mean_angular_velocity_deg_s": 16.80006841653859,
+          "head_p95_angular_velocity_deg_s": 58.34430663468975,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 0.9433333333333334,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_031",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210923_S03_S14_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            650,
+            651
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 650,
+              "frame_start_inclusive": 1732,
+              "frame_end_inclusive": 2355
+            },
+            {
+              "row_id": 651,
+              "frame_start_inclusive": 2355,
+              "frame_end_inclusive": 2856
+            }
+          ],
+          "source_action_labels": [
+            "draw_with_hands"
+          ],
+          "source_action_labels_raw": [
+            "draw_with_hands_clip12",
+            "draw_with_hands_clip13"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1811,
+          "frame_end_exclusive": 2411,
+          "frame_end_inclusive": 2410,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 27.867850070903888,
+          "head_mean_angular_velocity_deg_s": 11.109458747355617,
+          "head_p95_angular_velocity_deg_s": 41.92837601933715,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_032",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20211004_S20_S12_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            747,
+            748
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 747,
+              "frame_start_inclusive": 3135,
+              "frame_end_inclusive": 3635
+            },
+            {
+              "row_id": 748,
+              "frame_start_inclusive": 3635,
+              "frame_end_inclusive": 4180
+            }
+          ],
+          "source_action_labels": [
+            "studnet_attend_class"
+          ],
+          "source_action_labels_raw": [
+            "studnet_attend_class_clip15",
+            "studnet_attend_class_clip16"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3151,
+          "frame_end_exclusive": 3751,
+          "frame_end_inclusive": 3750,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 25.272745565873148,
+          "head_mean_angular_velocity_deg_s": 10.123941444901671,
+          "head_p95_angular_velocity_deg_s": 28.91719522088797,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_033",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220312_S29_S28_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            854,
+            855
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 854,
+              "frame_start_inclusive": 2501,
+              "frame_end_inclusive": 3001
+            },
+            {
+              "row_id": 855,
+              "frame_start_inclusive": 3001,
+              "frame_end_inclusive": 3501
+            }
+          ],
+          "source_action_labels": [
+            "catch_toss_pick_up_pen"
+          ],
+          "source_action_labels_raw": [
+            "catch_toss_pick_up_pen_clip28",
+            "catch_toss_pick_up_pen_clip29"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2701,
+          "frame_end_exclusive": 3301,
+          "frame_end_inclusive": 3300,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 64.5196898391792,
+          "head_mean_angular_velocity_deg_s": 15.05771613219724,
+          "head_p95_angular_velocity_deg_s": 37.71781703404358,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_034",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220318_S33_S34_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            951,
+            952
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 951,
+              "frame_start_inclusive": 4190,
+              "frame_end_inclusive": 4690
+            },
+            {
+              "row_id": 952,
+              "frame_start_inclusive": 4690,
+              "frame_end_inclusive": 5150
+            }
+          ],
+          "source_action_labels": [
+            "explain_on_blackboard"
+          ],
+          "source_action_labels_raw": [
+            "explain_on_blackboard_clip14",
+            "explain_on_blackboard_clip15"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 4491,
+          "frame_end_exclusive": 5091,
+          "frame_end_inclusive": 5090,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 57.088792564010625,
+          "head_mean_angular_velocity_deg_s": 17.78734464793215,
+          "head_p95_angular_velocity_deg_s": 51.14899357557335,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_035",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220318_S34_S33_03",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            945,
+            946
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 945,
+              "frame_start_inclusive": 3201,
+              "frame_end_inclusive": 3701
+            },
+            {
+              "row_id": 946,
+              "frame_start_inclusive": 3701,
+              "frame_end_inclusive": 4101
+            }
+          ],
+          "source_action_labels": [
+            "explain_on_blackboard"
+          ],
+          "source_action_labels_raw": [
+            "explain_on_blackboard_clip8",
+            "explain_on_blackboard_clip9"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3501,
+          "frame_end_exclusive": 4101,
+          "frame_end_inclusive": 4100,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 38.2665614493714,
+          "head_mean_angular_velocity_deg_s": 15.120070948483038,
+          "head_p95_angular_velocity_deg_s": 47.01409296901749,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_036",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220415_S35_S36_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            977,
+            978
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 977,
+              "frame_start_inclusive": 2200,
+              "frame_end_inclusive": 2600
+            },
+            {
+              "row_id": 978,
+              "frame_start_inclusive": 2600,
+              "frame_end_inclusive": 3000
+            }
+          ],
+          "source_action_labels": [
+            "perform_baking"
+          ],
+          "source_action_labels_raw": [
+            "perform_baking_clip2",
+            "perform_baking_clip3"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2201,
+          "frame_end_exclusive": 2801,
+          "frame_end_inclusive": 2800,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 27.660452982282703,
+          "head_mean_angular_velocity_deg_s": 11.31635583989719,
+          "head_p95_angular_velocity_deg_s": 28.62062986390285,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_037",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220415_S36_S35_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            961,
+            962
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 961,
+              "frame_start_inclusive": 2401,
+              "frame_end_inclusive": 2901
+            },
+            {
+              "row_id": 962,
+              "frame_start_inclusive": 2901,
+              "frame_end_inclusive": 3401
+            }
+          ],
+          "source_action_labels": [
+            "discuss_about_book"
+          ],
+          "source_action_labels_raw": [
+            "discuss_about_book_clip8",
+            "discuss_about_book_clip9"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2601,
+          "frame_end_exclusive": 3201,
+          "frame_end_inclusive": 3200,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 35.18251872202834,
+          "head_mean_angular_velocity_deg_s": 8.842624170397809,
+          "head_p95_angular_velocity_deg_s": 36.72109187238312,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_038",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210911_S06_S07_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            529,
+            530
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 529,
+              "frame_start_inclusive": 1905,
+              "frame_end_inclusive": 2445
+            },
+            {
+              "row_id": 530,
+              "frame_start_inclusive": 2445,
+              "frame_end_inclusive": 2993
+            }
+          ],
+          "source_action_labels": [
+            "catch_toss_pick_up_pen"
+          ],
+          "source_action_labels_raw": [
+            "catch_toss_pick_up_pen_clip19",
+            "catch_toss_pick_up_pen_clip20"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2101,
+          "frame_end_exclusive": 2701,
+          "frame_end_inclusive": 2700,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 30.32664274360878,
+          "head_mean_angular_velocity_deg_s": 24.2465744945177,
+          "head_p95_angular_velocity_deg_s": 77.05955541257535,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 0.9516666666666667,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_039",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20211004_S20_S12_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            746,
+            747
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 746,
+              "frame_start_inclusive": 2535,
+              "frame_end_inclusive": 3135
+            },
+            {
+              "row_id": 747,
+              "frame_start_inclusive": 3135,
+              "frame_end_inclusive": 3635
+            }
+          ],
+          "source_action_labels": [
+            "studnet_attend_class"
+          ],
+          "source_action_labels_raw": [
+            "studnet_attend_class_clip14",
+            "studnet_attend_class_clip15"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2551,
+          "frame_end_exclusive": 3151,
+          "frame_end_inclusive": 3150,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 20.87124572753115,
+          "head_mean_angular_velocity_deg_s": 8.511455035190831,
+          "head_p95_angular_velocity_deg_s": 39.2920346577619,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_040",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220312_S29_S28_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            855,
+            856
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 855,
+              "frame_start_inclusive": 3001,
+              "frame_end_inclusive": 3501
+            },
+            {
+              "row_id": 856,
+              "frame_start_inclusive": 3501,
+              "frame_end_inclusive": 4001
+            }
+          ],
+          "source_action_labels": [
+            "catch_toss_pick_up_pen"
+          ],
+          "source_action_labels_raw": [
+            "catch_toss_pick_up_pen_clip29",
+            "catch_toss_pick_up_pen_clip30"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3301,
+          "frame_end_exclusive": 3901,
+          "frame_end_inclusive": 3900,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 42.71098991410489,
+          "head_mean_angular_velocity_deg_s": 17.20088538406578,
+          "head_p95_angular_velocity_deg_s": 42.05179213766633,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.0
+        }
+      ],
+      "reserve_clips": [
+        {
+          "clip_id": "DESK_RESERVE_001",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210918_S05_S06_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            565,
+            566
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 565,
+              "frame_start_inclusive": 1288,
+              "frame_end_inclusive": 1778
+            },
+            {
+              "row_id": 566,
+              "frame_start_inclusive": 1778,
+              "frame_end_inclusive": 2283
+            }
+          ],
+          "source_action_labels": [
+            "pantry_stand_demostrate_coffee_machine"
+          ],
+          "source_action_labels_raw": [
+            "pantry_stand_demostrate_coffee_machine_clip2",
+            "pantry_stand_demostrate_coffee_machine_clip3"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1351,
+          "frame_end_exclusive": 1951,
+          "frame_end_inclusive": 1950,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 18.527154713217048,
+          "head_mean_angular_velocity_deg_s": 6.462681245852437,
+          "head_p95_angular_velocity_deg_s": 39.48230400849467,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.8233333333333334,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_002",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210918_S05_S06_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            567,
+            568,
+            569
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 567,
+              "frame_start_inclusive": 2283,
+              "frame_end_inclusive": 2865
+            },
+            {
+              "row_id": 568,
+              "frame_start_inclusive": 2865,
+              "frame_end_inclusive": 3133
+            },
+            {
+              "row_id": 569,
+              "frame_start_inclusive": 3133,
+              "frame_end_inclusive": 3641
+            }
+          ],
+          "source_action_labels": [
+            "pantry_sit_demostrate_coffee_machine",
+            "pantry_stand_demostrate_coffee_machine"
+          ],
+          "source_action_labels_raw": [
+            "pantry_sit_demostrate_coffee_machine_clip1",
+            "pantry_sit_demostrate_coffee_machine_clip2",
+            "pantry_stand_demostrate_coffee_machine_clip4"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2551,
+          "frame_end_exclusive": 3151,
+          "frame_end_inclusive": 3150,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 35.04243394057014,
+          "head_mean_angular_velocity_deg_s": 252.89438928987954,
+          "head_p95_angular_velocity_deg_s": 37.24130291469849,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 0.8433333333333334,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_003",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210918_S05_S06_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            569,
+            570
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 569,
+              "frame_start_inclusive": 3133,
+              "frame_end_inclusive": 3641
+            },
+            {
+              "row_id": 570,
+              "frame_start_inclusive": 3641,
+              "frame_end_inclusive": 3990
+            }
+          ],
+          "source_action_labels": [
+            "pantry_sit_demostrate_coffee_machine",
+            "pantry_stand_demostrate_coffee_machine"
+          ],
+          "source_action_labels_raw": [
+            "pantry_sit_demostrate_coffee_machine_clip2",
+            "pantry_stand_demostrate_coffee_machine_clip5"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3151,
+          "frame_end_exclusive": 3751,
+          "frame_end_inclusive": 3750,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 54.649768910618114,
+          "head_mean_angular_velocity_deg_s": 23.23705250906085,
+          "head_p95_angular_velocity_deg_s": 52.985609885931076,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 0.7333333333333333,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_004",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210929_S15_S11_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            658,
+            659
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 658,
+              "frame_start_inclusive": 1961,
+              "frame_end_inclusive": 2461
+            },
+            {
+              "row_id": 659,
+              "frame_start_inclusive": 2461,
+              "frame_end_inclusive": 2961
+            }
+          ],
+          "source_action_labels": [
+            "studnet_attend_class"
+          ],
+          "source_action_labels_raw": [
+            "studnet_attend_class_clip6",
+            "studnet_attend_class_clip7"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2061,
+          "frame_end_exclusive": 2661,
+          "frame_end_inclusive": 2660,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 18.726252671108853,
+          "head_mean_angular_velocity_deg_s": 5.4992880105841,
+          "head_p95_angular_velocity_deg_s": 22.08908277927045,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_RESERVE_005",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210929_S15_S11_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            659,
+            660
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 659,
+              "frame_start_inclusive": 2461,
+              "frame_end_inclusive": 2961
+            },
+            {
+              "row_id": 660,
+              "frame_start_inclusive": 2961,
+              "frame_end_inclusive": 3461
+            }
+          ],
+          "source_action_labels": [
+            "studnet_attend_class"
+          ],
+          "source_action_labels_raw": [
+            "studnet_attend_class_clip7",
+            "studnet_attend_class_clip8"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2661,
+          "frame_end_exclusive": 3261,
+          "frame_end_inclusive": 3260,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 19.519360061319315,
+          "head_mean_angular_velocity_deg_s": 8.536073705056223,
+          "head_p95_angular_velocity_deg_s": 32.22308695612211,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_RESERVE_006",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210929_S15_S11_03",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            664,
+            665
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 664,
+              "frame_start_inclusive": 881,
+              "frame_end_inclusive": 1422
+            },
+            {
+              "row_id": 665,
+              "frame_start_inclusive": 1422,
+              "frame_end_inclusive": 1922
+            }
+          ],
+          "source_action_labels": [
+            "catch_toss_pick_up_pen"
+          ],
+          "source_action_labels_raw": [
+            "catch_toss_pick_up_pen_clip22",
+            "catch_toss_pick_up_pen_clip23"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 881,
+          "frame_end_exclusive": 1481,
+          "frame_end_inclusive": 1480,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 74.91282170549334,
+          "head_mean_angular_velocity_deg_s": 15.769989184296058,
+          "head_p95_angular_velocity_deg_s": 45.33135045300263,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 0.7933333333333333,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_007",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210929_S15_S11_03",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            665,
+            666
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 665,
+              "frame_start_inclusive": 1422,
+              "frame_end_inclusive": 1922
+            },
+            {
+              "row_id": 666,
+              "frame_start_inclusive": 1922,
+              "frame_end_inclusive": 2423
+            }
+          ],
+          "source_action_labels": [
+            "catch_toss_pick_up_pen"
+          ],
+          "source_action_labels_raw": [
+            "catch_toss_pick_up_pen_clip23",
+            "catch_toss_pick_up_pen_clip24"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1481,
+          "frame_end_exclusive": 2081,
+          "frame_end_inclusive": 2080,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 93.39310104391038,
+          "head_mean_angular_velocity_deg_s": 33.99676164535754,
+          "head_p95_angular_velocity_deg_s": 108.16505793172698,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 0.7766666666666666,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_008",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20210929_S15_S11_03",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            666,
+            667
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 666,
+              "frame_start_inclusive": 1922,
+              "frame_end_inclusive": 2423
+            },
+            {
+              "row_id": 667,
+              "frame_start_inclusive": 2423,
+              "frame_end_inclusive": 3010
+            }
+          ],
+          "source_action_labels": [
+            "catch_toss_pick_up_pen"
+          ],
+          "source_action_labels_raw": [
+            "catch_toss_pick_up_pen_clip24",
+            "catch_toss_pick_up_pen_clip25"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2081,
+          "frame_end_exclusive": 2681,
+          "frame_end_inclusive": 2680,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 48.34185918031773,
+          "head_mean_angular_velocity_deg_s": 29.068651167677324,
+          "head_p95_angular_velocity_deg_s": 77.96158237716188,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 0.71,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_009",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220215_S21_S22_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            787,
+            788
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 787,
+              "frame_start_inclusive": 1511,
+              "frame_end_inclusive": 2011
+            },
+            {
+              "row_id": 788,
+              "frame_start_inclusive": 2011,
+              "frame_end_inclusive": 2511
+            }
+          ],
+          "source_action_labels": [
+            "draw_with_hands_and_guess"
+          ],
+          "source_action_labels_raw": [
+            "draw_with_hands_and_guess_clip1",
+            "draw_with_hands_and_guess_clip2"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1511,
+          "frame_end_exclusive": 2111,
+          "frame_end_inclusive": 2110,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 13.075911877424609,
+          "head_mean_angular_velocity_deg_s": 2.320281006238091,
+          "head_p95_angular_velocity_deg_s": 9.621818182729815,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.9433333333333334,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_010",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220215_S21_S22_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            788,
+            789
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 788,
+              "frame_start_inclusive": 2011,
+              "frame_end_inclusive": 2511
+            },
+            {
+              "row_id": 789,
+              "frame_start_inclusive": 2511,
+              "frame_end_inclusive": 3011
+            }
+          ],
+          "source_action_labels": [
+            "draw_with_hands_and_guess"
+          ],
+          "source_action_labels_raw": [
+            "draw_with_hands_and_guess_clip2",
+            "draw_with_hands_and_guess_clip3"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2111,
+          "frame_end_exclusive": 2711,
+          "frame_end_inclusive": 2710,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 12.478428502950619,
+          "head_mean_angular_velocity_deg_s": 3.6951195549433424,
+          "head_p95_angular_velocity_deg_s": 18.17156596646894,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.935,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_011",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220215_S21_S22_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            789,
+            790
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 789,
+              "frame_start_inclusive": 2511,
+              "frame_end_inclusive": 3011
+            },
+            {
+              "row_id": 790,
+              "frame_start_inclusive": 3011,
+              "frame_end_inclusive": 3511
+            }
+          ],
+          "source_action_labels": [
+            "draw_with_hands_and_guess"
+          ],
+          "source_action_labels_raw": [
+            "draw_with_hands_and_guess_clip3",
+            "draw_with_hands_and_guess_clip4"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2711,
+          "frame_end_exclusive": 3311,
+          "frame_end_inclusive": 3310,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 13.977708182000303,
+          "head_mean_angular_velocity_deg_s": 4.833917870986161,
+          "head_p95_angular_velocity_deg_s": 16.76440471358038,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.8983333333333333,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_012",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220215_S21_S22_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            790,
+            791
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 790,
+              "frame_start_inclusive": 3011,
+              "frame_end_inclusive": 3511
+            },
+            {
+              "row_id": 791,
+              "frame_start_inclusive": 3511,
+              "frame_end_inclusive": 4111
+            }
+          ],
+          "source_action_labels": [
+            "draw_with_hands_and_guess"
+          ],
+          "source_action_labels_raw": [
+            "draw_with_hands_and_guess_clip4",
+            "draw_with_hands_and_guess_clip5"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3311,
+          "frame_end_exclusive": 3911,
+          "frame_end_inclusive": 3910,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 15.134816549420126,
+          "head_mean_angular_velocity_deg_s": 2.760767718560582,
+          "head_p95_angular_velocity_deg_s": 10.874935861568572,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.9283333333333333,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_013",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220215_S21_S22_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            791,
+            792
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 791,
+              "frame_start_inclusive": 3511,
+              "frame_end_inclusive": 4111
+            },
+            {
+              "row_id": 792,
+              "frame_start_inclusive": 4111,
+              "frame_end_inclusive": 4750
+            }
+          ],
+          "source_action_labels": [
+            "draw_with_hands_and_guess"
+          ],
+          "source_action_labels_raw": [
+            "draw_with_hands_and_guess_clip5",
+            "draw_with_hands_and_guess_clip6"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3911,
+          "frame_end_exclusive": 4511,
+          "frame_end_inclusive": 4510,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 7.437691645209299,
+          "head_mean_angular_velocity_deg_s": 2.7252141482063323,
+          "head_p95_angular_velocity_deg_s": 11.2620446630867,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.9466666666666667,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_014",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220215_S22_S21_04",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            796,
+            797
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 796,
+              "frame_start_inclusive": 2945,
+              "frame_end_inclusive": 3500
+            },
+            {
+              "row_id": 797,
+              "frame_start_inclusive": 3500,
+              "frame_end_inclusive": 4063
+            }
+          ],
+          "source_action_labels": [
+            "draw_with_hands"
+          ],
+          "source_action_labels_raw": [
+            "draw_with_hands_clip15",
+            "draw_with_hands_clip16"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2945,
+          "frame_end_exclusive": 3545,
+          "frame_end_inclusive": 3544,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 12.79047618228536,
+          "head_mean_angular_velocity_deg_s": 2.9806901809787023,
+          "head_p95_angular_velocity_deg_s": 12.225435882846403,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.97,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_015",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220215_S22_S21_04",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            797,
+            798
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 797,
+              "frame_start_inclusive": 3500,
+              "frame_end_inclusive": 4063
+            },
+            {
+              "row_id": 798,
+              "frame_start_inclusive": 4063,
+              "frame_end_inclusive": 4630
+            }
+          ],
+          "source_action_labels": [
+            "draw_with_hands"
+          ],
+          "source_action_labels_raw": [
+            "draw_with_hands_clip16",
+            "draw_with_hands_clip17"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3545,
+          "frame_end_exclusive": 4145,
+          "frame_end_inclusive": 4144,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_timestamp_anchors",
+          "head_turn_excursion_deg": 9.248560338682191,
+          "head_mean_angular_velocity_deg_s": 2.5225958800577084,
+          "head_p95_angular_velocity_deg_s": 10.775180809360016,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.955,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_016",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220312_S29_S28_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            852,
+            853
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 852,
+              "frame_start_inclusive": 1501,
+              "frame_end_inclusive": 2001
+            },
+            {
+              "row_id": 853,
+              "frame_start_inclusive": 2001,
+              "frame_end_inclusive": 2501
+            }
+          ],
+          "source_action_labels": [
+            "catch_toss_pick_up_pen"
+          ],
+          "source_action_labels_raw": [
+            "catch_toss_pick_up_pen_clip26",
+            "catch_toss_pick_up_pen_clip27"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1501,
+          "frame_end_exclusive": 2101,
+          "frame_end_inclusive": 2100,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 11.688572420432891,
+          "head_mean_angular_velocity_deg_s": 0.2633237329580654,
+          "head_p95_angular_velocity_deg_s": 0.0,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_017",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220318_S33_S34_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            950,
+            951
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 950,
+              "frame_start_inclusive": 3690,
+              "frame_end_inclusive": 4190
+            },
+            {
+              "row_id": 951,
+              "frame_start_inclusive": 4190,
+              "frame_end_inclusive": 4690
+            }
+          ],
+          "source_action_labels": [
+            "explain_on_blackboard"
+          ],
+          "source_action_labels_raw": [
+            "explain_on_blackboard_clip13",
+            "explain_on_blackboard_clip14"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3891,
+          "frame_end_exclusive": 4491,
+          "frame_end_inclusive": 4490,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 54.97383929048731,
+          "head_mean_angular_velocity_deg_s": 17.305197284585297,
+          "head_p95_angular_velocity_deg_s": 54.966480373462105,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_RESERVE_018",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220318_S34_S33_03",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            944,
+            945
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 944,
+              "frame_start_inclusive": 2701,
+              "frame_end_inclusive": 3201
+            },
+            {
+              "row_id": 945,
+              "frame_start_inclusive": 3201,
+              "frame_end_inclusive": 3701
+            }
+          ],
+          "source_action_labels": [
+            "explain_on_blackboard"
+          ],
+          "source_action_labels_raw": [
+            "explain_on_blackboard_clip7",
+            "explain_on_blackboard_clip8"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2901,
+          "frame_end_exclusive": 3501,
+          "frame_end_inclusive": 3500,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 29.12528573528304,
+          "head_mean_angular_velocity_deg_s": 16.04012768951161,
+          "head_p95_angular_velocity_deg_s": 46.28349718571114,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.5
+        },
+        {
+          "clip_id": "DESK_RESERVE_019",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220415_S35_S36_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            978,
+            979
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 978,
+              "frame_start_inclusive": 2600,
+              "frame_end_inclusive": 3000
+            },
+            {
+              "row_id": 979,
+              "frame_start_inclusive": 3000,
+              "frame_end_inclusive": 3480
+            }
+          ],
+          "source_action_labels": [
+            "perform_baking"
+          ],
+          "source_action_labels_raw": [
+            "perform_baking_clip3",
+            "perform_baking_clip4"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2801,
+          "frame_end_exclusive": 3401,
+          "frame_end_inclusive": 3400,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 22.125587346029654,
+          "head_mean_angular_velocity_deg_s": 11.477401036272283,
+          "head_p95_angular_velocity_deg_s": 29.265062639145622,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 2.0
+        },
+        {
+          "clip_id": "DESK_RESERVE_020",
+          "category": "desktop_head_motion",
+          "recording_name": "recording_20220415_S36_S35_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            962,
+            963
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 962,
+              "frame_start_inclusive": 2901,
+              "frame_end_inclusive": 3401
+            },
+            {
+              "row_id": 963,
+              "frame_start_inclusive": 3401,
+              "frame_end_inclusive": 3950
+            }
+          ],
+          "source_action_labels": [
+            "discuss_about_book"
+          ],
+          "source_action_labels_raw": [
+            "discuss_about_book_clip10",
+            "discuss_about_book_clip9"
+          ],
+          "subject_role": "camera_wearer",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3201,
+          "frame_end_exclusive": 3801,
+          "frame_end_inclusive": 3800,
+          "frame_count": 600,
+          "duration_s": 20.0,
+          "source_fps": 30,
+          "head_motion_required": true,
+          "head_motion_metric_status": "computed_pv_camera_rotation_proxy_metadata_span",
+          "head_turn_excursion_deg": 25.925361730045463,
+          "head_mean_angular_velocity_deg_s": 10.005175351413493,
+          "head_p95_angular_velocity_deg_s": 31.712730208517,
+          "head_motion_qualified": true,
+          "pv_coverage_ratio": 1.0,
+          "head_motion_semantic_prior": 1.0
+        }
+      ],
+      "action_rule": "draw|write|book|cutting|baking|coffee|pen|table|blackboard|class",
+      "head_motion_rule": {
+        "required": true,
+        "must_be_computed_after_download": false,
+        "metric_source": "PV camera rotation proxy; authenticated head pose can replace it",
+        "recommended_metrics": [
+          "turn_excursion_deg >= 20",
+          "p95_angular_velocity_deg_s >= 10"
+        ],
+        "combination": "both"
+      }
+    },
+    "walking_person": {
+      "count": 40,
+      "duration_s": 6,
+      "subject_role": "any_person",
+      "clips": [
+        {
+          "clip_id": "WALK_001",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_03",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            78
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 78,
+              "frame_start_inclusive": 1001,
+              "frame_end_inclusive": 1191
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_and_then_sit_on_sofa_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_and_then_sit_on_sofa_casual_chat_clip1"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0
+          ],
+          "source_roles": [
+            "interactee"
+          ],
+          "frame_start_inclusive": 1001,
+          "frame_end_exclusive": 1181,
+          "frame_end_inclusive": 1180,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_002",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            85,
+            579
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 85,
+              "frame_start_inclusive": 901,
+              "frame_end_inclusive": 1226
+            },
+            {
+              "row_id": 579,
+              "frame_start_inclusive": 901,
+              "frame_end_inclusive": 1401
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_and_then_sit_on_sofa_casual_chat",
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_and_then_sit_on_sofa_casual_chat_clip2",
+            "pantry_walk_around_casual_chat_clip1"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 901,
+          "frame_end_exclusive": 1081,
+          "frame_end_inclusive": 1080,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_003",
+          "category": "walking_person",
+          "recording_name": "recording_20210921_S05_S12_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            123,
+            613
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 123,
+              "frame_start_inclusive": 1331,
+              "frame_end_inclusive": 1670
+            },
+            {
+              "row_id": 613,
+              "frame_start_inclusive": 1331,
+              "frame_end_inclusive": 1601
+            }
+          ],
+          "source_action_labels": [
+            "cabin_walk_in _and_then_sit_on_bench_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "cabin_walk_in _and_then_sit_on_bench_casual_chat_clip1",
+            "cabin_walk_in _and_then_sit_on_bench_casual_chat_clip2"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 1331,
+          "frame_end_exclusive": 1511,
+          "frame_end_inclusive": 1510,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_004",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S05_S13_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            623
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 623,
+              "frame_start_inclusive": 1127,
+              "frame_end_inclusive": 1628
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_casual_chat_clip1"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1127,
+          "frame_end_exclusive": 1307,
+          "frame_end_inclusive": 1306,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_005",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S13_S05_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            144,
+            632
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 144,
+              "frame_start_inclusive": 951,
+              "frame_end_inclusive": 1233
+            },
+            {
+              "row_id": 632,
+              "frame_start_inclusive": 951,
+              "frame_end_inclusive": 1425
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_table_casual_chat_clip1",
+            "lounge_walk_around_table_casual_chat_clip6"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 951,
+          "frame_end_exclusive": 1131,
+          "frame_end_inclusive": 1130,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_006",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S14_S03_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            162
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 162,
+              "frame_start_inclusive": 1850,
+              "frame_end_inclusive": 2450
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_table_casual_chat_clip5"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0
+          ],
+          "source_roles": [
+            "interactee"
+          ],
+          "frame_start_inclusive": 1850,
+          "frame_end_exclusive": 2030,
+          "frame_end_inclusive": 2029,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_007",
+          "category": "walking_person",
+          "recording_name": "recording_20220315_S30_S21_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            408,
+            891
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 408,
+              "frame_start_inclusive": 1401,
+              "frame_end_inclusive": 1845
+            },
+            {
+              "row_id": 891,
+              "frame_start_inclusive": 1401,
+              "frame_end_inclusive": 1845
+            }
+          ],
+          "source_action_labels": [
+            "run"
+          ],
+          "source_action_labels_raw": [
+            "run_clip1",
+            "run_clip2"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 1401,
+          "frame_end_exclusive": 1581,
+          "frame_end_inclusive": 1580,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_008",
+          "category": "walking_person",
+          "recording_name": "recording_20220318_S32_S31_02",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            936
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 936,
+              "frame_start_inclusive": 4158,
+              "frame_end_inclusive": 4380
+            }
+          ],
+          "source_action_labels": [
+            "run"
+          ],
+          "source_action_labels_raw": [
+            "run_clip3"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 4158,
+          "frame_end_exclusive": 4338,
+          "frame_end_inclusive": 4337,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_009",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            85,
+            579
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 85,
+              "frame_start_inclusive": 901,
+              "frame_end_inclusive": 1226
+            },
+            {
+              "row_id": 579,
+              "frame_start_inclusive": 901,
+              "frame_end_inclusive": 1401
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_and_then_sit_on_sofa_casual_chat",
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_and_then_sit_on_sofa_casual_chat_clip2",
+            "pantry_walk_around_casual_chat_clip1"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 1081,
+          "frame_end_exclusive": 1261,
+          "frame_end_inclusive": 1260,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_010",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S05_S13_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            623
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 623,
+              "frame_start_inclusive": 1127,
+              "frame_end_inclusive": 1628
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_casual_chat_clip1"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1307,
+          "frame_end_exclusive": 1487,
+          "frame_end_inclusive": 1486,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_011",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S13_S05_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            144,
+            632
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 144,
+              "frame_start_inclusive": 951,
+              "frame_end_inclusive": 1233
+            },
+            {
+              "row_id": 632,
+              "frame_start_inclusive": 951,
+              "frame_end_inclusive": 1425
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_table_casual_chat_clip1",
+            "lounge_walk_around_table_casual_chat_clip6"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 1131,
+          "frame_end_exclusive": 1311,
+          "frame_end_inclusive": 1310,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_012",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S14_S03_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            162
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 162,
+              "frame_start_inclusive": 1850,
+              "frame_end_inclusive": 2450
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_table_casual_chat_clip5"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0
+          ],
+          "source_roles": [
+            "interactee"
+          ],
+          "frame_start_inclusive": 2030,
+          "frame_end_exclusive": 2210,
+          "frame_end_inclusive": 2209,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_013",
+          "category": "walking_person",
+          "recording_name": "recording_20220315_S30_S21_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            408,
+            891
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 408,
+              "frame_start_inclusive": 1401,
+              "frame_end_inclusive": 1845
+            },
+            {
+              "row_id": 891,
+              "frame_start_inclusive": 1401,
+              "frame_end_inclusive": 1845
+            }
+          ],
+          "source_action_labels": [
+            "run"
+          ],
+          "source_action_labels_raw": [
+            "run_clip1",
+            "run_clip2"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 1581,
+          "frame_end_exclusive": 1761,
+          "frame_end_inclusive": 1760,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_014",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            579,
+            580
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 579,
+              "frame_start_inclusive": 901,
+              "frame_end_inclusive": 1401
+            },
+            {
+              "row_id": 580,
+              "frame_start_inclusive": 1401,
+              "frame_end_inclusive": 1901
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip1",
+            "pantry_walk_around_casual_chat_clip2"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1261,
+          "frame_end_exclusive": 1441,
+          "frame_end_inclusive": 1440,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_015",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S13_S05_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            148,
+            634
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 148,
+              "frame_start_inclusive": 1568,
+              "frame_end_inclusive": 1923
+            },
+            {
+              "row_id": 634,
+              "frame_start_inclusive": 1540,
+              "frame_end_inclusive": 2020
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_table_casual_chat_clip2",
+            "lounge_walk_around_table_casual_chat_clip7"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 1540,
+          "frame_end_exclusive": 1720,
+          "frame_end_inclusive": 1719,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_016",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S14_S03_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            162
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 162,
+              "frame_start_inclusive": 1850,
+              "frame_end_inclusive": 2450
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_table_casual_chat_clip5"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0
+          ],
+          "source_roles": [
+            "interactee"
+          ],
+          "frame_start_inclusive": 2210,
+          "frame_end_exclusive": 2390,
+          "frame_end_inclusive": 2389,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_017",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            580
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 580,
+              "frame_start_inclusive": 1401,
+              "frame_end_inclusive": 1901
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip2"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1441,
+          "frame_end_exclusive": 1621,
+          "frame_end_inclusive": 1620,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_018",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S13_S05_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            148,
+            634
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 148,
+              "frame_start_inclusive": 1568,
+              "frame_end_inclusive": 1923
+            },
+            {
+              "row_id": 634,
+              "frame_start_inclusive": 1540,
+              "frame_end_inclusive": 2020
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_table_casual_chat_clip2",
+            "lounge_walk_around_table_casual_chat_clip7"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 1720,
+          "frame_end_exclusive": 1900,
+          "frame_end_inclusive": 1899,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_019",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S14_S03_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            162,
+            163
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 162,
+              "frame_start_inclusive": 1850,
+              "frame_end_inclusive": 2450
+            },
+            {
+              "row_id": 163,
+              "frame_start_inclusive": 2450,
+              "frame_end_inclusive": 2850
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_table_casual_chat",
+            "lounge_wander_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_table_casual_chat_clip5",
+            "lounge_wander_around_table_casual_chat_clip1"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0
+          ],
+          "source_roles": [
+            "interactee"
+          ],
+          "frame_start_inclusive": 2390,
+          "frame_end_exclusive": 2570,
+          "frame_end_inclusive": 2569,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_020",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            580
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 580,
+              "frame_start_inclusive": 1401,
+              "frame_end_inclusive": 1901
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip2"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1621,
+          "frame_end_exclusive": 1801,
+          "frame_end_inclusive": 1800,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_021",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S13_S05_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            152,
+            638
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 152,
+              "frame_start_inclusive": 2493,
+              "frame_end_inclusive": 2934
+            },
+            {
+              "row_id": 638,
+              "frame_start_inclusive": 2514,
+              "frame_end_inclusive": 3064
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_table_casual_chat_clip3",
+            "lounge_walk_around_table_casual_chat_clip8"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 2493,
+          "frame_end_exclusive": 2673,
+          "frame_end_inclusive": 2672,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_022",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S14_S03_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            163
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 163,
+              "frame_start_inclusive": 2450,
+              "frame_end_inclusive": 2850
+            }
+          ],
+          "source_action_labels": [
+            "lounge_wander_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_wander_around_table_casual_chat_clip1"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0
+          ],
+          "source_roles": [
+            "interactee"
+          ],
+          "frame_start_inclusive": 2570,
+          "frame_end_exclusive": 2750,
+          "frame_end_inclusive": 2749,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_023",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            580,
+            581
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 580,
+              "frame_start_inclusive": 1401,
+              "frame_end_inclusive": 1901
+            },
+            {
+              "row_id": 581,
+              "frame_start_inclusive": 1901,
+              "frame_end_inclusive": 2401
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip2",
+            "pantry_walk_around_casual_chat_clip3"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1801,
+          "frame_end_exclusive": 1981,
+          "frame_end_inclusive": 1980,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_024",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S13_S05_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            152,
+            638
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 152,
+              "frame_start_inclusive": 2493,
+              "frame_end_inclusive": 2934
+            },
+            {
+              "row_id": 638,
+              "frame_start_inclusive": 2514,
+              "frame_end_inclusive": 3064
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_table_casual_chat_clip3",
+            "lounge_walk_around_table_casual_chat_clip8"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 2673,
+          "frame_end_exclusive": 2853,
+          "frame_end_inclusive": 2852,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_025",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S14_S03_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            163,
+            164
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 163,
+              "frame_start_inclusive": 2450,
+              "frame_end_inclusive": 2850
+            },
+            {
+              "row_id": 164,
+              "frame_start_inclusive": 2850,
+              "frame_end_inclusive": 3250
+            }
+          ],
+          "source_action_labels": [
+            "lounge_wander_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_wander_around_table_casual_chat_clip1",
+            "lounge_wander_around_table_casual_chat_clip2"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0
+          ],
+          "source_roles": [
+            "interactee"
+          ],
+          "frame_start_inclusive": 2750,
+          "frame_end_exclusive": 2930,
+          "frame_end_inclusive": 2929,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_026",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            581
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 581,
+              "frame_start_inclusive": 1901,
+              "frame_end_inclusive": 2401
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip3"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 1981,
+          "frame_end_exclusive": 2161,
+          "frame_end_inclusive": 2160,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_027",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S13_S05_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            152,
+            638
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 152,
+              "frame_start_inclusive": 2493,
+              "frame_end_inclusive": 2934
+            },
+            {
+              "row_id": 638,
+              "frame_start_inclusive": 2514,
+              "frame_end_inclusive": 3064
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_table_casual_chat_clip3",
+            "lounge_walk_around_table_casual_chat_clip8"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 2853,
+          "frame_end_exclusive": 3033,
+          "frame_end_inclusive": 3032,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_028",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S14_S03_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            164
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 164,
+              "frame_start_inclusive": 2850,
+              "frame_end_inclusive": 3250
+            }
+          ],
+          "source_action_labels": [
+            "lounge_wander_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_wander_around_table_casual_chat_clip2"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0
+          ],
+          "source_roles": [
+            "interactee"
+          ],
+          "frame_start_inclusive": 2930,
+          "frame_end_exclusive": 3110,
+          "frame_end_inclusive": 3109,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_029",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            581
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 581,
+              "frame_start_inclusive": 1901,
+              "frame_end_inclusive": 2401
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip3"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2161,
+          "frame_end_exclusive": 2341,
+          "frame_end_inclusive": 2340,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_030",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S13_S05_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            156,
+            640
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 156,
+              "frame_start_inclusive": 3277,
+              "frame_end_inclusive": 3850
+            },
+            {
+              "row_id": 640,
+              "frame_start_inclusive": 3277,
+              "frame_end_inclusive": 3849
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_table_casual_chat_clip4",
+            "lounge_walk_around_table_casual_chat_clip9"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 3277,
+          "frame_end_exclusive": 3457,
+          "frame_end_inclusive": 3456,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_031",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            581,
+            582
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 581,
+              "frame_start_inclusive": 1901,
+              "frame_end_inclusive": 2401
+            },
+            {
+              "row_id": 582,
+              "frame_start_inclusive": 2401,
+              "frame_end_inclusive": 2901
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip3",
+            "pantry_walk_around_casual_chat_clip4"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2341,
+          "frame_end_exclusive": 2521,
+          "frame_end_inclusive": 2520,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_032",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S13_S05_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            156,
+            640
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 156,
+              "frame_start_inclusive": 3277,
+              "frame_end_inclusive": 3850
+            },
+            {
+              "row_id": 640,
+              "frame_start_inclusive": 3277,
+              "frame_end_inclusive": 3849
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_table_casual_chat_clip4",
+            "lounge_walk_around_table_casual_chat_clip9"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 3457,
+          "frame_end_exclusive": 3637,
+          "frame_end_inclusive": 3636,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_033",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            582
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 582,
+              "frame_start_inclusive": 2401,
+              "frame_end_inclusive": 2901
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip4"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2521,
+          "frame_end_exclusive": 2701,
+          "frame_end_inclusive": 2700,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_034",
+          "category": "walking_person",
+          "recording_name": "recording_20210923_S13_S05_01",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            156,
+            640
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 156,
+              "frame_start_inclusive": 3277,
+              "frame_end_inclusive": 3850
+            },
+            {
+              "row_id": 640,
+              "frame_start_inclusive": 3277,
+              "frame_end_inclusive": 3849
+            }
+          ],
+          "source_action_labels": [
+            "lounge_walk_around_table_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "lounge_walk_around_table_casual_chat_clip4",
+            "lounge_walk_around_table_casual_chat_clip9"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            0,
+            1
+          ],
+          "source_roles": [
+            "camera_wearer",
+            "interactee"
+          ],
+          "frame_start_inclusive": 3637,
+          "frame_end_exclusive": 3817,
+          "frame_end_inclusive": 3816,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 1.0
+        },
+        {
+          "clip_id": "WALK_035",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            582
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 582,
+              "frame_start_inclusive": 2401,
+              "frame_end_inclusive": 2901
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip4"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2701,
+          "frame_end_exclusive": 2881,
+          "frame_end_inclusive": 2880,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_036",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            582,
+            583
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 582,
+              "frame_start_inclusive": 2401,
+              "frame_end_inclusive": 2901
+            },
+            {
+              "row_id": 583,
+              "frame_start_inclusive": 2901,
+              "frame_end_inclusive": 3401
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip4",
+            "pantry_walk_around_casual_chat_clip5"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 2881,
+          "frame_end_exclusive": 3061,
+          "frame_end_inclusive": 3060,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_037",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            583
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 583,
+              "frame_start_inclusive": 2901,
+              "frame_end_inclusive": 3401
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip5"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3061,
+          "frame_end_exclusive": 3241,
+          "frame_end_inclusive": 3240,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_038",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            583,
+            584
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 583,
+              "frame_start_inclusive": 2901,
+              "frame_end_inclusive": 3401
+            },
+            {
+              "row_id": 584,
+              "frame_start_inclusive": 3401,
+              "frame_end_inclusive": 3990
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip5",
+            "pantry_walk_around_casual_chat_clip6"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3241,
+          "frame_end_exclusive": 3421,
+          "frame_end_inclusive": 3420,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_039",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            584
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 584,
+              "frame_start_inclusive": 3401,
+              "frame_end_inclusive": 3990
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip6"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3421,
+          "frame_end_exclusive": 3601,
+          "frame_end_inclusive": 3600,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        },
+        {
+          "clip_id": "WALK_040",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            584
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 584,
+              "frame_start_inclusive": 3401,
+              "frame_end_inclusive": 3990
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip6"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3601,
+          "frame_end_exclusive": 3781,
+          "frame_end_inclusive": 3780,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        }
+      ],
+      "reserve_clips": [
+        {
+          "clip_id": "WALK_RESERVE_001",
+          "category": "walking_person",
+          "recording_name": "recording_20210918_S05_S06_05",
+          "hololens_sequence": null,
+          "resolve_hololens_sequence": "archive_index_by_recording",
+          "source_row_ids": [
+            584
+          ],
+          "source_intervals_inclusive": [
+            {
+              "row_id": 584,
+              "frame_start_inclusive": 3401,
+              "frame_end_inclusive": 3990
+            }
+          ],
+          "source_action_labels": [
+            "pantry_walk_around_casual_chat"
+          ],
+          "source_action_labels_raw": [
+            "pantry_walk_around_casual_chat_clip6"
+          ],
+          "subject_role": "any_person",
+          "body_indices": [
+            1
+          ],
+          "source_roles": [
+            "camera_wearer"
+          ],
+          "frame_start_inclusive": 3781,
+          "frame_end_exclusive": 3961,
+          "frame_end_inclusive": 3960,
+          "frame_count": 180,
+          "duration_s": 6.0,
+          "source_fps": 30,
+          "head_motion_required": false,
+          "head_motion_metric_status": "not_required",
+          "head_turn_excursion_deg": null,
+          "head_mean_angular_velocity_deg_s": null,
+          "head_p95_angular_velocity_deg_s": null,
+          "head_motion_qualified": false,
+          "pv_coverage_ratio": 0.0,
+          "head_motion_semantic_prior": 0.0
+        }
+      ],
+      "action_rule": "(?:^|_)(?:walk|wander|run)(?:$|_)",
+      "head_motion_rule": {
+        "required": false
+      }
+    }
+  },
+  "validation": {
+    "unique_primary_clip_ids": 80,
+    "primary_count": 80,
+    "duplicate_rgb_time_keys": [],
+    "head_motion_is_not_guaranteed_by_action_text": true,
+    "pv_recordings_with_rotation_metrics": [
+      "recording_20210907_S02_S01_01",
+      "recording_20210907_S03_S04_01",
+      "recording_20210907_S04_S03_01",
+      "recording_20210907_S04_S03_02",
+      "recording_20210910_S05_S06_01",
+      "recording_20210910_S06_S05_01",
+      "recording_20210910_S06_S05_02",
+      "recording_20210910_S06_S05_03",
+      "recording_20210911_S03_S08_01",
+      "recording_20210911_S03_S08_02",
+      "recording_20210911_S06_S07_01",
+      "recording_20210911_S06_S07_02",
+      "recording_20210911_S07_S06_01",
+      "recording_20210911_S07_S06_02",
+      "recording_20210911_S07_S06_03",
+      "recording_20210911_S08_S03_01",
+      "recording_20210911_S08_S03_02",
+      "recording_20210911_S08_S03_03",
+      "recording_20210918_S05_S06_01",
+      "recording_20210918_S05_S06_02",
+      "recording_20210918_S05_S06_03",
+      "recording_20210918_S05_S06_04",
+      "recording_20210918_S05_S06_05",
+      "recording_20210918_S05_S09_01",
+      "recording_20210918_S06_S05_01",
+      "recording_20210918_S06_S05_02",
+      "recording_20210918_S06_S05_03",
+      "recording_20210918_S09_S05_01",
+      "recording_20210918_S09_S05_02",
+      "recording_20210918_S09_S05_03",
+      "recording_20210921_S05_S12_01",
+      "recording_20210921_S05_S12_02",
+      "recording_20210921_S05_S12_03",
+      "recording_20210921_S10_S11_01",
+      "recording_20210921_S10_S11_02",
+      "recording_20210921_S11_S10_01",
+      "recording_20210921_S11_S10_02",
+      "recording_20210923_S03_S14_01",
+      "recording_20210923_S05_S13_01",
+      "recording_20210923_S05_S13_02",
+      "recording_20210923_S13_S05_01",
+      "recording_20210923_S14_S03_01",
+      "recording_20210923_S14_S03_02",
+      "recording_20210923_S14_S03_03",
+      "recording_20210929_S05_S16_01",
+      "recording_20210929_S05_S16_02",
+      "recording_20210929_S05_S16_03",
+      "recording_20210929_S05_S16_04",
+      "recording_20210929_S15_S11_01",
+      "recording_20210929_S15_S11_02",
+      "recording_20210929_S15_S11_03",
+      "recording_20210929_S16_S05_01",
+      "recording_20211002_S03_S18_01",
+      "recording_20211002_S03_S18_02",
+      "recording_20211002_S03_S18_03",
+      "recording_20211002_S03_S18_04",
+      "recording_20211002_S15_S17_01",
+      "recording_20211002_S15_S17_02",
+      "recording_20211002_S17_S15_01",
+      "recording_20211002_S17_S15_02",
+      "recording_20211002_S17_S15_03",
+      "recording_20211002_S18_S03_01",
+      "recording_20211002_S18_S03_02",
+      "recording_20211004_S12_S20_01",
+      "recording_20211004_S12_S20_02",
+      "recording_20211004_S12_S20_03",
+      "recording_20211004_S12_S20_04",
+      "recording_20211004_S19_S06_01",
+      "recording_20211004_S19_S06_02",
+      "recording_20211004_S19_S06_03",
+      "recording_20211004_S19_S06_04",
+      "recording_20211004_S19_S06_05",
+      "recording_20211004_S20_S12_01",
+      "recording_20211004_S20_S12_02",
+      "recording_20211004_S20_S12_03",
+      "recording_20211004_S20_S12_04",
+      "recording_20220215_S21_S22_01",
+      "recording_20220215_S21_S22_02",
+      "recording_20220215_S22_S21_01",
+      "recording_20220215_S22_S21_02",
+      "recording_20220215_S22_S21_03",
+      "recording_20220215_S22_S21_04",
+      "recording_20220218_S02_S23_01",
+      "recording_20220218_S02_S23_02",
+      "recording_20220218_S23_S02_01",
+      "recording_20220218_S23_S02_02",
+      "recording_20220225_S24_S25_01",
+      "recording_20220225_S24_S25_02",
+      "recording_20220225_S25_S24_01",
+      "recording_20220225_S26_S27_01",
+      "recording_20220225_S27_S26_01",
+      "recording_20220225_S27_S26_02",
+      "recording_20220225_S27_S26_03",
+      "recording_20220225_S27_S26_04",
+      "recording_20220312_S28_S29_01",
+      "recording_20220312_S28_S29_02",
+      "recording_20220312_S28_S29_03",
+      "recording_20220312_S28_S29_04",
+      "recording_20220312_S28_S29_05",
+      "recording_20220312_S28_S29_06",
+      "recording_20220312_S29_S28_01",
+      "recording_20220312_S29_S28_02",
+      "recording_20220312_S29_S28_03",
+      "recording_20220312_S29_S28_04",
+      "recording_20220312_S29_S28_05",
+      "recording_20220315_S21_S30_01",
+      "recording_20220315_S21_S30_02",
+      "recording_20220315_S21_S30_03",
+      "recording_20220315_S21_S30_04",
+      "recording_20220315_S21_S30_05",
+      "recording_20220315_S21_S30_06",
+      "recording_20220315_S30_S21_01",
+      "recording_20220315_S30_S21_02",
+      "recording_20220318_S31_S32_01",
+      "recording_20220318_S32_S31_01",
+      "recording_20220318_S32_S31_02",
+      "recording_20220318_S33_S34_01",
+      "recording_20220318_S33_S34_02",
+      "recording_20220318_S34_S33_01",
+      "recording_20220318_S34_S33_02",
+      "recording_20220318_S34_S33_03",
+      "recording_20220415_S35_S36_01",
+      "recording_20220415_S35_S36_02",
+      "recording_20220415_S36_S35_01",
+      "recording_20220415_S36_S35_02"
+    ],
+    "desktop_head_motion_qualified_count": 40
+  },
+  "notes": [
+    "Motion-X body_idx_0=1 denotes the camera wearer; body_idx_0=0 denotes the interactee.",
+    "Motion-X frame_interval_end is inclusive; emitted frame_end_exclusive is one greater.",
+    "PV metrics are camera-rotation proxies, not authenticated head pose. A pending status is retained when PV text is absent or does not cover a window.",
+    "No RGB archive is downloaded or decoded by this script."
+  ]
+}

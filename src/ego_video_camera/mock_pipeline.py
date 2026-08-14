@@ -12,7 +12,13 @@ from .serialization import write_json
 from .trajectory_alignment import umeyama
 from .transforms import Sim3
 from .video_io import FFmpegWriter, verify_video
-from .visualization import DA3_COLOR, GT_COLOR, compose_triptych, draw_pose_overlay
+from .visualization import (
+    ACTIMIND_EGO_ESTIMATION_LABEL,
+    DA3_COLOR,
+    GT_COLOR,
+    compose_triptych,
+    draw_pose_overlay,
+)
 
 
 def _pose(x: float, yaw_deg: float = 0.0) -> np.ndarray:
@@ -118,7 +124,7 @@ def run_mock_pipeline(
                 gt_overlay,
                 da3_overlay,
                 gt_title="Exo + GT Head Pose",
-                da3_title="Exo + DA3 Head Pose",
+                da3_title=f"Exo + {ACTIMIND_EGO_ESTIMATION_LABEL} Head Pose",
                 sequence_label="Synthetic mock sequence",
                 timestamp_label=f"t={timestamps[index]:.3f}s frame={index:05d}",
                 alignment_label="Calibration-prefix alignment (synthetic)",

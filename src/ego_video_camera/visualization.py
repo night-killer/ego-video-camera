@@ -11,6 +11,7 @@ from .camera_models import CameraModel
 
 GT_COLOR = (0, 220, 0)
 DA3_COLOR = (0, 140, 255)
+ACTIMIND_EGO_ESTIMATION_LABEL = "ActiMind Ego Estimation"
 
 
 @dataclass(frozen=True)

@@ -24,7 +24,7 @@ def test_triptych_has_requested_panel_geometry():
         exo,
         exo.copy(),
         gt_title="Exo + GT Head Pose",
-        da3_title="Exo + DA3 Head Pose",
+        da3_title="Exo + ActiMind Ego Estimation Head Pose",
         sequence_label="sequence",
         timestamp_label="timestamp",
         alignment_label="Calibration-prefix alignment",

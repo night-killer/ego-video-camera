@@ -4,7 +4,11 @@ DROID/RH20T 机器人腕部 RGB 的独立 DA3-Streaming 入口、固定 7 段选
 exo 数据准备和 GPU 命令见 [DA3 机器人交互 Ego/Exo Demo](docs/robot_interaction_da3_demo_zh.md)。
 该入口使用 `run_robot_demo.sh`，不会改变下述 EgoBody 入口和产物。
 
-本仓库从 EgoBody 的 egocentric RGB 估计 DA3 相机轨迹，并把 GT 与 DA3 结果分别投影到同一张、未经去畸变的 master Kinect RGB 上。最终视频为 1920×1080 三联画：左侧 Ego RGB，右上仅显示绿色 GT，右下仅显示橙色 DA3。
+需要约 80 段 EgoBody demo（40 段桌面/头动、40 段行走）时，见
+[EgoBody 80 段选择与选择性下载说明](docs/egobody_80_demo_zh.md)。仓库内清单位于
+`configs/egobody_demo_80/`；彩色 archive 仍须先从官方站点取得有效授权凭据。
+
+本仓库从 EgoBody 的 egocentric RGB 估计 DA3 相机轨迹，并把 GT 与估计结果分别投影到同一张、未经去畸变的 master Kinect RGB 上。最终视频为 1920×1080 三联画：左侧 Ego RGB，右上仅显示绿色 GT，右下仅显示橙色 `ActiMind Ego Estimation`。DA3 仅作为内部推理后端和产物字段名。
 
 面向“彩色、非鱼眼、机器人 ego 优先”的下一轮数据集、模型微调和统一评测设计，见 [彩色透视 Ego Video 位姿估计实验报告](docs/ego_pose_rgb_pinhole_finetune_report_zh.md)。该报告同时审计了现有 `core65` 的鱼眼/灰度偏差、当前仅有 DA3 可运行的问题，以及最新 ReViV 的微调方案。
 
@@ -39,7 +43,7 @@ git submodule update --init --recursive
 - Ego/Exo 同步只使用精确 frame ID。EgoBody 没有提供 exo timestamp 时，mapping 中写 `null`，并标记 `sync_basis=exact_frame_id`
 - gaze CSV 中的完整 4×4 矩阵是 `T_W_Q`，Head frame 的前向为 `-Z`
 
-投影标注只绘制三根从中心向外的语义箭头：红色 `R` 表示头右方，绿色 `UP` 表示头上方，蓝色 `GAZE` 表示视线方向。真实 Head frame 和 EgoBody PV camera-center proxy 均使用 `(+X,+Y,-Z)`。中心点和历史轨迹仍以绿色区分 GT、橙色区分 DA3。
+投影标注只绘制三根从中心向外的语义箭头：红色 `R` 表示头右方，绿色 `UP` 表示头上方，蓝色 `GAZE` 表示视线方向。真实 Head frame 和 EgoBody PV camera-center proxy 均使用 `(+X,+Y,-Z)`。中心点和历史轨迹仍以绿色区分 GT、橙色区分 `ActiMind Ego Estimation`。
 
 在 calibration prefix 内估计固定外参：
 
@@ -158,7 +162,7 @@ CUDA_VISIBLE_DEVICES=7 ./run_demo.sh \
 
 DA3 adapter 只接收 Ego RGB 路径，并明确调用 `use_ray_pose=True`；不会传入 GT extrinsics、GT intrinsics 或 pose-conditioned 数据。loop closure 关闭，因此不需要额外 SALAD checkpoint。默认参数为 resolution 504、chunk/overlap 60/30。
 
-低置信或无效姿态不会用 GT 替代，默认不插值，视频会显示 `DA3 prediction unavailable`。输出同时保存 raw W2C、stitched C2W、预测内参、raw/normalized confidence、模型/源码/checkpoint 信息和 pose convention。
+低置信或无效姿态不会用 GT 替代，默认不插值，视频会显示 `ActiMind Ego Estimation prediction unavailable`。输出同时保存 raw W2C、stitched C2W、预测内参、raw/normalized confidence、模型/源码/checkpoint 信息和 pose convention。
 
 对齐与评估包含：
 

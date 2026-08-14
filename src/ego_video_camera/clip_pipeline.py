@@ -37,7 +37,15 @@ from .serialization import read_json, write_json
 from .trajectory_alignment import estimate_full_alignment, estimate_prefix_alignment
 from .transforms import invert_pose
 from .video_io import FFmpegWriter, verify_video
-from .visualization import DA3_COLOR, GT_COLOR, compose_triptych, draw_pose_overlay, draw_text, letterbox
+from .visualization import (
+    ACTIMIND_EGO_ESTIMATION_LABEL,
+    DA3_COLOR,
+    GT_COLOR,
+    compose_triptych,
+    draw_pose_overlay,
+    draw_text,
+    letterbox,
+)
 
 
 def _resolve_sequence_dir(data_root: Path, recording: str, sequence: str) -> Path:
@@ -125,7 +133,14 @@ def load_clip_records(data_root: str | Path, clip: dict[str, Any]):
     return pv_calibration, records, mappings
 
 
-def _gt_state(data_root: Path, clip: dict, records, config: dict) -> dict:
+def _gt_state(
+    data_root: Path,
+    clip: dict,
+    records,
+    config: dict,
+    *,
+    allow_head_tracking: bool = True,
+) -> dict:
     recording = clip["recording_name"]
     T_K_W, calibration_path = load_T_K_W(data_root, recording)
     T_W_E = np.asarray([record.T_W_E for record in records])
@@ -135,7 +150,11 @@ def _gt_state(data_root: Path, clip: dict, records, config: dict) -> dict:
     ) / 10_000_000.0
     head_poses = np.full_like(T_K_E, np.nan)
     head_valid = np.zeros(len(records), dtype=bool)
-    gaze_file = _find_gaze_file(data_root, recording, clip["hololens_sequence"])
+    gaze_file = (
+        _find_gaze_file(data_root, recording, clip["hololens_sequence"])
+        if allow_head_tracking
+        else None
+    )
     if gaze_file is not None:
         head_records = load_head_tracking(gaze_file)
         tolerance = float(config["clip"].get("sync_tolerance_ms", 50))
@@ -237,17 +256,35 @@ def _render_gt_only(
     return {"video": str(output_path), "preview": str(preview_path)}
 
 
-def prepare_gt_clip(
+def prepare_loaded_gt_clip(
     data_root: str | Path,
     clip: dict,
     output_dir: str | Path,
     config: dict,
+    records,
+    mappings: list[FrameMapping],
+    *,
+    allow_head_tracking: bool = True,
+    metadata_root: str | Path | None = None,
 ) -> dict:
     output = Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
-    _, records, mappings = load_clip_records(data_root, clip)
-    gt = _gt_state(Path(data_root), clip, records, config)
-    camera, camera_path = load_master_camera(data_root)
+    if not records:
+        identifier = clip.get("clip_id") or clip.get("recording_name") or "clip"
+        raise RuntimeError(f"No input records found for {identifier}")
+    if len(records) != len(mappings):
+        raise RuntimeError(
+            f"Record/mapping count mismatch: {len(records)} != {len(mappings)}"
+        )
+    reference_root = Path(metadata_root) if metadata_root is not None else Path(data_root)
+    gt = _gt_state(
+        reference_root,
+        clip,
+        records,
+        config,
+        allow_head_tracking=allow_head_tracking,
+    )
+    camera, camera_path = load_master_camera(reference_root)
     width, height = 1920, 1080
     if mappings and mappings[0].exo_image:
         image = cv2.imread(str(mappings[0].exo_image))
@@ -340,6 +377,23 @@ def prepare_gt_clip(
     return {"records": records, "mappings": mappings, "gt": gt, "camera": camera, "report": report}
 
 
+def prepare_gt_clip(
+    data_root: str | Path,
+    clip: dict,
+    output_dir: str | Path,
+    config: dict,
+) -> dict:
+    _, records, mappings = load_clip_records(data_root, clip)
+    return prepare_loaded_gt_clip(
+        data_root,
+        clip,
+        output_dir,
+        config,
+        records,
+        mappings,
+    )
+
+
 def _align_da3(da3_c2w: np.ndarray, valid: np.ndarray, gt: dict, config: dict) -> dict:
     timestamps = gt["timestamps_sec"]
     source = da3_c2w[valid]
@@ -382,7 +436,12 @@ def _plot_trajectory(path: Path, gt: np.ndarray, estimate: np.ndarray, title: st
     plt.figure(figsize=(7, 6))
     plt.plot(gt[:, 0, 3], gt[:, 2, 3], "g-", label="GT")
     if valid.any():
-        plt.plot(estimate[valid, 0, 3], estimate[valid, 2, 3], color="orange", label="DA3")
+        plt.plot(
+            estimate[valid, 0, 3],
+            estimate[valid, 2, 3],
+            color="orange",
+            label=ACTIMIND_EGO_ESTIMATION_LABEL,
+        )
     plt.axis("equal")
     plt.grid(True)
     plt.xlabel("Kinect X [m]")
@@ -495,7 +554,14 @@ def _render_comparison(
                 history=estimate_history[-40:],
             )
             if not estimate_projected:
-                draw_text(da3_overlay, "DA3 prediction unavailable", (50, 90), (0, 0, 255), 0.9, 2)
+                draw_text(
+                    da3_overlay,
+                    f"{ACTIMIND_EGO_ESTIMATION_LABEL} prediction unavailable",
+                    (50, 90),
+                    (0, 0, 255),
+                    0.9,
+                    2,
+                )
             if not gt_projected:
                 draw_text(gt_overlay, "GT projection unavailable", (50, 90), (0, 0, 255), 0.9, 2)
             proxy_suffix = " Head Pose" if head_mode == "head_pose" else " Head Proxy"
@@ -526,7 +592,7 @@ def _render_comparison(
                 gt_overlay,
                 da3_overlay,
                 gt_title="Exo + GT" + proxy_suffix,
-                da3_title="Exo + DA3" + proxy_suffix,
+                da3_title=f"Exo + {ACTIMIND_EGO_ESTIMATION_LABEL}{proxy_suffix}",
                 sequence_label=f"{clip.get('difficulty', '')} {clip['recording_name']}",
                 timestamp_label=f"frame={mapping.ego_frame_id:05d} timestamp={mapping.ego_timestamp}",
                 alignment_label=alignment_label,
@@ -555,6 +621,16 @@ def _da3_resume_matches(da3_dir: Path, records, config: dict) -> bool:
             timestamps_match = np.array_equal(
                 data["timestamps"], np.asarray([record.timestamp for record in records])
             )
+            pose_shape_matches = (
+                data["c2w"].shape == (len(records), 4, 4)
+                and data["confidence"].shape == (len(records),)
+            )
+        metadata = read_json(json_path)
+        metadata_records = metadata.get("records", [])
+        source_images_match = len(metadata_records) == len(records) and all(
+            Path(item.get("source_image", "")).resolve() == Path(record.image_path).resolve()
+            for item, record in zip(metadata_records, records)
+        )
         expected_overlap = _effective_streaming_overlap(
             len(records),
             int(da3_config["window_size"]),
@@ -573,12 +649,19 @@ def _da3_resume_matches(da3_dir: Path, records, config: dict) -> bool:
             "effective_overlap": expected_overlap,
             "loop_closure": False,
             "confidence_threshold": float(da3_config["confidence_threshold"]),
+            "output_pose_basis": "egobody_pv",
             "input_count": len(records),
         }
-    except (OSError, KeyError, ValueError):
+    except (OSError, KeyError, TypeError, ValueError):
         return False
-    return frame_ids_match and timestamps_match and all(
-        resolved.get(key) == value for key, value in expected.items()
+    return (
+        frame_ids_match
+        and timestamps_match
+        and pose_shape_matches
+        and source_images_match
+        and all(
+            resolved.get(key) == value for key, value in expected.items()
+        )
     )
 
 
@@ -676,9 +759,13 @@ def run_clip(
     render_comparison: bool,
     evaluate: bool,
     resume: bool = False,
+    prepared_clip: dict | None = None,
 ) -> dict:
     output = Path(output_dir)
-    prepared = prepare_gt_clip(data_root, clip, output, config)
+    if prepared_clip is not None:
+        prepared = prepared_clip
+    else:
+        prepared = prepare_gt_clip(data_root, clip, output, config)
     records, mappings, gt, camera = (
         prepared["records"],
         prepared["mappings"],
@@ -686,6 +773,18 @@ def run_clip(
         prepared["camera"],
     )
     da3_dir = output / "da3"
+    if (
+        not run_da3
+        and (render_comparison or evaluate)
+        and not _da3_resume_matches(da3_dir, records, config)
+    ):
+        raise RuntimeError(
+            "--no-run-da3 requires a matching DA3 resume cache when rendering or "
+            "evaluation is requested. Run with --run-da3 --resume, or use "
+            "--no-run-da3 --no-render --no-evaluate for GT-only output."
+        )
+    if not run_da3 and not render_comparison and not evaluate:
+        return {"gt": prepared["report"], "da3": "not_run_on_cpu"}
     if run_da3 and not (resume and _da3_resume_matches(da3_dir, records, config)):
         if da3_dir.exists():
             shutil.rmtree(da3_dir)
@@ -702,6 +801,7 @@ def run_clip(
             chunk_size=int(da3_config["window_size"]),
             overlap=int(da3_config["window_overlap"]),
             confidence_threshold=float(da3_config["confidence_threshold"]),
+            output_pose_basis="egobody_pv",
         )
     da3_npz = da3_dir / "da3_poses_raw.npz"
     if not da3_npz.is_file():

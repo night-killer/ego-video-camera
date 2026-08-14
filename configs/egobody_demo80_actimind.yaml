@@ -1,0 +1,57 @@
+data_root: /data/aigc/cyb/zxgu/data/EgoBody_demo80
+output_root: outputs/egobody_demo80_actimind
+
+runtime:
+  python_path: /data/aigc/cyb/zxgu/env/worldsearcher/bin/python
+  ffmpeg_path: /data/aigc/cyb/zxgu/env/worldsearcher/bin/ffmpeg
+  ffprobe_path: /data/aigc/cyb/zxgu/env/worldsearcher/bin/ffprobe
+  device: cuda
+  cpu_mock_mode: false
+
+da3:
+  source_root: thirdparty/Depth-Anything-3
+  checkpoint_path: /data/aigc/cyb/zxgu/ckpt/DA3NESTED-GIANT-LARGE
+  checkpoint_status: user_validated_local
+  use_ray_pose: true
+  sample_fps: 8
+  input_resolution: 504
+  streaming: true
+  window_size: 60
+  window_overlap: 30
+  loop_closure: false
+  confidence_threshold: 1.5
+  interpolate_invalid: false
+
+clip:
+  calibration_prefix_sec: 3
+  maximum_prefix_ratio: 0.30
+  sync_tolerance_ms: 50
+
+head_pose:
+  prefer_head_tracking: false
+  fallback_to_camera_center: true
+  minimum_pairs: 20
+  minimum_coverage: 0.80
+  max_translation_p95_m: 0.05
+  max_rotation_p95_deg: 10.0
+
+alignment:
+  modes: [sim3_full, sim3_prefix, se3_full]
+  minimum_translation_span_m: 0.10
+  minimum_rank_ratio: 0.001
+
+visualization:
+  model_display_label: ActiMind Ego Estimation
+  canvas_width: 1920
+  canvas_height: 1080
+  axis_length_m: 0.20
+  trajectory_history_sec: 5
+  render_axes: true
+  render_trajectory: true
+  render_confidence: true
+  render_errors: true
+
+video:
+  codec: libx264
+  pixel_format: yuv420p
+  faststart: true
